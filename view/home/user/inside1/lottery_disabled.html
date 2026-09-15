@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽奖功能暂停</title>
+    <link rel="stylesheet" href="/Assets/libs/layui/css/layui.css">
+    <style>
+        .disabled-container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .disabled-icon {
+            font-size: 80px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .disabled-title {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .disabled-content {
+            color: #999;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .back-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="disabled-container">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="disabled-icon">
+                    <i class="layui-icon layui-icon-pause"></i>
+                </div>
+                <div class="disabled-title">抽奖功能暂停中</div>
+                <div class="disabled-content">
+                    <p>抽奖活动暂时关闭，请关注站点公告或联系管理员获取最新信息。</p>
+                    <p>感谢您的理解与支持！</p>
+                </div>
+                <div class="back-btn">
+                    <button class="layui-btn layui-btn-normal" onclick="history.back()">
+                        <i class="layui-icon layui-icon-return"></i> 返回上页
+                    </button>
+                    <button class="layui-btn layui-btn-primary" onclick="location.href='/user/main'">
+                        <i class="layui-icon layui-icon-home"></i> 返回首页
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

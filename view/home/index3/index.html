@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.67">
+    <link rel="icon" href="/favicon.ico">
+  <title>{:conf('name')}</title>
+    <meta name="description" content="{:conf('keyword')}">
+    <link rel="stylesheet" href="/template/index3/css/main.css">
+    <link rel="stylesheet" href="/template/index3/css/circles.css">
+    <link rel="stylesheet" href="/template/CDN/all.min.css">
+  </head>
+  <body>
+    <div id="app">
+      <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+      <div class="theme-container">
+        <div class="common-wrapper series--no">
+          <header class="navbar-container" style="top:0;">
+            <div class="site-brand nav-item">
+              <img class="logo" src="{:conf('logo')}" alt="{:conf('name')}">
+              <a href="/" class="router-link-active router-link-exact-active site-name can-hide">{:conf('name')}</a>
+            </div>
+            <div class="nav-item navbar-links-wrapper">
+              <nav class="navbar-links">
+                <empty name='user'>
+                <div class="navbar-links__item">
+                  <a href="/index/login" class="link" aria-label="登录">
+                    <span class="link-text">登录</span>
+                    <span class="link-icon">
+                      <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15">
+                        <path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path>
+                        <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon>
+                      </svg>
+                    </span>
+                  </a>
+                </div>
+                <div class="navbar-links__item">
+                  <a href="/index/register" class="link" aria-label="注册">
+                    <span class="link-text">注册</span>
+                    <span class="link-icon">
+                      <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15">
+                        <path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path>
+                        <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon>
+                      </svg>
+                    </span>
+                  </a>
+                </div>
+                <else/>
+                <div class="navbar-links__item">
+                  <a href="/user/index" class="link" aria-label="用户中心">
+                    <span class="link-text">用户中心</span>
+                    <span class="link-icon">
+                      <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15">
+                        <path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path>
+                        <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon>
+                      </svg>
+                    </span>
+                  </a>
+                </div>
+                <div class="navbar-links__item">
+                  <a class="link logoutBtn" id="logoutBtn" aria-label="退出">
+                    <span class="link-text">退出</span>
+                    <span class="link-icon">
+                      <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15">
+                        <path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path>
+                        <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon>
+                      </svg>
+                    </span>
+                  </a>
+                </div>
+                </empty>
+                
+                <div class="navbar-links__item">
+                  <span class="xicon-container btn-toggle-dark-mode btn--dark-mode" onclick="toggleMode()">
+                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width: 20px; height: 20px; display: none;">
+                      <path d="M15 2h2v3h-2z" fill="currentColor"></path>
+                      <path d="M27 15h3v2h-3z" fill="currentColor"></path>
+                      <path d="M15 27h2v3h-2z" fill="currentColor"></path>
+                      <path d="M2 15h3v2H2z" fill="currentColor"></path>
+                      <path d="M5.45 6.884l1.414-1.415l2.121 2.122l-1.414 1.414z" fill="currentColor"></path>
+                      <path d="M23 7.58l2.121-2.12l1.414 1.414l-2.121 2.121z" fill="currentColor"></path>
+                      <path d="M23.002 24.416l1.415-1.414l2.12 2.122l-1.413 1.414z" fill="currentColor"></path>
+                      <path d="M5.47 25.13L7.59 23L9 24.42l-2.12 2.12l-1.41-1.41z" fill="currentColor"></path>
+                      <path d="M16 8a8 8 0 1 0 8 8a8 8 0 0 0-8-8zm0 14a6 6 0 0 1 0-12z" fill="currentColor"></path>
+                    </svg>
+                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width: 20px; height: 20px;">
+                      <path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path>
+                    </svg>
+                  </span>
+                </div>
+              </nav>
+            </div>
+            <!-- 移动端导航按钮 -->
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+          </header>
+          <!-- 移动端导航菜单容器 -->
+          <div id="navLinksMobile" class="nav-links-mobile"></div>
+          <div class="series-mask"></div>
+          <div class="home-wrapper">
+            <section class="banner-brand__wrapper" style="overflow:hidden;background:url(/template/index3/img/background.svg) center/cover no-repeat; background-attachment: fixed;">
+              <div class="banner-brand__content">
+                <h1 class="title">{:conf('name')} 极速蓝光
+                  <span class="cd-words-wrapper">
+                    <span class="word">一次解析</span>
+                    <span class="word">无广告</span>
+                    <span class="word">解析接口</span>
+                  </span>
+                </h1>
+                <p class="tagline">{:conf('name')}API FFSir云解析,vip视频解析,一次解析,{:conf('name')}</p>
+                <div class="btn-group">
+                  <empty name='user'>
+                  <a href="/index/login" class="link btn-primary" aria-label="用户登陆">
+                    <i class="fas fa-user-lock"></i>
+                    <span>用户登录</span>
+                  </a>
+                  <a href="/index/register" class="link btn-secondary" aria-label="用户注册">
+                    <i class="fas fa-user-plus"></i>
+                    <span>用户注册</span>
+                  </a>
+                  <a href="/index/login" class="link btn-outline" aria-label="稳定的JSON接口">
+                    <i class="fas fa-code"></i>
+                    <span>稳定的JSON接口</span>
+                  </a>
+                  <a target="_blank" href="/index/login" class="link btn-outline" aria-label="视频测试">
+                    <i class="fas fa-play-circle"></i>
+                    <span>视频测试</span>
+                  </a>
+                  <else/>
+                  <a href="/user/index" class="link btn-primary" aria-label="用户登陆">
+                    <i class="fas fa-user"></i>
+                    <span>用户中心</span>
+                  </a>
+                  <a href="/index/register" class="link btn-secondary" aria-label="用户注册">
+                    <i class="fas fa-user-plus"></i>
+                    <span>用户注册</span>
+                  </a>
+                  <a href="/user/index" class="link btn-outline" aria-label="稳定的JSON接口">
+                    <i class="fas fa-code"></i>
+                    <span>稳定的JSON接口</span>
+                  </a>
+                  <a target="_blank" href="/user/video/" class="link btn-outline" aria-label="视频测试">
+                    <i class="fas fa-play-circle"></i>
+                    <span>视频测试</span>
+                  </a>
+                  </empty>
+                  
+                  <a target="_blank" href="/user/index" class="link btn-outline" aria-label="播放器下载">
+                    <i class="fas fa-download"></i>
+                    <span>播放器下载</span>
+                  </a>
+                  <span class="mode-toggle" onclick="toggleMode()">
+                    <i class="fas fa-sun" id="mode-icon"></i>
+                    <span id="mode-text">早间模式</span>
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #dbeafe;
+            --primary-dark: #3a50c5;
+            --secondary: #38b000;
+            --secondary-light: #d1fae5;
+            --danger: #f857a6;
+            --danger-light: #fce7e7;
+            --success: #00bbf9;
+            --surface: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 16px;
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition: all 0.3s var(--ease-in-out);
+            --transition-fast: all 0.2s var(--ease-in-out);
+            --font-base: 16px;
+            --font-md: clamp(1rem, 3vw, 1.1rem);
+            --font-lg: clamp(1.5rem, 5vw, 2.5rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--surface-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            font-size: var(--font-base);
+        }
+
+        /* 导航栏美化 */
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4%;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .navbar-container.scrolled {
+            padding: 0.75rem 4%;
+            box-shadow: var(--shadow-md);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .site-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius);
+            object-fit: cover;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+        }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.25);
+        }
+
+        .site-name {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            position: relative;
+            padding-left: 5px;
+        }
+
+        .site-name::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 导航链接美化 */
+        .navbar-links {
+            display: flex;
+            gap: 0.8rem;
+            font-size: var(--font-md);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-links {
+                display: none;
+            }
+        }
+
+        .navbar-links__item {
+            list-style: none;
+        }
+
+        .link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+        }
+
+        .link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .link:hover, .link.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+            border-color: var(--primary-light);
+        }
+
+        .link:hover::after, .link.active::after {
+            width: 100%;
+        }
+
+        /* 退出按钮美化 */
+        .logoutBtn {
+            background-color: var(--danger-light);
+            color: var(--danger);
+            border-left: 3px solid var(--danger);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(248, 87, 166, 0.1);
+        }
+
+        .logoutBtn:hover {
+            background-color: #fee2e2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(248, 87, 166, 0.15);
+        }
+
+        /* 深色模式切换按钮 */
+        .xicon-container {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        /* 移动端导航 */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            z-index: 101;
+            transition: var(--transition-fast);
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+        }
+
+        .nav-toggle:hover {
+            color: var(--primary);
+        }
+
+        .nav-links-mobile {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 340px;
+            background: var(--surface);
+            box-shadow: -8px 0 20px rgba(0, 0, 0, 0.12);
+            display: flex;
+            flex-direction: column;
+            padding: 6rem 2rem 2rem;
+            transform: translateX(100%);
+            transition: transform 0.4s var(--ease-out-back);
+            z-index: 99;
+            overflow-y: auto;
+            border-left: 1px solid var(--border);
+        }
+
+        .nav-links-mobile.active {
+            transform: translateX(0);
+        }
+
+        .nav-links-mobile .link {
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            gap: 0.6rem;
+            font-weight: 500;
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            transition: var(--transition);
+            background-color: var(--surface-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .nav-links-mobile .link:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 1.8rem;
+            right: 1.8rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .close-menu:hover {
+            color: var(--primary);
+        }
+
+        /* 主内容区美化 */
+        .home-wrapper {
+            padding: 2rem 0;
+        }
+
+        .banner-brand__wrapper {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .banner-brand__content {
+            max-width: 800px;
+            z-index: 2;
+            padding: 0 2rem;
+        }
+
+        .title {
+            font-size: var(--font-lg);
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .title span {
+            display: block;
+        }
+
+        .cd-words-wrapper {
+            display: inline-block;
+            position: relative;
+            text-align: left;
+        }
+
+        .cd-words-wrapper b {
+            display: inline-block;
+            position: absolute;
+            white-space: nowrap;
+            left: 0;
+            top: 0;
+        }
+
+        .cd-words-wrapper b.is-visible {
+            position: relative;
+        }
+
+        .tagline {
+            font-size: var(--font-md);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        /* 按钮组美化 */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        .link.btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .link.btn-primary::after {
+            background: white;
+        }
+
+        .link.btn-primary:hover {
+            background: linear-gradient(135deg, #3a50c5, #3548b5);
+            color: white;
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .link.btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #2f855a);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(56, 176, 0, 0.2);
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .link.btn-secondary::after {
+            background: white;
+        }
+
+        .link.btn-secondary:hover {
+            background: linear-gradient(135deg, #2f855a, #276749);
+            color: white;
+            box-shadow: 0 8px 20px rgba(56, 176, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .link.btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .link.btn-outline::after {
+            background: var(--primary);
+        }
+
+        .link.btn-outline:hover {
+            background: var(--surface);
+            color: var(--primary);
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .mode-toggle:hover {
+            background: var(--surface-secondary);
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* 公告弹窗美化 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s var(--ease-in-out);
+            padding: 1.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transform: translateY(20px) scale(0.96);
+            transition: transform 0.4s var(--ease-out-back), box-shadow 0.4s var(--ease-in-out);
+            box-shadow: 0 25px 35px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            animation: modalFadeIn 0.4s ease-out forwards;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        @keyframes modalFadeIn {
+            0% {
+                transform: translateY(20px) scale(0.96);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.8rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at left top, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+        }
+
+        .modal-header::after {
+            content: "";
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg) scale(1.1);
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-content {
+            padding: 1.8rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            max-height: calc(90vh - 180px);
+        }
+
+        .announcement-content {
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-size: var(--font-md);
+        }
+
+        .announcement-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .announcement-content h4 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin: 1.8rem 0 1.2rem;
+            font-weight: 600;
+            position: relative;
+            padding-left: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .announcement-content h4::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .announcement-content h4 i {
+            margin-right: 0.6rem;
+            color: var(--primary);
+        }
+
+        .announcement-content ul, 
+        .announcement-content ol {
+            margin-left: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .announcement-content li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .announcement-content ul li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .announcement-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .announcement-content a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            display: inline-block;
+        }
+
+        .announcement-content a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .announcement-content a:hover {
+            color: var(--primary-dark);
+        }
+
+        .announcement-content a:hover::after {
+            width: 100%;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background-color: var(--surface-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dont-show-again {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            gap: 0.6rem;
+        }
+
+        .dont-show-again input {
+            accent-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .modal-confirm {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 25px -5px rgba(67, 97, 238, 0.2);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .modal-confirm::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease-in-out);
+            z-index: -1;
+        }
+
+        .modal-confirm:hover {
+            opacity: 0.95;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(67, 97, 238, 0.3);
+        }
+
+        .modal-confirm:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* 退出确认弹窗美化 */
+        .logout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s var(--ease-in-out);
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .logout-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .logout-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2.5rem 1.8rem;
+            text-align: center;
+            transform: translateY(20px) scale(0.9);
+            transition: transform 0.3s var(--ease-out-back);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-height: 70vh;
+            overflow: hidden;
+        }
+
+        .logout-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .logout-message {
+            color: var(--text-secondary);
+            margin-bottom: 1.8rem;
+            line-height: 1.8;
+            font-size: var(--font-md);
+        }
+
+        .logout-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-cancel {
+            background-color: var(--surface-secondary);
+            color: var(--text-secondary);
+        }
+
+        .btn-cancel:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-confirm {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background-color: #f43f5e;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(248, 87, 166, 0.2);
+        }
+
+        /* 登录弹窗美化 */
+        .login-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s var(--ease-in-out);
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .login-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .login-modal-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.4s var(--ease-out-back);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .login-modal-overlay.active .login-modal-container {
+            transform: translateY(0) scale(1);
+        }
+        
+        .login-modal-header {
+            padding: 1.8rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .login-modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        
+        .login-modal-close {
+            position: absolute;
+            top: 1.8rem;
+            right: 1.8rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .login-modal-close:hover {
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        .login-modal-content {
+            padding: 1.8rem;
+            overflow-y: auto;
+            max-height: calc(80vh - 180px);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .input-field {
+            display: flex;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 1.2rem;
+            height: 50px;
+            width: 100%;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .input-field i {
+            color: var(--text-tertiary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .input-field input {
+            background: 0;
+            outline: 0;
+            border: 0;
+            line-height: 1;
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 0.8rem 0;
+        }
+        
+        .input-field:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .input-field:focus-within i {
+            color: var(--primary);
+        }
+        
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+            margin-top: 1rem;
+        }
+        
+        .login-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -2px rgba(67, 97, 238, 0.3);
+        }
+        
+        .terms-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 1.2rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .terms-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .terms-text a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .terms-text a:hover {
+            color: var(--primary-dark);
+        }
+        
+        .terms-text a:hover::after {
+            width: 100%;
+        }
+        
+        .form-loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+        }
+        
+        .form-loading .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .validation-error {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.4rem 1rem;
+            background-color: rgba(248, 87, 166, 0.1);
+            color: var(--danger);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+    </style>
+        <!-- 退出确认弹窗 -->
+    <div class="logout-modal" id="logoutModal">
+        <div class="logout-container">
+            <h3 class="logout-title"><i class="fas fa-sign-out-alt"></i> 退出账户</h3>
+            <p class="logout-message">您确定要退出 <span class="font-semibold"><?php echo htmlspecialchars($user['uid'] ?? '当前账户'); ?></span> 吗？退出后将需要重新登录。</p>
+            <div class="logout-actions">
+                <button class="btn btn-cancel" id="cancelLogout"><i class="fas fa-times"></i> 取消</button>
+                <a href="/user/logOut" class="btn btn-confirm" id="confirmLogout"><i class="fas fa-check"></i> 确认退出</a>
+            </div>
+        </div>
+    </div>
+        <!-- 公告弹窗（无需登录即可显示） -->
+            <if conf('notice_type')==1>
+    <div class="modal-overlay" id="announcementModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-bullhorn"></i> 系统公告</h3>
+                <button class="modal-close" id="closeAnnouncement">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="announcement-content">
+                    {:conf('notice')}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-row">
+                    <label class="dont-show-again">
+                        <input type="checkbox" id="dontShowAgain">
+                        <span>7天内不再显示</span>
+                    </label>
+                </div>
+                <button class="modal-confirm" id="confirmAnnouncement">
+                    <i class="fas fa-check-circle"></i>
+                    <span>我已阅读并知晓</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    </if>
+    <script>eval(function(p, a, c, k, e, r) {
+        e = function(c) {
+          return c.toString(36)
+        };
+        if ('0'.replace(0, e) == 0) {
+          while (c--) r[e(c)] = k[c];
+          k = [function(e) {
+            return r[e] || e
+          }];
+          e = function() {
+            return '[2-9a-v]'
+          };
+          c = 1
+        };
+        while (c--) if (k[c]) p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]);
+        return p
+      } ('2.addEventListener("DOMContentLoaded",g(){4 8=2.querySelectorAll(\'.cd-8-wrapper .word\');let 9=0;g p(){8[9].5.remove(\'l-m\');9=(9+1)%8.length;8[9].5.n(\'l-m\')}8[9].5.n(\'l-m\');setInterval(p,2000)});g toggleMode(){4 6=2.6;4 d=2.a(\'3-q\');4 e=2.a(\'r-h\');4 f=2.a(\'s-h\');6.5.toggle(\'7-3\');d.o=6.5.i(\'7-3\')?\'夜间模式\':\'早间模式\';e.b.c=6.5.i(\'7-3\')?\'j\':\'k\';f.b.c=6.5.i(\'7-3\')?\'k\':\'j\';t.setItem(\'7-3\',6.5.i(\'7-3\')?\'u\':\'disabled\')}(g(){4 v=t.getItem(\'7-3\');4 d=2.a(\'3-q\');4 e=2.a(\'r-h\');4 f=2.a(\'s-h\');if(v===\'u\'){2.6.5.n(\'7-3\');d.o=\'夜间模式\';e.b.c=\'j\';f.b.c=\'k\'}else{d.o=\'早间模式\';e.b.c=\'k\';f.b.c=\'j\'}})();', [], 32, '||document|mode|const|classList|body|dark|words|currentIndex|getElementById|style|display|modeText|sunIcon|moonIcon|function|icon|contains|block|none|is|visible|add|textContent|showNextWord|text|sun|moon|localStorage|enabled|darkMode'.split('|'), 0, {}))</script>
+  </body>
+    <script>
+     const logoutModal = document.getElementById('logoutModal');
+             function openLogoutModal() {
+                logoutModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeLogoutModal() {
+                logoutModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            if (logoutBtn) logoutBtn.addEventListener('click', openLogoutModal);
+            // 移动端导航菜单初始化
+            function initMobileNav() {
+                const navLinksMobile = document.getElementById('navLinksMobile');
+                const navbarLinks = document.querySelector('.navbar-links');
+                
+                // 创建关闭按钮
+                const closeMenu = document.createElement('button');
+                closeMenu.id = 'closeMenu';
+                closeMenu.classList.add('close-menu');
+                closeMenu.innerHTML = '<i class="fas fa-times"></i>';
+                
+                // 复制导航链接并添加关闭按钮
+                if (navLinksMobile && navbarLinks) {
+                    navLinksMobile.innerHTML = navbarLinks.innerHTML;
+                    navLinksMobile.appendChild(closeMenu);
+                    
+                    // 绑定关闭按钮事件
+                    closeMenu.addEventListener('click', function() {
+                        navLinksMobile.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                    
+                    // 绑定移动端退出按钮事件
+                    const mobileLogoutBtn = navLinksMobile.querySelector('.logoutBtn');
+                    if (mobileLogoutBtn) {
+                        mobileLogoutBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openLogoutModal();
+                            navLinksMobile.classList.remove('active');
+                        });
+                    }
+                }
+                
+                // 绑定导航切换按钮事件
+                const navToggle = document.getElementById('navToggle');
+                if (navToggle && navLinksMobile) {
+                    function debounce(func, wait = 300) {
+                        let timeout;
+                        return function() {
+                            const context = this;
+                            const args = arguments;
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => func.apply(context, args), wait);
+                        };
+                    }
+                    
+                    const debouncedToggle = debounce(function() {
+                        navLinksMobile.classList.toggle('active');
+                        document.body.style.overflow = navLinksMobile.classList.contains('active') ? 'hidden' : '';
+                    }, 300);
+                    
+                    navToggle.addEventListener('click', debouncedToggle);
+                    navToggle.addEventListener('touchstart', debouncedToggle, { passive: true });
+                }
+            }
+            
+            // 页面加载完成后初始化移动端导航
+            document.addEventListener('DOMContentLoaded', initMobileNav);
+            
+            if (cancelLogout) cancelLogout.addEventListener('click', closeLogoutModal);
+                // 点击弹窗外部关闭
+            if (logoutModal) {
+                logoutModal.addEventListener('click', function(e) {
+                    if (e.target === logoutModal) {
+                        closeLogoutModal();
+                    }
+                });
+            }
+            
+            // 深色模式切换图标更新
+            function updateModeIcon() {
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                const modeIcon = document.getElementById('mode-icon');
+                
+                if (modeIcon) {
+                    if (isDarkMode) {
+                        modeIcon.classList.remove('fa-sun');
+                        modeIcon.classList.add('fa-moon');
+                    } else {
+                        modeIcon.classList.remove('fa-moon');
+                        modeIcon.classList.add('fa-sun');
+                    }
+                }
+            }
+            
+            // 初始化模式图标
+            updateModeIcon();
+    </script>
+           <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航栏滚动效果
+            const navbar = document.querySelector('.navbar-container');
+            if (navbar) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 10) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+            
+            // 公告弹窗
+            const announcementModal = document.getElementById('announcementModal');
+            const confirmAnnouncement = document.getElementById('confirmAnnouncement');
+            const closeAnnouncement = document.getElementById('closeAnnouncement');
+            const dontShowAgain = document.getElementById('dontShowAgain');
+            
+            // 检查是否设置了不再显示
+            const dontShow = localStorage.getItem('dontShowAnnouncement');
+            const expiration = localStorage.getItem('announcementExpiration');
+
+            <?php if(conf('notice_type')==1){?> 
+            // 如果未设置"不再显示"或已过期，则显示弹窗
+            if (announcementModal && (!dontShow || (expiration && new Date().getTime() > parseInt(expiration)))) {
+                setTimeout(() => {
+                    announcementModal.classList.add('active');
+                }, 800);
+            }
+            <?php }?>
+            
+            function closeModal() {
+                if (announcementModal) {
+                    // 如果勾选了"不再显示"
+                    if (dontShowAgain && dontShowAgain.checked) {
+                        const now = new Date();
+                        const expirationTime = now.getTime() + 7 * 24 * 60 * 60 * 1000; // 7天后
+                        
+                        localStorage.setItem('dontShowAnnouncement', 'true');
+                        localStorage.setItem('announcementExpiration', expirationTime.toString());
+                    }
+                    
+                    announcementModal.classList.remove('active');
+                }
+            }
+      
+            // 确认按钮和关闭按钮都能关闭弹窗
+            if (confirmAnnouncement) confirmAnnouncement.addEventListener('click', closeModal);
+            if (closeAnnouncement) closeAnnouncement.addEventListener('click', closeModal);
+            
+            // 点击弹窗外部关闭
+            if (announcementModal) {
+                announcementModal.addEventListener('click', function(e) {
+                    if (e.target === announcementModal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            // 退出确认弹窗
+            const confirmLogout = document.getElementById('confirmLogout');
+            
+            if (confirmLogout) {
+                confirmLogout.addEventListener('click', function() {
+                    // 安全增强：添加CSRF验证
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrf_token';
+                    csrfInput.value = 'cc465468e997f96b48ff6e4ada878b7c57a57276ca03e4642987d0b5e06e8c51';
+                    
+                    const form = document.createElement('form');
+                    form.action = '/user/logOut';
+                    form.method = 'post';
+                    form.appendChild(csrfInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            }
+            
+            // 登录表单验证和提交
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('register-username');
+            const passwordInput = document.getElementById('register-password');
+            const usernameError = document.getElementById('usernameError');
+            const passwordError = document.getElementById('passwordError');
+            
+            if (loginBtn && usernameInput && passwordInput) {
+                loginBtn.addEventListener('click', function() {
+                    const isUsernameValid = validateUsername();
+                    const isPasswordValid = validatePassword();
+                    
+                    if (isUsernameValid && isPasswordValid) {
+                        // 显示加载状态
+                        loginBtn.innerHTML = '<div class="form-loading"><div class="spinner"></div></div>';
+                        loginBtn.disabled = true;
+                        
+                        $.ajax({
+                            type: "post",
+                            url: "{:url('/ajax/login')}",
+                            data: $('#form1').serialize(), 
+                            dataType: "json",
+                            success: function(data) {
+                                // 恢复按钮状态
+                                loginBtn.innerHTML = '<i class="fas fa-arrow-right"></i><span>立即登录</span>';
+                                loginBtn.disabled = false;
+                                
+                                if (data.code == 0) {
+                                    // 登录成功
+                                    notice.success({
+                                        title: '登录通知',
+                                        message: data.msg,
+                                        animateInside: true,
+                                        position: 'topCenter',
+                                        transitionOut: 'flipOutX',
+                                        transitionOutMobile: 'flipOutX',
+                                        displayMode: '2',
+                                        audio: '1'
+                                    });
+                                    
+                                    setTimeout(function () {
+                                        const loginModal = document.getElementById('loginModal');
+                                        if (loginModal) loginModal.classList.remove('active');
+                                        location.href = "{:url('/user/index')}";
+                                    }, 1500);
+                                } else {
+                                    // 登录失败
+                                    notice.error({
+                                        title: '系统提示',
+                                        message: data.msg,
+                                        animateInside: true,
+                                        position: 'topCenter',
+                                        transitionOut: 'flipOutX',
+                                        transitionOutMobile: 'flipOutX',
+                                        displayMode: '2',
+                                        audio: '1'
+                                    });
+                                }
+                            }, 
+                            error: function () {
+                                // 恢复按钮状态
+                                loginBtn.innerHTML = '<i class="fas fa-arrow-right"></i><span>立即登录</span>';
+                                loginBtn.disabled = false;
+                                
+                                notice.error({
+                                    title: '系统提示',
+                                    message: '服务器错误，请稍后重试~',
+                                    animateInside: true,
+                                    position: 'topCenter',
+                                    transitionOut: 'flipOutX',
+                                    transitionOutMobile: 'flipOutX',
+                                    timeout: false,
+                                    displayMode: '2',
+                                    audio: '1'
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                function validateUsername() {
+                    const username = usernameInput.value.trim();
+                    if (!username) {
+                        if (usernameError) {
+                            usernameError.textContent = '用户名/邮箱不能为空';
+                            usernameError.style.display = 'block';
+                        }
+                        return false;
+                    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(username) && 
+                               !/^[a-zA-Z0-9]([._-]?[a-zA-Z0-9]){0,19}$/.test(username)) {
+                        if (usernameError) {
+                            usernameError.textContent = '请输入有效的用户名或邮箱';
+                            usernameError.style.display = 'block';
+                        }
+                        return false;
+                    } else {
+                        if (usernameError) usernameError.style.display = 'none';
+                        return true;
+                    }
+                }
+                
+                function validatePassword() {
+                    const password = passwordInput.value;
+                    if (password.length < 6) {
+                        if (passwordError) passwordError.style.display = 'block';
+                        return false;
+                    } else {
+                        if (passwordError) passwordError.style.display = 'none';
+                        return true;
+                    }
+                }
+                
+                // 输入框焦点事件
+                usernameInput.addEventListener('focus', function() {
+                    if (usernameError) usernameError.style.display = 'none';
+                });
+                
+                passwordInput.addEventListener('focus', function() {
+                    if (passwordError) passwordError.style.display = 'none';
+                });
+            }
+            
+            // 监听窗口大小变化，调整弹窗
+            function adjustModalSize() {
+                const modals = ['login-modal-container', 'logout-container', 'modal-container'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        // 如果弹窗高度超过视口高度，添加滚动条
+                        if (modal.offsetHeight > (window.innerHeight - 80)) {
+                            modal.style.overflowY = 'auto';
+                        } else {
+                            modal.style.overflowY = 'visible';
+                        }
+                    }
+                });
+            }
+            
+            // 初始化时调整一次
+            adjustModalSize();
+            
+            // 窗口大小变化时调整
+            window.addEventListener('resize', adjustModalSize);
+        });
+    </script>
+</html>

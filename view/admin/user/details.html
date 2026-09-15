@@ -1,0 +1,221 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+     <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form ">
+        <input name="id" value="{:isset($shop.id) ? $shop.id : ''}" type="hidden"/>
+   
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">用户名:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="user" value="{:isset($shop.user) ? $shop.user : ''}"  class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">密码:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="pass"   class="layui-input"
+                          />
+                </div>
+            </div>
+    
+            <empty name='$shop'>
+                
+                       <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">邮箱:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" value="{:isset($shop.email) ? $shop.email : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">解析名:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="client_name" value="{:isset($shop.client_name) ? $shop.client_name : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+            
+            <else/>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">账户余额:</label>
+                    <div class="layui-input-block">
+                        <input type="number" step="0.001" name="money" class="layui-input"
+                               lay-verType="tips" lay-verify="required" value="{:isset($shop.money) ? $shop.money : '0'}" >
+                    </div>
+                </div>
+
+                <div class="layui-form-item div_1">
+               <label class="layui-form-label layui-form-required">解析点数:</label>
+                <div class="layui-input-block">
+                    <input  name="points" class="layui-input"
+                           lay-verType="tips" lay-verify="required" value="{:isset($shop.points) ? $shop.points : ''}" >
+                </div>
+            </div>
+         
+        
+                  <div class="layui-form-item div_2">
+               <label class="layui-form-label layui-form-required">到期时间:</label>
+                <div class="layui-input-block">
+                    <input  name="bytime" class="layui-input"
+                     id="test" value="{:isset($shop.bytime) ? $shop.bytime : ''}" >
+                </div>
+            </div> 
+        
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">方式:</label>
+                <div class="layui-input-block">
+                         <select class="form-control" name="way">
+                                    <option value="包点" <if isset($shop.way) && $shop.way=='包点'>selected</if>>包点</option>    
+                                     <option value="包月" <if isset($shop.way) && $shop.way=='包月'>selected</if>>包月</option> 
+                                     </select>
+                </div>
+            </div>
+         
+              <div class="layui-form-item div_3">
+               <label class="layui-form-label layui-form-required">每日上限:</label>
+                <div class="layui-input-block">
+                    <input  name="daily_limit" class="layui-input"
+                           lay-verType="tips" lay-verify="required" value="{:isset($shop.daily_limit) ? $shop.daily_limit : '0'}" >
+                </div>
+            </div>
+            
+         
+              <div class="layui-form-item div_4">
+               <label class="layui-form-label layui-form-required">每日上限:</label>
+                <div class="layui-input-block">
+                    <input  name="fullnum" class="layui-input"
+                           lay-verType="tips" lay-verify="required" value="{:isset($shop.fullnum) ? $shop.fullnum : '0'}" >
+                </div>
+            </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">接口密钥:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="my" value="{:isset($shop.my) ? $shop.my : ''}" class="layui-input" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">解析授权IP:</label>
+                    <div class="layui-input-block">
+                        <textarea name="auth_ip" class="layui-textarea" placeholder="多个IP可按系统原有格式填写">{:isset($shop.auth_ip) ? $shop.auth_ip : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">采集授权IP:</label>
+                    <div class="layui-input-block">
+                        <textarea name="cj_auth_ip" class="layui-textarea" placeholder="多个IP可按系统原有格式填写">{:isset($shop.cj_auth_ip) ? $shop.cj_auth_ip : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">防盗链域名:</label>
+                    <div class="layui-input-block">
+                        <textarea name="referer" class="layui-textarea" placeholder="多个域名可按系统原有格式填写">{:isset($shop.referer) ? $shop.referer : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">播放器配置:</label>
+                    <div class="layui-input-block">
+                        <textarea name="player" class="layui-textarea">{:isset($shop.player) ? $shop.player : ''}</textarea>
+                    </div>
+                </div>
+
+            </empty>
+        
+
+     
+       
+       <hr style="width:0px"><hr>
+                    <div class="layui-form-item">
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn" id="noticeBtn" lay-filter="submitBtn" lay-submit>&emsp;提交&emsp;</button>
+                  
+                        </div>
+                    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    <include file="/public/footer">
+        <script>
+layui.use(['admin', 'form', 'jquery', 'notice', 'laydate'], function () {
+    var form = layui.form;
+    var $ = layui.jquery;
+    var notice = layui.notice;
+    var laydate = layui.laydate;
+    
+    // 初始化日期选择器
+    laydate.render({
+        elem: '#test' //指定元素
+    });
+    
+    // 初始化时根据当前选中值设置显示状态
+    var initialWay = $("select[name='way']").val();
+    setWayDisplay(initialWay);
+    
+    // 监听方式选择变化
+    form.on('select(way)', function(data){
+        setWayDisplay(data.value);
+    });
+    
+    // 设置显示/隐藏的核心函数
+    function setWayDisplay(way){
+        if(way === '包点'){
+            // 包点：显示div1和div3，隐藏div2和div4
+            $('.div_1').show();
+            $('.div_3').show();
+            $('.div_2').hide();
+            $('.div_4').hide();
+        } else if(way === '包月'){
+            // 包月：显示div2和div4，隐藏div1和div3
+            $('.div_1').hide();
+            $('.div_3').hide();
+            $('.div_2').show();
+            $('.div_4').show();
+        }
+    }
+    
+    // 表单提交处理
+    form.on('submit(submitBtn)', function (data) {
+        if (data.field.user == "") {
+            notice.msg('请输入用户名！', {icon: 3, audio:'1'});
+            return false;
+        }
+
+        notice.msg('正在执行中..', {icon: 4, close: true});
+        $.ajax({
+            type: "POST",
+            url: "{:url('/user/edit')}",
+            data: data.field,
+            dataType: "json",
+            success: function(data) {
+                notice.destroy();
+                if (data.code == 0) {
+                    notice.msg(data.msg, {icon: 1, audio:'1'});
+                    var index = parent.layer.getFrameIndex(window.name);
+                    setTimeout(function () {
+                        parent.layer.close(index);
+                        parent.location.reload();
+                    },500);
+                } else {
+                    notice.msg(data.msg, {icon: 2, audio:'1'});
+                }
+            }
+        });
+        return false;
+    });
+
+    // 为select添加lay-filter属性（如果HTML中没有）
+    $("select[name='way']").attr('lay-filter', 'way');
+    // 重新渲染表单，使过滤器生效
+    form.render('select');
+});
+</script>

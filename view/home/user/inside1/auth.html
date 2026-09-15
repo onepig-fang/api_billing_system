@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户&授权IP设置-{:conf('name')}</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+    <link rel="stylesheet" href="{__LIBS__}layui/css/layui.css"/>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#4080FF',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        glass: 'rgba(255, 255, 255, 0.75)',
+                        glassBorder: 'rgba(220, 223, 230, 0.8)',
+                        glassDark: 'rgba(242, 243, 245, 0.6)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass backdrop-blur-md border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .glass-card-dark {
+                @apply bg-glassDark backdrop-blur-md border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all;
+            }
+            .btn-outline {
+                @apply border border-primary text-primary font-medium py-2.5 px-4 rounded-lg hover:bg-primary/5 transition-all;
+            }
+            .info-badge {
+                @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium transition-all;
+            }
+            .card-header {
+                @apply flex items-center justify-between mb-4 pb-2 border-b border-gray-100;
+            }
+            .section-gap {
+                @apply my-6;
+            }
+        }
+        .max-w-5xl {
+    max-width: 95%;
+}
+    </style>
+</head>
+<body class="bg-white min-h-screen font-inter text-gray-800">
+    <!-- 顶部导航栏 -->
+    
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 页面说明卡片 -->
+        <div class="glass-card-dark p-5 mb-8">
+            <div class="flex items-start">
+                <div class="text-primary mr-4 mt-0.5">
+                    <i class="fa fa-info-circle text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-1">授权IP设置说明</h3>
+                    <p class="text-gray-600 text-sm">通过设置授权IP，您可以限制只有指定的服务器IP能够访问解析接口和采集接口，提高接口访问的安全性。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+            <!-- 解析接口授权IP设置卡片 -->
+            <div class="glass-card p-6 section-gap transform hover:translate-y-[-4px] transition-all duration-300">
+                <div class="card-header">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-link text-primary mr-2"></i>
+                        解析接口授权IP设置
+                    </h2>
+                    <span class="info-badge bg-primary/10 text-primary">
+                        安全设置
+                    </span>
+                </div>
+                
+                <?php if (conf('authip') == 1) { ?>
+                <form id="auth-ip-form" class="layui-form space-y-5">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">解析接口授权IP</label>
+                        <input 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus bg-white" 
+                            value="{$user.auth_ip}" 
+                            name="auth_ip" 
+                            placeholder="请输入授权IP地址，留空表示不限制IP访问"
+                            oninput="validateIP(this)"
+                        >
+                        <p class="text-sm text-gray-500 flex items-center">
+                            <i class="fa fa-lightbulb-o mr-1 text-warning"></i>
+                            支持授权多个服务器IP，如需授权多IP需用“,”隔开。
+                        </p>
+                    </div>
+                    
+                    <div class="pt-2">
+                        <input name="method" value="auth_ip" hidden>
+                        <button 
+                            type="submit" 
+                            name="action" 
+                            value="update_auth_ip" 
+                            lay-submit 
+                            lay-filter="authIpForm" 
+                            class="btn-primary w-full md:w-auto"
+                        >
+                            <i class="fa fa-check mr-2"></i> 更新解析授权IP
+                        </button>
+                    </div>
+                </form>
+                <?php } else { ?>
+                    <div class="p-5 bg-warning/10 border border-warning/30 rounded-lg">
+                        <p class="text-warning font-medium flex items-center">
+                            <i class="fa fa-exclamation-circle mr-2"></i>
+                            您的账户未开通解析接口授权功能
+                        </p>
+                        <p class="text-gray-600 text-sm mt-2 pl-5">请联系客服开通该功能以使用解析接口服务</p>
+                    </div>
+                <?php } ?>
+            </div>
+            
+            <!-- 采集接口授权IP设置卡片 -->
+            <div class="glass-card p-6 section-gap transform hover:translate-y-[-4px] transition-all duration-300">
+                <div class="card-header">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-cubes text-primary mr-2"></i>
+                        采集接口授权IP设置
+                    </h2>
+                    <span class="info-badge bg-primary/10 text-primary">
+                        安全设置
+                    </span>
+                </div>
+                
+                <?php if (conf('cjip') == 1) { ?>
+                <form id="collect-auth-form" class="layui-form space-y-5">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">采集接口授权IP</label>
+                        <input 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus bg-white" 
+                            value="{$user.cj_auth_ip}" 
+                            name="cj_auth_ip" 
+                            placeholder="请输入授权IP地址，留空表示不限制IP访问"
+                            oninput="validateIP(this)"
+                        >
+                        <p class="text-sm text-gray-500 flex items-center">
+                            <i class="fa fa-lightbulb-o mr-1 text-warning"></i>
+                            支持授权多个服务器IP，如需授权多IP需用“,”隔开。
+                        </p>
+                    </div>
+                    
+                    <div class="pt-2">
+                        <input name="method" value="cj_ip" hidden>
+                        <button 
+                            type="submit" 
+                            lay-submit 
+                            lay-filter="cjAuthForm" 
+                            class="btn-primary w-full md:w-auto"
+                        >
+                            <i class="fa fa-check mr-2"></i> 更新采集授权IP
+                        </button>
+                    </div>
+                </form>
+                <?php } else { ?>
+                    <div class="p-5 bg-warning/10 border border-warning/30 rounded-lg">
+                        <p class="text-warning font-medium flex items-center">
+                            <i class="fa fa-exclamation-circle mr-2"></i>
+                            您的账户未开通采集接口授权功能
+                        </p>
+                        <p class="text-gray-600 text-sm mt-2 pl-5">请联系客服开通该功能以使用采集接口服务</p>
+                    </div>
+                <?php } ?>
+            </div>
+            
+            <!-- 安全提示卡片 -->
+            <div class="glass-card-dark p-5">
+                <h3 class="font-semibold mb-3 flex items-center">
+                    <i class="fa fa-shield text-primary mr-2"></i>
+                    安全建议
+                </h3>
+                <ul class="space-y-2 text-sm text-gray-600">
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                        <span>仅授权必要的服务器IP，避免使用0.0.0.0等过于宽泛的IP段</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                        <span>定期审查授权IP列表，移除不再需要的IP地址</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                        <span>如发现异常访问，请立即更新授权IP并联系技术支持</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    
+    <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+    <script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var $ = layui.jquery;
+            
+            // 修改授权IP
+            form.on('submit(authIpForm)', function(data){
+                layer.load(1, {
+                    shade: [0.3, '#fff'],
+                    content: '正在更新授权IP...',
+                    success: function(layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding-top': '30px',
+                            'textAlign': 'center'
+                        });
+                    }
+                });
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/edit',
+                    data: data.field,
+                    dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code === 0){
+                            layer.msg(res.msg, {
+                                icon: 1,
+                                time: 1500,
+                                shade: 0.3
+                            }, function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2, shade: 0.3});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2, shade: 0.3});
+                    }
+                });
+                return false;
+            });
+            
+            // 修改采集IP
+            form.on('submit(cjAuthForm)', function(data){
+                layer.load(1, {
+                    shade: [0.3, '#fff'],
+                    content: '正在更新采集IP...',
+                    success: function(layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding-top': '30px',
+                            'textAlign': 'center'
+                        });
+                    }
+                });
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/edit',
+                    data: data.field,
+                    dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code == 0){
+                            layer.msg(res.msg, {
+                                icon: 1,
+                                time: 1500,
+                                shade: 0.3
+                            }, function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2, shade: 0.3});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2, shade: 0.3});
+                    }
+                });
+                return false;
+            });
+        });
+        
+        // IP地址验证
+        function validateIP(input) {
+            // 允许为空或多个IP地址用逗号分隔
+            if (!input.value.trim()) {
+                input.classList.remove('border-danger', 'bg-danger/5');
+                input.classList.add('border-gray-300');
+                return true;
+            }
+            
+            const ipPattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+            const ips = input.value.split(',');
+            
+            // 验证每个IP
+            let isValid = true;
+            ips.forEach(ip => {
+                if (ip.trim() && !ipPattern.test(ip.trim())) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                input.classList.remove('border-gray-300');
+                input.classList.add('border-danger', 'bg-danger/5');
+            } else {
+                input.classList.remove('border-danger', 'bg-danger/5');
+                input.classList.add('border-gray-300');
+            }
+            
+            return isValid;
+        }
+        
+        // 处理URL参数中的提示信息
+        const urlParams = new URLSearchParams(window.location.search);
+        const message = urlParams.get('act');
+        const type = urlParams.get('type');
+        
+        if (message) {
+            let decodedMessage = message.replace(/\\u([\d\w]{4})/gi, (match, grp) => 
+                String.fromCharCode(parseInt(grp, 16))
+            );
+            decodedMessage = decodeURIComponent(decodedMessage);
+            
+            layer.msg(decodedMessage, {
+                icon: type === 'warning' ? 2 : 1,
+                time: 2000,
+                shade: 0.3
+            });
+        }
+        
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+        });
+    </script>
+</body>
+</html>

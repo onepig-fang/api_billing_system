@@ -1,0 +1,247 @@
+<include file="/public/header">
+    <style>
+    .layui-form-switch {
+    position: relative;
+     height: 20px; 
+    line-height: 20px;
+    min-width: 35px;
+    padding: 0 5px;
+     margin-top: 0px; 
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #fff;
+    -webkit-transition: .1s linear;
+    transition: .1s linear;
+}
+                  xm-select*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 200;
+    text-overflow: ellipsis;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+.theme-white .layui-input, .theme-white .layui-select, .theme-white .layui-textarea, .theme-white xm-select {
+    height: 30px; 
+    border-radius: 4px;
+}
+xm-select {
+    min-height: 30px;
+    line-height: 36px;
+   // width: 200%;
+}
+xm-select > .xm-label .scroll .label-content {
+    display: flex;
+    padding: 1px 30px 3px 10px;
+  
+}
+.theme-white .layui-tab-brief>.layui-tab-title .layui-this {
+    color: #1677ff;
+    text-shadow: 0 0 0.25px currentcolor;
+
+    //padding: 8px 0;
+}
+
+    </style>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+           <form name="form1" method="post" id="form1" class="layui-form model-form">
+        <input name="id" type="hidden" value="{$id}"/>
+        <input name="uid" type="hidden" />
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">标题:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" placeholder="请输入标题" class="layui-input"
+                           lay-verType="tips" lay-verify="required" value="{$data.title}"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">公告内容:</label>
+                <div class="layui-input-block">
+                 <textarea id="ShuKa"  name="content" class="layui-textarea editor" placeholder="请输入公告内容" >{$data.content}</textarea>
+                </div>
+            </div>
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">推送:</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="mail_push" value="1" lay-skin="switch" lay-filter="pushSwitch" {$data.mail_push==1?'checked':''} />
+                </div>
+            </div>
+            
+            <!-- 推送选项区域，默认隐藏 -->
+            <div id="pushOptions" style="display: none;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">推送范围:</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="push_scope" value="all" title="全部用户" checked lay-filter="scopeFilter">
+                        <input type="radio" name="push_scope" value="selected" title="指定用户" lay-filter="scopeFilter">
+                    </div>
+                </div>
+                
+                <div id="userSelect" class="layui-form-item" style="display: none;">
+                    <label class="layui-form-label">选择用户:</label>
+                    <div class="layui-input-block">
+                 
+                            <ul id="xmSelect"></ul>
+                    </div>
+                </div>
+            </div>
+       
+        <div class="layui-form-item text-right">
+            <button class="layui-btn" id="submit" type="button">保存</button>
+            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        </div>
+    </form>   
+    </div>
+</div>
+
+<include file="/public/footer">
+<script type="text/javascript" src="/Assets/libs/tinymce/tinymce.min.js"></script>
+<script>
+    layui.use(['layer', 'form', 'table', 'util', 'admin', 'xmSelect', 'code', 'notice'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        var notice = layui.notice;
+        var xmSelect = layui.xmSelect; // 关键：通过layui获取xmSelect
+        var code = layui.code; // 关键：通过layui获取xmSelect
+        tinymce.init({
+            selector: '#ShuKa',
+            height: 525,
+            branding: false,
+            language: 'zh_CN',
+            plugins: 'code print preview fullscreen paste searchreplace save autosave link autolink image imagetools media table codesample lists advlist hr charmap emoticons anchor directionality pagebreak quickbars nonbreaking visualblocks visualchars wordcount',
+            toolbar: 'fullscreen preview code | undo redo | forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | formatselect fontselect fontsizeselect | link image media emoticons charmap anchor pagebreak codesample | ltr rtl',
+            toolbar_drawer: 'sliding',
+            images_upload_url: '{:url("/Upload/images")}',
+            file_picker_types: 'media',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                })
+            }
+        });
+        
+
+             // 初始化xm-select
+   var xmSelect = xmSelect.render({
+            el: '#xmSelect',
+            name: 'user_ids',
+            filterable: true,
+             radio: false, // 设置为单选模式
+            tips: '请选择推送用户',
+            remoteSearch: false, // 开启远程搜索功能
+         
+            data: []
+        });
+        var selectedUserIds = '{:isset($data["user_id"]) ? $data["user_id"] : ""}';
+        var selectedUserIdList = selectedUserIds ? selectedUserIds.split(',') : [];
+        var hasMailPush = '{:isset($data["mail_push"]) ? $data["mail_push"] : "0"}' === '1';
+
+ $.ajax({
+    url: '{:url("/Article/select")}',
+    method: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      // 将 API 响应的数据添加到 xmSelect 组件中
+      xmSelect.update({
+        data: response // 假设 API 响应的数据为一个包含 name 和 value 字段的数组
+      });
+
+        if (selectedUserIdList.length > 0) {
+            xmSelect.setValue(selectedUserIdList);
+        }
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+
+        if (hasMailPush) {
+            $('#pushOptions').show();
+            if (selectedUserIdList.length > 0) {
+                $('input[name="push_scope"][value="selected"]').prop('checked', true);
+                $('#userSelect').show();
+            }
+        }
+        form.render();
+
+        // 推送开关监听
+        form.on('switch(pushSwitch)', function(data){
+            if(data.elem.checked) {
+                $('#pushOptions').show();
+            } else {
+                $('#pushOptions').hide();
+                $('#userSelect').hide();
+            }
+            form.render();
+        });
+        
+        // 推送范围监听
+        form.on('radio(scopeFilter)', function(data){
+            if(data.value === 'selected') {
+                $('#userSelect').show();
+            } else {
+                $('#userSelect').hide();
+            }
+        });
+        
+        // 表单提交事件
+        $('#submit').click(function(){
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            
+            // 获取选中的用户
+            var selectedUsers = xmSelect.getValue();
+            var user_ids = selectedUsers.map(function(user) {
+                return user.value;
+            });
+            
+            // 添加到表单数据中
+            var formData = $('#form1').serializeArray();
+            // 先移除已有的user_ids
+            formData = formData.filter(function(item) {
+                return item.name !== 'user_ids[]';
+            });
+            // 添加新的user_ids
+            user_ids.forEach(function(id) {
+                formData.push({name: 'user_ids[]', value: id});
+            });
+            
+            // 转换为URL编码的字符串
+            var formDataStr = $.param(formData);
+            
+            $.ajax({
+                type: "POST",
+                url: '{:url("/Article/edit")}',
+                data: formDataStr,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                    //    parent.location.reload();
+                        notice.msg(data.msg, {icon: 1, audio:'0'});
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'0'});
+                    }
+                },
+                error: function() {
+                    notice.destroy();
+                    notice.msg("服务器错误！", {icon: 2, audio:'0'});
+                }
+            });
+            return false;
+        });
+    });
+</script>

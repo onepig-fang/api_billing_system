@@ -1,0 +1,86 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+     <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form ">
+        <input name="id" value="{:isset($data.id) ? $data.id : ''}" type="hidden"/>
+   
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">名称:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" value="{:isset($data.name) ? $data.name : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">链接:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="old_url"  value="{:isset($data.old_url) ? $data.old_url : ''}" placeholder="" class="layui-input"
+                         />
+                </div>
+            </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">新链接:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="new_url"  placeholder=""  value="{:isset($data.new_url) ? $data.new_url : ''}" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+         
+         
+        
+
+     
+       
+       <hr style="width:0px"><hr>
+                    <div class="layui-form-item">
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn" id="noticeBtn" lay-filter="submitBtn" lay-submit>&emsp;提交&emsp;</button>
+                  
+                        </div>
+                    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    <include file="/public/footer">
+        <script>
+    layui.use([ 'admin', 'form', 'jquery', 'notice'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var notice = layui.notice;
+
+        var admin = layui.admin;
+        form.on('submit(submitBtn)', function (data) {
+            if (data.field.name == "") {
+                notice.msg('请输入名称！', {icon: 3, audio:'1'});
+                return false;
+            }
+    
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: "{:url('/url/save')}",
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                             var index = parent.layer.getFrameIndex(window.name);
+                  setTimeout(function () {
+                parent.layer.close(index);
+                           parent.location.reload();
+                  },500);
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

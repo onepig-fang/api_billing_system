@@ -1,0 +1,375 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form " id="formBasForm" lay-filter="formBasForm">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">站点配置</li>
+                           <li>公告配置</li>
+                          <li>邮箱配置</li>
+                         <li>解析配置</li>
+                         <li>缓存配置</li>
+             
+                    </ul>
+                    <div class="layui-tab-content" >
+                        <div class="layui-tab-item layui-show">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>站点信息配置</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">网站名称</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="name" class="layui-input" placeholder="该站点的名称" value="{:isset($set.name) ? $set.name : ''}" required/>
+                                        </div>
+                                    </div>
+                              
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">关键字</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="keyword" class="layui-input" placeholder="该站点的关键词" required value="{:isset($set.keyword) ? $set.keyword : ''}"/>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item layui-form-text">
+                                        <label class="layui-form-label">网站描述</label>
+                                        <div class="layui-input-block">
+                                            <textarea name="content" class="layui-input" placeholder="网站描述，可留空" style="height:120px">{:isset($set.content) ? $set.content : ''}</textarea>
+                                        </div>
+                                    </div>
+                                            <div class="layui-form-item">
+                                        <label class="layui-form-label">站点域名</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="ym" class="layui-input" placeholder="该站点的关键词" required value="{:isset($set.ym) ? $set.ym : ''}"/>
+                                        </div>
+                                    </div>
+                                           <div class="layui-form-item">
+                                        <label class="layui-form-label">网站风格</label>
+                                        <div class="layui-input-block">
+                                      <select class="form-control" name="template">
+                                    <option value="index1"  <if isset($set.template) && $set.template=='index1'>selected</if>>简约风</option>    
+                                     <option value="index2"  <if isset($set.template) && $set.template=='index2'>selected</if>>商务风</option>  
+                                      <option value="index3"  <if isset($set.template) && $set.template=='index3'>selected</if>>时尚风</option> </select>
+                                        </div>
+                                    </div>
+                                     <div class="layui-form-item">
+                                        <label class="layui-form-label">网站内页风格</label>
+                                        <div class="layui-input-block">
+                                      <select class="form-control" name="inside">
+                                    <option value="inside1" <if isset($set.inside) && $set.inside=='inside1'>selected</if>>时尚风</option>    
+                                <!--  <option value="inside2" <if isset($set.inside) && $set.inside=='inside2'>selected</if>>二号风格</option>  --> </select>
+                                        </div>
+                                    </div>
+                                        <!--    <div class="layui-form-item">
+                                        <label class="layui-form-label">检验绑定QQ</label>
+                                        <div class="layui-input-block">
+                                         <input name="checkqq" value="0" hidden="">
+                                <input type="checkbox" name="checkqq" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['checkqq'] eq 1"> checked </if>>
+                                        </div>
+                                    </div>-->
+                                            <div class="layui-form-item">
+                                        <label class="layui-form-label">邮箱注册</label>
+                                        <div class="layui-input-block">
+                                          <input name="mailreg" value="0" hidden="">
+                                <input type="checkbox" name="mailreg" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['mailreg'] eq 1"> checked </if>>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                      <!--  <div class="layui-form-item">
+                                        <label class="layui-form-label">QQ快捷登录</label>
+                                        <div class="layui-input-block">
+                                           <input name="qqlogin" value="0" hidden="">
+                                <input type="checkbox" name="qqlogin" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['qqlogin'] eq 1"> checked </if>>
+                                        </div>
+                                    </div>-->
+                                  <div class="layui-form-item">
+                                            <label class="layui-form-label">网站LOGO</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" class="layui-input" name="logo" placeholder="填写网站LOGOURL" value="{:isset($set.logo) ? $set.logo : ''}">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <div class="layui-upload-drag" id="uploads">
+                                                <i class="layui-icon layui-icon-upload-drag" style="color:#2d8cf0;"></i>
+                                                <p>点击上传，或将文件拖拽到此处</p>
+                                                <div class="layui-hide" id="uploadDemoViews">
+                                                    <hr>
+                                                    <img src="" alt="上传成功后渲染" id="demo23" style="max-width: 196px">
+                                                </div>
+                                            </div>
+                                        </div>
+                            
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">备案号</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="beian" class="layui-input" placeholder="前台显示，可留空" value="{:isset($set.beian) ? $set.beian : ''}"/>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">客服ＱＱ</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="kefuqq" class="layui-input"  lay-required value="{:isset($set.kefuqq) ? $set.kefuqq : ''}"/>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">QQ群号码&链接</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="qqgroupurl" class="layui-input"  lay-required value="{:isset($set.qqgroupurl) ? $set.qqgroupurl : ''}"/>
+                                        </div>
+                                    </div>
+                                        <div class="layui-form-item">
+                                        <label class="layui-form-label">网站API标语</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="background" class="layui-input"  lay-required value="{:isset($set.background) ? $set.background : ''}"/>
+                                        </div>
+                                    </div>
+                                     <div class="layui-form-item">
+                                        <label class="layui-form-label">公共弹幕库自定义地址</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="cjdiyurl" class="layui-input" placeholder="" value="{:isset($set.cjdiyurl) ? $set.cjdiyurl : ''}" required/>
+                                        </div>
+                                    </div>
+                                     <div class="layui-form-item">
+                                        <label class="layui-form-label">调用一次扣点</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="dy" class="layui-input" placeholder="" value="{:isset($set.dy) ? $set.dy : '1'}" required/>
+                                        </div>
+                                    </div>
+                                      <div class="layui-form-item">
+                                        <label class="layui-form-label">客户端下载地址</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="khd" class="layui-input" placeholder="" value="{:isset($set.khd) ? $set.khd : ''}" required/>
+                                        </div>
+                                    </div>
+                                      <div class="layui-form-item">
+                                        <label class="layui-form-label">解析失败返回视频地址</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="fdvideo" class="layui-input" placeholder="" value="{:isset($set.fdvideo) ? $set.fdvideo : ''}" required/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+               
+                        </div>
+           
+                      <div class="layui-tab-item">
+                          
+                                      <div class="layui-form-item">
+                                        <label class="layui-form-label">首页公告开关</label>
+                                        <div class="layui-input-block">
+                                           <input name="notice_type" value="0" hidden="">
+                                <input type="checkbox" name="notice_type" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['notice_type'] eq 1"> checked </if>>
+                                        </div>
+                                    </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">首页公告</label>
+                                <div class="layui-input-block">
+                                     <textarea placeholder="请输入首页弹窗内容"  name="notice" rows="2" id="ShuKa" class="ant-input css-r6xsk5">{$set.notice|raw|default=''}</textarea>
+                                </div>
+                            </div>
+                         <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">内页公告</label>
+                                <div class="layui-input-block">
+                                     <textarea placeholder="请输入内页弹窗内容"  name="notices" rows="2" id="ShuKas" class="ant-input css-r6xsk5">{$set.notices|raw|default=''}</textarea>
+                                </div>
+                            </div>
+                          
+                        </div>
+                       
+                        <div class="layui-tab-item">
+                      
+                            <div id="frame_set1" style="display: inherit">
+                          
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">SMTP服务器</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="emailHost" class="layui-input" value="{:isset($set.emailHost) ? $set.emailHost : ''}"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">SMTP端口</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="emailport" class="layui-input" value="{:isset($set.emailport) ? $set.emailport : ''}"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱账号</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="emailuser" class="layui-input" value="{:isset($set.emailuser) ? $set.emailuser : ''}"/>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="emailpass" class="layui-input" value="{:isset($set.emailpass) ? $set.emailpass : ''}"/>
+                                    </div>
+                                </div>
+                            </div>
+                     
+                            <blockquote class="layui-elem-quote-sf-info">
+                       。<br/>使用普通模式发信时，建议使用QQ邮箱，SMTP服务器smtp.qq.com，端口465，密码不是QQ密码也不是邮箱独立密码，是QQ邮箱设置界面生成的<a class="layui-btn layui-btn-xs layui-btn-warm" ew-href="http://service.mail.qq.com/cgi-bin/help?subtype=1&&no=1001256&&id=28"  target="_blank" rel="noreferrer">授权码</a>。为确保发信成功率，发信邮箱和收信邮箱最好同一个
+                            </blockquote>
+                        </div>
+                            <div class="layui-tab-item">
+                                  <div class="layui-form-item">
+                                        <label class="layui-form-label">IP授权加密秘钥开关</label>
+                                        <div class="layui-input-block">
+                                         <input name="authip" value="0" hidden="">
+                                <input type="checkbox" name="authip" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['authip'] eq 1"> checked </if>>解析授权IP开关【开启则需要用户授权解析IP才能进行解析,关闭则不需要授权】
+                                        </div>
+                                    </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">IP授权加密秘钥</label>
+                                <div class="layui-input-block">
+                                    <input name="authip_key" class="layui-input" value="{:isset($set.authip_key) ? $set.authip_key : ''}" >
+                                    IP授权加密秘钥防止中转IP,请勿将密码告知他人-防止他人强制解密
+(注意：不要频繁更新秘钥,每次更新所有用户都需要重新授权解析IP)
+                                </div>
+                            </div>
+                                <div class="layui-form-item">
+                                        <label class="layui-form-label">采集IP授权加密秘钥开关</label>
+                                        <div class="layui-input-block">
+                                         <input name="cjip" value="0" hidden="">
+                                <input type="checkbox" name="cjip" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['cjip'] eq 1"> checked </if>>采集IP授权IP开关【开启则需要用户授权解析IP才能进行解析,关闭则不需要授权】
+                                        </div>
+                                    </div>
+                           <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">采集IP授权加密秘钥</label>
+                                <div class="layui-input-block">
+                                    <input name="cj_authip_key" class="layui-input" value="{:isset($set.cj_authip_key) ? $set.cj_authip_key : ''}"> 
+                                </div>
+                            </div>
+                          
+                        </div>
+              <div class="layui-tab-item">
+                                  <div class="layui-form-item">
+                                        <label class="layui-form-label">缓存开关</label>
+                                        <div class="layui-input-block">
+                                         <input name="cache" value="0" hidden="">
+                                <input type="checkbox" name="cache" value="1" lay-skin="switch"  lay-text="开启|关闭"   <if condition="$set['cache'] eq 1"> checked </if>>开启后会对m3u8解析内容进行缓存
+                                        </div>
+                                    </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">缓存时间</label>
+                                <div class="layui-input-block">
+                                    <input name="cache_time" class="layui-input" value="{:isset($set.cache_time) ? $set.cache_time : ''}" >
+                                缓存时间，过期后自动删除文件。开启后有效
+                                </div>
+                            </div>
+                                          <div class="layui-form-item layui-form-text" style="    color: red;">
+                          注意事项：无论开关都需要后台清理缓存，开启后部分切片播放失败。因为他们m3u8文件输出的播放地址是隐藏的，如果播放失败关闭即可。
+                           </div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="width:0px"><hr>
+                <div class="layui-form-item layui-row layui-col-space10 ">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="noticeBtn" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<include file="/public/footer">
+            <script type="text/javascript" src="/Assets/libs/tinymce/tinymce.min.js"></script>
+<script>
+    layui.use(['upload', 'element', 'layer', 'form', 'admin', 'notice', 'laydate'], function () {
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        var element = layui.element;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var notice = layui.notice;
+        var laydate = layui.laydate;
+
+          tinymce.init({
+            selector: '#ShuKa',
+            height: 525,
+            branding: false,
+            language: 'zh_CN',
+            plugins: 'code print preview fullscreen paste searchreplace save autosave link autolink image imagetools media table codesample lists advlist hr charmap emoticons anchor directionality pagebreak quickbars nonbreaking visualblocks visualchars wordcount',
+            toolbar: 'fullscreen preview code | undo redo | forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | formatselect fontselect fontsizeselect | link image media emoticons charmap anchor pagebreak codesample | ltr rtl',
+            toolbar_drawer: 'sliding',
+            images_upload_url: '{:url("/Upload/image")}',
+            file_picker_types: 'media',
+             setup: function (editor) {
+                editor.on('change', function () {
+             editor.save();
+                })
+            }
+        });
+         tinymce.init({
+            selector: '#ShuKas',
+            height: 525,
+            branding: false,
+            language: 'zh_CN',
+            plugins: 'code print preview fullscreen paste searchreplace save autosave link autolink image imagetools media table codesample lists advlist hr charmap emoticons anchor directionality pagebreak quickbars nonbreaking visualblocks visualchars wordcount',
+            toolbar: 'fullscreen preview code | undo redo | forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | formatselect fontselect fontsizeselect | link image media emoticons charmap anchor pagebreak codesample | ltr rtl',
+            toolbar_drawer: 'sliding',
+            images_upload_url: '{:url("/Upload/image")}',
+            file_picker_types: 'media',
+             setup: function (editor) {
+                editor.on('change', function () {
+             editor.save();
+                })
+            }
+        });
+        var uploadInst = upload.render({
+            elem: '#uploads'
+            ,url: '{:url("/Upload/image")}'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#demo23').attr('src', result); //图片链接（base64）
+                });
+                notice.msg('上传中...', {icon: 4, close: true});
+            }
+            ,done: function(res){
+                notice.destroy();
+                //如果上传失败
+                if(res.code == 0){
+                    var logoUrl = res.location || (res.data && res.data.url) || '';
+                    var previewUrl = logoUrl || (res.data && res.data.path) || (res.files && res.files.file) || '';
+                    if (logoUrl) {
+                        $("input[name='logo']").val(logoUrl);
+                    }
+                    layui.$('#uploadDemoViews').removeClass('layui-hide').find('img').attr('src', previewUrl);
+                    notice.msg('上传成功！', {icon: 1, audio:'0'});
+                }else{
+                    notice.msg('上传失败！', {icon: 2, audio:'0'});
+                }
+            }
+        });
+
+        // 表单提交事件
+        form.on('submit(noticeBtn)', function (data) {
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: '{:url("/Set/edit")}',
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                },
+                error: function() {
+                    notice.destroy();
+                    notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

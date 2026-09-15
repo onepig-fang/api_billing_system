@@ -1,0 +1,251 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-header">抽奖记录管理</div>
+        <div class="layui-card-body">
+            <!-- 搜索栏 -->
+            <form class="layui-form" id="searchForm">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md3">
+                        <input type="text" name="username" placeholder="用户名" class="layui-input">
+                    </div>
+                    <div class="layui-col-md3">
+                        <select name="prize_type">
+                            <option value="">全部奖品类型</option>
+                            <option value="points">点数</option>
+                            <option value="money">余额</option>
+                            <option value="pack_quota">打包额度</option>
+                            <option value="empty">谢谢参与</option>
+                        </select>
+                    </div>
+                    <div class="layui-col-md3">
+                        <input type="text" name="date_range" placeholder="选择日期范围" class="layui-input" id="dateRange">
+                    </div>
+                    <div class="layui-col-md3">
+                        <button type="button" class="layui-btn" id="searchBtn">
+                            <i class="layui-icon layui-icon-search"></i> 搜索
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-normal" id="resetBtn">
+                            <i class="layui-icon layui-icon-refresh"></i> 重置
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <hr>
+            
+            <!-- 统计信息 -->
+            <div class="layui-row layui-col-space15" style="margin-bottom: 15px;">
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body" style="text-align: center;">
+                            <h2 style="margin:0; color:#1E9FFF;" id="todayCount">-</h2>
+                            <p style="margin:5px 0 0 0; color:#666;">今日抽奖</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body" style="text-align: center;">
+                            <h2 style="margin:0; color:#28C88E;" id="monthCount">-</h2>
+                            <p style="margin:5px 0 0 0; color:#666;">本月抽奖</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body" style="text-align: center;">
+                            <h2 style="margin:0; color:#FFB800;" id="totalCount">-</h2>
+                            <p style="margin:5px 0 0 0; color:#666;">总抽奖数</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body" style="text-align: center;">
+                            <button type="button" class="layui-btn layui-btn-sm" id="refreshStats">
+                                <i class="layui-icon layui-icon-refresh-3"></i> 刷新统计
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据表格 -->
+            <table class="layui-hide" id="recordTable" lay-filter="recordTable"></table>
+        </div>
+    </div>
+</div>
+
+<!-- 表格工具栏 -->
+<script type="text/html" id="tableToolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="refresh">
+            <i class="layui-icon layui-icon-refresh"></i> 刷新数据
+        </button>
+    </div>
+</script>
+
+<!-- 行工具栏 -->
+<script type="text/html" id="rowToolbar">
+    <div class="layui-btn-group">
+        <button class="layui-btn layui-btn-xs" lay-event="view">
+            <i class="layui-icon layui-icon-about"></i> 详情
+        </button>
+    </div>
+</script>
+
+<include file="/public/footer">
+<script>
+layui.use(['table', 'form', 'laydate', 'layer', 'notice'], function () {
+    var table = layui.table;
+    var form = layui.form;
+    var laydate = layui.laydate;
+    var layer = layui.layer;
+    var notice = layui.notice;
+    var $ = layui.jquery;
+
+    // 日期范围选择器
+    laydate.render({
+        elem: '#dateRange',
+        type: 'date',
+        range: true
+    });
+
+    // 初始化表格
+    var tableIns = table.render({
+        elem: '#recordTable',
+        url: '{:url("/lottery/recordList")}',
+        toolbar: '#tableToolbar',
+        title: '抽奖记录表',
+        cols: [[
+            {field: 'id', title: 'ID', width: 80, fixed: 'left', sort: true},
+            {field: 'username', title: '用户名', width: 120},
+            {field: 'prize_name', title: '奖品名称', width: 150},
+            {field: 'prize_type', title: '奖品类型', width: 100, templet: function(d) {
+                var typeMap = {
+                    'points': '<span class="layui-badge layui-bg-blue">点数</span>',
+                    'money': '<span class="layui-badge layui-bg-green">余额</span>',
+                    'pack_quota': '<span class="layui-badge layui-bg-orange">打包额度</span>',
+                    'empty': '<span class="layui-badge">谢谢参与</span>'
+                };
+                return typeMap[d.prize_type] || d.prize_type;
+            }},
+            {field: 'prize_value', title: '奖品数值', width: 100, templet: function(d) {
+                if (d.prize_type === 'empty') {
+                    return '-';
+                } else if (d.prize_type === 'money') {
+                    return '￥' + d.prize_value;
+                } else if (d.prize_type === 'pack_quota') {
+                    return d.prize_value + '次';
+                } else {
+                    return d.prize_value;
+                }
+            }},
+            {field: 'status', title: '发放状态', width: 100, templet: function(d) {
+                return d.status == 1 ? '<span class="layui-badge layui-bg-green">已发放</span>' : '<span class="layui-badge layui-bg-red">未发放</span>';
+            }},
+            {field: 'ip', title: 'IP地址', width: 130},
+            {field: 'create_time', title: '抽奖时间', width: 180, sort: true},
+            {title: '操作', width: 150, align: 'center', toolbar: '#rowToolbar', fixed: 'right'}
+        ]],
+        page: true,
+        limit: 15,
+        limits: [15, 30, 50, 100]
+    });
+
+    // 头工具栏事件
+    table.on('toolbar(recordTable)', function(obj) {
+        switch(obj.event) {
+            case 'refresh':
+                tableIns.reload();
+                loadStatistics();
+                break;
+        }
+    });
+
+    // 行工具栏事件
+    table.on('tool(recordTable)', function(obj) {
+        var data = obj.data;
+        switch(obj.event) {
+            case 'view':
+                var content = `
+                    <div style="padding: 15px;">
+                        <p><strong>记录ID：</strong>${data.id}</p>
+                        <p><strong>用户名：</strong>${data.username}</p>
+                        <p><strong>奖品名称：</strong>${data.prize_name}</p>
+                        <p><strong>奖品类型：</strong>${getPrizeTypeName(data.prize_type)}</p>
+                        <p><strong>奖品数值：</strong>${data.prize_value}</p>
+                        <p><strong>发放状态：</strong>${data.status == 1 ? '已发放' : '未发放'}</p>
+                        <p><strong>IP地址：</strong>${data.ip}</p>
+                        <p><strong>抽奖时间：</strong>${data.create_time}</p>
+                    </div>
+                `;
+                layer.open({
+                    type: 1,
+                    title: '抽奖记录详情',
+                    content: content,
+                    area: ['500px', '400px'],
+                    btn: ['关闭'],
+                    btnAlign: 'c'
+                });
+                break;
+        }
+    });
+
+    // 搜索
+    $('#searchBtn').on('click', function() {
+        var formData = form.val('searchForm');
+        tableIns.reload({
+            where: formData,
+            page: {curr: 1}
+        });
+    });
+
+    // 重置
+    $('#resetBtn').on('click', function() {
+        document.getElementById('searchForm').reset();
+        form.render();
+        tableIns.reload({
+            where: {},
+            page: {curr: 1}
+        });
+    });
+
+    // 刷新统计
+    $('#refreshStats').on('click', function() {
+        loadStatistics();
+    });
+
+    // 加载统计数据
+    function loadStatistics() {
+        $.ajax({
+            url: '{:url("/lottery/statistics")}',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    $('#todayCount').text(res.data.today_count);
+                    $('#monthCount').text(res.data.month_count);
+                    $('#totalCount').text(res.data.total_count);
+                }
+            }
+        });
+    }
+
+    // 获取奖品类型名称
+    function getPrizeTypeName(type) {
+        var typeMap = {
+            'points': '点数',
+            'money': '余额',
+            'pack_quota': '打包额度',
+            'empty': '谢谢参与'
+        };
+        return typeMap[type] || type;
+    }
+
+    // 初始加载统计数据
+    loadStatistics();
+});
+</script>

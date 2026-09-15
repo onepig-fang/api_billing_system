@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>卡密充值-{:conf('name')}</title>
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <include file="/public/header">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .card-shadow {
+                @apply shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+        }
+            
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+      <!--  <div class="glass-card mb-6">
+            <div class="p-5 text-center">
+                <h1 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-gray-800">兑换卡密充值</h1>
+            </div>
+        </div>-->
+        
+        <!-- 充值中心信息卡片 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-list-alt text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">自助卡密兑换充值中心</h2>
+            </div>
+            
+            <div class="space-y-3 mb-4">
+                <p class="flex items-start">
+                    <i class="fa fa-info-circle text-primary mt-1 mr-2"></i>
+                    <span>卡密兑换完成后，等待1-5s系统会自动跳转，查看您当前余额 
+                        <span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-sm font-medium">{$user['money']}</span> 元，通常秒到账。
+                    </span>
+                </p>
+                <p class="flex items-start">
+                    <i class="fa fa-arrow-right text-primary mt-1 mr-2"></i>
+                    <span>充值完成后 <a ew-href='/shop' class="text-primary font-medium">前往套餐中心购买套餐</a></span>
+                </p>
+                <p class="flex items-start">
+                    <i class="fa fa-headphones text-primary mt-1 mr-2"></i>
+                    <span>如充值遇到问题或有疑问联系：
+                        <a href="#" class="text-primary font-medium" onclick="showContactModal()">联系我们</a>
+                    </span>
+                </p>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-4 mt-4 space-y-2">
+                <p class="flex items-center">
+                    <i class="fa fa-money text-primary mr-2"></i>
+                    您当前余额：<span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-sm font-medium">{$user['money']}</span> 元
+                </p>
+                <p class="flex items-center">
+                    <i class="fa fa-history text-primary mr-2"></i>
+                    您目前一共充值 <span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-sm font-medium">{$payc}</span> 次
+                </p>
+            </div>
+        </div>
+        
+        <!-- 卡密充值表单 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-credit-card text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">卡密兑换充值系统</h2>
+            </div>
+
+            
+            <form method="POST" class="layui-form space-y-6">
+                <!-- 账户余额查询 -->
+                <div>
+                    <label for="balance" class="block text-sm font-medium text-gray-700 mb-1.5">账户余额查询</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa fa-wallet text-gray-400"></i>
+                        </div>
+                        <input id="balance" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus" type="text" name="name" value="您账户还剩余额为：{$user['money']}元" readonly autocomplete="off">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">这是您第{$payc+1}次充值，感谢您对我们的认可，我们将加倍努力</p>
+                </div>
+                
+                <!-- 输入卡密 -->
+                <div>
+                    <label for="card_code" class="block text-sm font-medium text-gray-700 mb-1.5">输入卡密</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa fa-key text-gray-400"></i>
+                        </div>
+                        <input id="card_code" class="w-full pl-10 pr-4 py-3 border-2 border-primary focus:border-primary/70 rounded-lg input-focus" type="text" name="card_code" required autocomplete="off" placeholder="请输入卡密">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">输入您获得的卡密进行兑换充值</p>
+                </div>
+                
+                <!-- 兑换卡密充值按钮 -->
+                <button type="submit" class="btn-primary w-full flex items-center justify-center" lay-submit lay-filter="cardForm">
+                    <i class="fa fa-redeem mr-2"></i> 兑 换 卡 密 充 值
+                </button>
+            </form>
+        </div>
+        
+        <!-- 充值记录 -->
+        <div class="glass-card p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-history text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">充值记录</h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+               <table id="SK_Table" lay-filter="SK_Table"></table>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // 联系我们功能
+        function showContactModal() {
+            Swal.fire({
+                title: '联系我们',
+                html: `
+                    <div class="text-left">
+                        <p class="mb-2">如果您在充值过程中遇到任何问题，请通过以下方式联系我们：</p>
+                        <p class="mb-2 flex items-center"><i class="fa fa-envelope-o mr-2 text-primary"></i> QQ：{:conf('kefuqq')}</p>
+                        <p class="mb-2 flex items-center"><i class="fa fa-phone mr-2 text-primary"></i> QQ群：{:conf('qqgroupurl')}</p>
+                        <p class="flex items-center"><i class="fa fa-comments-o mr-2 text-primary"></i> 在线客服：工作日 9:00-18:00</p>
+                    </div>
+                `,
+                confirmButtonText: '关闭',
+                confirmButtonColor: '#3b82f6'
+            });
+        }
+        
+        // 卡密兑换表单提交处理
+
+
+    </script>
+
+ <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'table', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+             var $ = layui.jquery;
+             var table = layui.table;
+            // 兑换卡密
+            form.on('submit(cardForm)', function(data){
+                layer.load(1);
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/redeem_card',
+                    data: data.field,
+                      dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code ===0){
+                            layer.msg(res.msg, {icon: 1});
+                              setTimeout(function () {
+         
+                          location.reload();
+                  },500);
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2});
+                    }
+                });
+                return false;
+            });
+   /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/ajax/cardlist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+        
+            
+           {field: 'order_id', title: '订单号',  minWidth: 280},
+           {field: 'money', title: '充值金额',  minWidth: 160},
+              {field: 'time', title: '充值时间',  minWidth: 160},
+              {field: 'fs', title: '支付方式',  minWidth: 160},
+
+            ]]
+        });
+        });
+        
+   
+    </script>
+</body>
+</html>

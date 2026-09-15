@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>解析套餐购买-{:conf('name')}</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+   <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .card-shadow {
+                @apply shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .package-card {
+                @apply glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .badge {
+                @apply absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold;
+            }
+        }
+           
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+
+        
+        <!-- 用户信息卡片 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-info-circle text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">解析接口套餐</h2>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a  ew-href="/user/recharge" class="btn-secondary flex items-center">
+                    <i class="fa fa-credit-card mr-1"></i> 在线充值
+                </a>
+                <a  ew-href="/user/card/" class="btn-secondary flex items-center">
+                    <i class="fa fa-key mr-1"></i> 卡密充值
+                </a>
+            </div>
+            
+            <div class="space-y-3">
+                <p class="flex items-start">
+                    <i class="fa fa-money text-primary mt-1 mr-2"></i>
+                    <span>您当前余额：<span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-sm font-medium">{$user.money}</span> 元</span>
+                </p>
+                <p class="flex items-start">
+                    <i class="fa fa-exclamation-circle text-danger mt-1 mr-2"></i>
+                    <span>注意：<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-sm font-medium">点数可叠加&时效不可以叠加（相等日上限除外）</span> ！</span>
+                </p>
+                <p class="flex items-start">
+                    <i class="fa fa-user text-primary mt-1 mr-2"></i>
+                    <span>你当前的账户类型是：<?php echo $user['way'] == '包点' ? "<span class='bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-sm font-medium'>点数用户</span>" : "<span class='bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-sm font-medium'>时效用户</span>" ?> 首页可更换类型！</span>
+                </p>
+                <p class="flex items-start">
+                    <i class="fa fa-info-circle text-primary mt-1 mr-2"></i>
+                    <span>系统已自动为你匹配相应套餐 ！如需其他的请切换账户类型。</span>
+                </p>
+            
+                    <button type="submit" class="text-primary font-medium flex items-center user" name='user'>
+                        <i class="fa fa-exchange mr-1"></i> 点我一键切换成【<?php if($user['way']=='包点'){ ?>
+                        时效用户
+                          <?php } else { ?>
+                        点数用户
+                          <?php }?>】类型，查看更多套餐
+                    </button>
+        
+            </div>
+        </div>
+        
+        <!-- 套餐列表区域 -->
+        <div class="glass-card p-6 mb-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-shopping-bag text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">套餐列表</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ 
+     <?php echo $html;?>
+            </div>
+        </div>
+    </main>
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+        <script>
+               $('.user').click(function(){
+            $.ajax({
+            type: "POST",
+            url: "/user/user",        
+            dataType: "json",
+                success: function(data){
+                    if(data.code==0){
+                          Swal.fire({
+                                        icon: 'success',
+                                        title: '成功',
+                                        text: data.msg,
+                                        confirmButtonColor: '#3b82f6'
+                                    }).then(() => {
+                                        // 刷新页面以更新余额
+                                        location.reload();
+                                    });
+                         //  showNotification(data.msg);
+                    setTimeout(function(){
+                                    location.reload();
+                                }, 1000);
+                    }else{
+                         showNotification(data.msg);
+                    }
+                }
+            });
+        });
+              // 显示通知 - 优化弹窗位置使其居中
+        function showNotification(message) {
+            // 检测设备类型，手机端强制居中，电脑端可选择居中或默认位置
+            const isMobile = window.innerWidth < 768;
+            const position = isMobile ? 'center' : 'top-end';
+            
+            Swal.fire({
+                position: position,
+                icon: 'success',
+                title: message,
+                showConfirmButton: false,
+                timer: 1500,
+                // 添加自定义类名以增强居中效果
+                customClass: {
+                    container: 'swal2-center'
+                }
+            });
+        }
+        // 显示所有赠送的采集套餐名称
+        function showAllCmsapiNames(packageId, names) {
+            let html = `
+                <div class="text-center mb-3">
+                    <h4 class="font-bold">解析套餐ID: ${packageId}</h4>
+                    <p class="text-sm text-gray-500">说明:购买解析套餐后自动发放,授权采集IP即可使用</p>
+                </div>
+                <div class="space-y-2">
+            `;
+            
+            names.forEach((item) => {
+                html += `
+                    <div class="flex items-center p-2 bg-gray-50 rounded-lg">
+                        <span class="text-gray-700">${item.cmsapi_name}</span>
+                        <span class="ml-auto text-xs text-gray-500">采集ID: ${item.cmsapi_id}</span>
+                    </div>
+                `;    
+            });
+            
+            html += `</div>`;
+            
+            Swal.fire({
+                title: '赠送的采集接口',
+                html: html,
+                icon: 'info',
+                confirmButtonText: '关闭',
+                width: '400px',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-lg font-bold',
+                    content: 'text-sm'
+                }
+            });
+        }
+   
+   
+        // 确认购买套餐
+        function confirmPurchase(packageId, packageName, packagePrice) {
+            // 获取当前余额
+            const currentBalance = parseFloat("{$user.money}");
+            
+            // 检查余额是否充足
+            if (currentBalance < packagePrice) {
+                Swal.fire({
+                    title: '余额不足',
+                    html: `
+                        <p>您当前余额为：<strong>${currentBalance} 元</strong>，<br>
+                        无法购买套餐：<strong>${packageName}</strong>，价格为：<strong>${packagePrice} 元</strong>。</p>
+                        <p>请先充值后再购买。</p>
+                    `,
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonText: '在线充值',
+                    cancelButtonText: '卡密充值',
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#6b7280'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 如果用户点击“在线充值”，跳转到在线充值页面
+                           window.location.href = "/user/recharge";
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        // 如果用户点击“卡密充值”，跳转到卡密充值页面
+                        window.location.href = "/user/card/";
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: '确认购买解析套餐？',
+                    html: `
+                        <p>您将购买解析套餐：</p>
+                        <p class="font-bold my-2">${packageName}</p>
+                        <p>套餐价格：<strong class="text-primary">${packagePrice} 元</strong></p>
+                        <p>您当前余额：<strong>${currentBalance} 元</strong></p>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '确认购买',
+                    cancelButtonText: '取消',
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#6b7280',
+                    focusCancel: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 如果用户确认购买，则跳转到购买页面
+                     //   window.location.href = `/shop/purChase?id=${packageId}`;
+                     
+                         $.ajax({
+                    type: 'POST',
+                    url: '/shop/purchase',
+                    data: {id:packageId},
+                      dataType: "json",
+                    success: function(res){
+                        if(res.code ===0){
+                                   // 显示成功信息
+        Swal.fire({
+                                        icon: 'success',
+                                        title: '成功',
+                                        text: res.msg,
+                                        confirmButtonColor: '#3b82f6'
+                                    }).then(() => {
+                                        // 刷新页面以更新余额
+                                        location.reload();
+                                    });
+                        } else {
+                            Swal.fire({
+                                        icon: 'error',
+                                        title: '失败',
+                                        text: res.msg,
+                                        confirmButtonColor: '#3b82f6'
+                                    });
+                        }
+                    },
+                    error: function(){
+            ;
+                     
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: '请求失败，请检查网络后重试',
+                                        text: '请求失败，请检查网络后重试',
+                                        confirmButtonColor: '#3b82f6'
+                                    });;
+                    }
+                });
+                     
+       
+                  
+                    }
+                });
+            }
+        }
+  
+    </script>
+     <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+</body>
+</html>

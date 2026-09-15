@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>资源提交-{:conf('name')}</title>
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+       	<script src="{template}/inside1/css/chart.umd.min.js"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- 引入Clipboard.js用于复制功能 -->
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>       <script src="/template/CDN/js/clipboard.min.js"></script>
+        <include file="/public/header">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .table-hover-row {
+                @apply hover:bg-gray-50 transition-colors duration-200;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .copy-btn {
+                @apply px-3 py-1 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors duration-200 text-sm;
+            }
+            .key-display {
+                @apply bg-gray-100 text-gray-800 px-3 py-2 rounded-lg font-mono text-sm break-all inline-block;
+            }
+        }
+           
+    </style>
+        <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+            .glass-effect-hover {
+                transition: all 0.3s ease;
+            }
+            .glass-effect-hover:hover {
+                backdrop-filter: blur(15px);
+                background-color: rgba(255, 255, 255, 0.85);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            }
+            .badge {
+                @apply inline-block px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap;
+            }
+            .progress-bar {
+                @apply h-2 rounded-full overflow-hidden bg-gray-200;
+            }
+            .progress-value {
+                @apply h-full transition-all duration-700 ease-out;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .colored-text {
+                @apply font-bold;
+            }
+            /* 新增：弹窗居中样式 */
+            .swal2-center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+       
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+ <!--       <div class="glass-card mb-6">
+            <div class="p-5 text-center">
+                <h1 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-gray-800">替换系统</h1>
+            </div>
+        </div>-->
+        
+        <!-- 主内容区 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 提交替换资源表单 -->
+            <div class="lg:col-span-5 glass-card card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-upload text-blue-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">提交替换资源</h2>
+                    </div>
+                    
+                    <form method="POST" class="layui-form space-y-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                            <input class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" name="name" type="text" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">原链接(一行一个)</label>
+                            <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" name="url" rows="10" required></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">新链接</label>
+                            <input class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" name="newurl" type="text" required>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button class="btn-primary" type="submit" lay-submit lay-filter="upForm">提交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 公共库区域 -->
+            <div class="lg:col-span-7 glass-card card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-database text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">公共库</h2>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-gray-700 mb-2">你的KEY为：</p>
+                        <div class="flex items-center">
+                            <span class="key-display flex-grow mr-2">{$user.key}</span>
+                            <button id="copy-key" class="copy-btn  copy-text" data-clipboard-text="{$user.key}">
+                                <i class="fa fa-copy mr-1"></i> 复制
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" class="layui-form space-y-6">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">KEY（使用公共库来为你的Json更替资源）</label>
+                            <input class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus" name="key" type="text" value="{$user.key}" required>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button class="btn-primary" type="submit" name="keyset" lay-submit lay-filter="keyset">设置</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-6">
+                        <h3 class="text-base font-semibold text-gray-800 mb-3">最近更新</h3>
+                        <div class="overflow-x-auto">
+                              <table id="SK_Table" lay-filter="SK_Table"></table>
+                        </div>
+               
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 私人库区域 -->
+            <div class="lg:col-span-12 glass-card card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-lock text-blue-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">私人库(如需修改请重复提交即可)</h2>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                       <table id="SK_Tables" lay-filter="SK_Tables"></table>
+                    </div>
+          
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="/template/CDN/js/jquery.min.js"></script>
+    
+    <script>
+      $(function () {
+        new Clipboard('.copy-text');
+    });
+
+    $(".copy-text").click(function () {
+     Swal.fire({
+                    
+                    title: '复制成功',
+                    text: 'KEY已复制到剪贴板',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+    });
+   
+    </script>
+    
+ <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'table', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+             var $ = layui.jquery;
+             var table = layui.table;
+            // 兑换卡密
+            form.on('submit(upForm)', function(data){
+                layer.load(1);
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/jsonup',
+                    data: data.field,
+                      dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code ===0){
+                            layer.msg(res.msg, {icon: 1});
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2});
+                    }
+                });
+                return false;
+            });
+              form.on('submit(keyset)', function(data){
+                layer.load(1);
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/keyup',
+                    data: data.field,
+                      dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code ===0){
+                            layer.msg(res.msg, {icon: 1});
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2});
+                    }
+                });
+                return false;
+            });
+   /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/ajax/reurlPublicList")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+        
+            
+            {field: 'name', title: '备注',  minWidth: 280},
+            {field: 'old_url', title: '原URL',  minWidth: 160},
+            {field: 'new_url', title: '新URL',  minWidth: 160},
+            {field: 'intime', title: '时间',  minWidth: 160},
+
+            ]]
+        });
+            var insTb = table.render({
+            elem: '#SK_Tables',
+            url: '{:url("/ajax/reurlPrivateList")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+        
+            
+            {field: 'name', title: '备注',  minWidth: 280},
+            {field: 'old_url', title: '原URL',  minWidth: 160},
+            {field: 'new_url', title: '新URL',  minWidth: 160},
+            {field: 'intime', title: '时间',  minWidth: 160},
+
+            ]]
+        });
+        });
+        
+   
+    </script>
+
+</body>
+</html>

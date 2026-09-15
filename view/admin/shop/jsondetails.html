@@ -1,0 +1,85 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+     <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form ">
+        <input name="id" value="{:isset($json.id) ? $json.id : ''}" type="hidden"/>
+   
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">名称:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Json_name" value="{:isset($json.Json_name) ? $json.Json_name : ''}" placeholder="请输入名称" class="layui-input"
+                        />
+                </div>
+            </div>
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">规则:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Json_str" value="{:isset($json.Json_str) ? $json.Json_str : ''}" placeholder="" class="layui-input"
+                         />
+                </div>
+            </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">解析接口:</label>
+                <div class="layui-input-block">
+          <input type="text" name="Json_api" value="{:isset($json.Json_api) ? $json.Json_api : ''}" placeholder="" class="layui-input"
+                        />
+             
+                </div>
+            </div>
+ 
+         
+     
+       
+       <hr style="width:0px"><hr>
+                    <div class="layui-form-item">
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn" id="noticeBtn" lay-filter="submitBtn" lay-submit>&emsp;提交&emsp;</button>
+                  
+                        </div>
+                    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    <include file="/public/footer">
+        <script>
+    layui.use([ 'admin', 'form', 'jquery', 'notice'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var notice = layui.notice;
+
+        var admin = layui.admin;
+        form.on('submit(submitBtn)', function (data) {
+            if (data.field.name == "") {
+                notice.msg('请输入名称！', {icon: 3, audio:'1'});
+                return false;
+            }
+    
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: "{:url('/shop/jiexiedit')}",
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                             var index = parent.layer.getFrameIndex(window.name);
+                  setTimeout(function () {
+                parent.layer.close(index);
+                     parent.location.reload();      
+                  },500);
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

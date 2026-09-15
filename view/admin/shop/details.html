@@ -1,0 +1,132 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+     <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form ">
+        <input name="id" value="{:isset($shop.id) ? $shop.id : ''}" type="hidden"/>
+   
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">套餐名称:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" value="{:isset($shop.name) ? $shop.name : ''}" placeholder="请输入套餐名称" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">套餐价格:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="price" value="{:isset($shop.price) ? $shop.price : ''}" placeholder="请输入套餐价格" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">套餐介绍:</label>
+                <div class="layui-input-block">
+                    <textarea  name="content" class="layui-textarea">{:isset($shop.content) ? $shop.content : ''}</textarea>
+             
+                </div>
+            </div>
+  
+                <div class="layui-form-item">
+               <label class="layui-form-label layui-form-required">大小(月数或点数):</label>
+                <div class="layui-input-block">
+                    <input  name="dd" class="layui-input"
+                           lay-verType="tips" lay-verify="required" value="{:isset($shop.dd) ? $shop.dd : ''}" >
+                </div>
+            </div >  <empty name='$shop'>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">方式:</label>
+                <div class="layui-input-block">
+                         <select class="form-control" name="fs">
+                                    <option value="包点" <if isset($shop.fs) && $shop.fs=='包点'>selected</if>>包点</option>    
+                                     <option value="包月" <if isset($shop.fs) && $shop.fs=='包月'>selected</if>>包月</option> 
+                                     </select>
+                </div>
+            </div></empty>
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">每日上限:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fullnum" value="{:isset($shop.fullnum) ? $shop.fullnum : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>0代表无限
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">绑定解析:</label>
+                <div class="layui-input-block">
+                    <select name="bind_enable">
+                        <option value="0" <if isset($shop.bind_enable) && $shop.bind_enable=='0'>selected</if>>关闭</option>
+                        <option value="1" <if isset($shop.bind_enable) && $shop.bind_enable=='1'>selected</if>>开启</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">绑定接口:</label>
+                <div class="layui-input-block">
+                    <?php
+                        $bindIds = [];
+                        if (!empty($shop) && !empty($shop['bind_json_ids'])) {
+                            $bindIds = explode(',', (string)$shop['bind_json_ids']);
+                        }
+                    ?>
+                    <volist name="jsonList" id="j">
+                        <input type="checkbox" name="bind_json_ids[]" value="{$j.id}" title="{$j.Json_name} (ID:{$j.id})"
+                            <?php if (in_array((string)$j['id'], $bindIds, true)) echo 'checked'; ?>>
+                    </volist>
+                </div>
+            </div>
+
+     
+       
+       <hr style="width:0px"><hr>
+                    <div class="layui-form-item">
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn" id="noticeBtn" lay-filter="submitBtn" lay-submit>&emsp;提交&emsp;</button>
+                  
+                        </div>
+                    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    <include file="/public/footer">
+        <script>
+    layui.use([ 'admin', 'form', 'jquery', 'notice'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var notice = layui.notice;
+
+        var admin = layui.admin;
+        form.on('submit(submitBtn)', function (data) {
+            if (data.field.name == "") {
+                notice.msg('请输入名称！', {icon: 3, audio:'1'});
+                return false;
+            }
+    
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: "{:url('/shop/edit')}",
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                             var index = parent.layer.getFrameIndex(window.name);
+                  setTimeout(function () {
+                parent.layer.close(index);
+                           parent.location.reload();
+                  },500);
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

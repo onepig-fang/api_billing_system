@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:conf('name')}</title>
+    <script src="/template/index2/css/3.1.4"></script>
+    <link href="/template/index2/css/font-awesome.min.css" rel="stylesheet">
+    <script type="text/javascript" src="{__JS__}jquery-2.1.4.min.js?v=318"></script>
+
+    <!-- Tailwind 配置优化 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#4080FF',
+                        accent: '#6AA1FF',
+                        light: '#E8F3FF',
+                        dark: '#0E42D2',
+                        neutral: '#F5F7FA',
+                        'neutral-dark': '#4E5969',
+                        success: '#36D399',
+                        warning: '#FBBD23',
+                        danger: '#F87272'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类和样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(to right, #165DFF, #6AA1FF);
+            }
+            .card-3d {
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            }
+            .card-3d:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+            .glassmorphism {
+                backdrop-filter: blur(12px);
+                background: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .progress-indicator {
+                height: 4px;
+                background: linear-gradient(90deg, #165DFF 0%, #6AA1FF 100%);
+                position: absolute;
+                top: 0;
+                left: 0;
+                animation: progress 1.5s ease-in-out infinite;
+            }
+            .btn-primary {
+                @apply px-6 py-3 bg-primary hover:bg-dark text-white rounded-lg transition-all shadow-lg shadow-primary/20 transform hover:-translate-y-1 duration-300;
+            }
+            .btn-secondary {
+                @apply px-6 py-3 bg-white border border-primary text-primary hover:bg-light rounded-lg transition-all transform hover:-translate-y-1 duration-300;
+            }
+        }
+        
+        /* 全局动画和过渡效果 */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; right: 0; left: unset; }
+        }
+
+        /* 公告弹窗样式 */
+        .announcement-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .announcement-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .announcement-content {
+            background-color: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .announcement-modal.active .announcement-content {
+            transform: translateY(0);
+        }
+        
+        .announcement-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .announcement-body {
+            padding: 20px;
+        }
+        
+        .announcement-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800 overflow-x-hidden">
+    <!-- 公告弹窗 -->
+    <if conf('notice_type')==1>
+    <div class="announcement-modal" id="announcementModal">
+        <div class="announcement-content">
+            <div class="announcement-header">
+                <h3 class="text-xl font-bold text-primary">重要公告</h3>
+                <button class="text-gray-500 hover:text-gray-700 transition-colors" id="closeAnnouncement">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="announcement-body">
+              {:conf('notice')}
+            </div>
+            <div class="announcement-footer">
+                <label class="flex items-center mr-4">
+                    <input type="checkbox" class="mr-2" id="dontShowAgain">
+                    <span class="text-sm text-gray-600">7天内不再显示</span>
+                </label>
+                <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-dark transition-colors" id="confirmAnnouncement">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div></if>
+
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <a href="#" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+                        <i class="fa fa-play-circle text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-primary">{:conf('name')}</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">首页</a>
+                    <a href="#features" class="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">功能</a>
+                    <a href="#pricing" class="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">价格</a>
+                    <a href="#faq" class="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">常见问题</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="/index/login" class="hidden sm:inline-block px-4 py-2 text-primary hover:text-dark transition-colors duration-300 font-medium">登录</a>
+                    <a href="/index/login" class="btn-primary">
+                        <i class="fa fa-rocket mr-2"></i>开始使用
+                    </a>
+                    
+                    <!-- 移动端菜单按钮 -->
+                    <button class="md:hidden text-gray-700 focus:outline-none" id="menu-toggle">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-lg absolute w-full transform transition-transform duration-300" id="mobile-menu">
+            <div class="container mx-auto px-4 py-4 space-y-3">
+                <a href="/" class="block py-2 text-gray-700 hover:text-primary transition-colors duration-300 font-medium">首页</a>
+                <a href="#features" class="block py-2 text-gray-700 hover:text-primary transition-colors duration-300 font-medium">功能</a>
+                <a href="#pricing" class="block py-2 text-gray-700 hover:text-primary transition-colors duration-300 font-medium">价格</a>
+                <a href="#faq" class="block py-2 text-gray-700 hover:text-primary transition-colors duration-300 font-medium">常见问题</a>
+                <a href="/index/login" class="block py-2 text-primary hover:text-dark transition-colors duration-300 font-medium">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section class="pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-b from-light to-white relative overflow-hidden">
+        <!-- 背景装饰元素 -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -skew-x-12 transform origin-top-right"></div>
+        <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl"></div>
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl"></div>
+        
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 animate-on-scroll">
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight text-shadow mb-6">
+                        <span class="text-gradient">解锁视频</span>
+                        <span class="block">无限可能</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-xl">
+                        突破地域限制，随时随地观看您喜爱的内容。我们的智能算法技术支持多平台视频解析，高清画质，快速稳定。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="/index/login" class="btn-primary">
+                            <i class="fa fa-rocket mr-2"></i>立即开始免费试用
+                        </a>
+                        <a href="#pricing" class="btn-secondary">
+                            <i class="fa fa-th-list mr-2"></i>查看价格方案
+                        </a>
+                    </div>
+                    <div class="mt-10 flex items-center space-x-4">
+                        <div class="flex -space-x-2">
+                            <img src="https://picsum.photos/200/200?random=1" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://picsum.photos/200/200?random=2" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://picsum.photos/200/200?random=3" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://picsum.photos/200/200?random=4" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                        </div>
+                        <div>
+                            <div class="flex items-center">
+                                <i class="fa fa-star text-yellow-400"></i>
+                                <i class="fa fa-star text-yellow-400"></i>
+                                <i class="fa fa-star text-yellow-400"></i>
+                                <i class="fa fa-star text-yellow-400"></i>
+                                <i class="fa fa-star text-yellow-400"></i>
+                                <span class="ml-2 text-sm font-medium">4.9/5</span>
+                            </div>
+                            <p class="text-sm text-gray-600">来自 <span class="font-semibold">10,000+</span> 满意用户</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative animate-on-scroll" style="animation-delay: 0.3s">
+                    <div class="relative z-10 bg-white rounded-xl shadow-2xl overflow-hidden animate-float">
+                        <div class="relative">
+                            <img src="https://picsum.photos/800/500?random=10" alt="视频解析演示" class="w-full h-auto">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <button class="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center text-white hover:bg-primary transition-colors duration-300 transform hover:scale-110">
+                                    <i class="fa fa-play-circle text-2xl"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-white">
+                                        <h3 class="font-bold">解析完成：旅行视频</h3>
+                                        <p class="text-sm opacity-80">已准备好播放</p>
+                                    </div>
+                                    <span class="px-3 py-1 bg-green-500 text-white text-xs rounded-full">HD 1080p</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center">
+                                <a href="#" class="px-4 py-2 bg-primary text-white rounded-lg flex items-center transition-all duration-300 hover:bg-dark">
+                                    <i class="fa fa-download mr-2"></i> 下载视频
+                                </a>
+                                <div class="flex space-x-2">
+                                    <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                                        <i class="fa fa-share-alt text-gray-600"></i>
+                                    </button>
+                                    <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                                        <i class="fa fa-star-o text-gray-600"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute top-1/4 -right-6 w-32 h-32 bg-accent/20 rounded-full blur-2xl -z-10"></div>
+                    <div class="absolute bottom-1/4 -left-8 w-40 h-40 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 解析器 -->
+    <section class="py-20 bg-white animate-on-scroll">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">立即解析您的视频</h2>
+                <p class="text-gray-600 text-lg">只需粘贴视频链接，选择格式，即可开始解析播放</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 relative overflow-hidden card-3d">
+                <div class="absolute top-0 left-0 right-0 h-1">
+                    <div class="progress-indicator"></div>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <input type="text" placeholder="粘贴视频链接..." class="w-full px-6 py-4 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+                        <div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
+                            <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                                <i class="fa fa-paperclip text-gray-600"></i>
+                            </button>
+                            <button class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                                <i class="fa fa-history text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="px-8 py-4 bg-primary hover:bg-dark text-white rounded-lg transition-colors shadow-lg shadow-primary/20 whitespace-nowrap transform hover:-translate-y-1 duration-300" onclick="window.location.href='/user/video'">
+                        <i class="fa fa-magic mr-2"></i> 开始解析
+                    </button>
+                </div>
+                
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        <i class="fa fa-check-circle text-primary mr-1"></i> 支持 腾讯
+                    </span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        <i class="fa fa-check-circle text-primary mr-1"></i> 支持 爱奇艺
+                    </span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        <i class="fa fa-check-circle text-primary mr-1"></i> 支持 优酷
+                    </span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        <i class="fa fa-check-circle text-primary mr-1"></i> 支持 搜狐
+                    </span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        <i class="fa fa-check-circle text-primary mr-1"></i> 支持更多平台
+                    </span>
+                </div>
+            </div>
+            
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-3d">
+                    <div class="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-bolt text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">极速解析</h3>
+                    <p class="text-gray-600">先进的解析引擎，最快1秒即可完成解析，无需长时间等待。</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-3d">
+                    <div class="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-video-camera text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">高清画质</h3>
+                    <p class="text-gray-600">支持高达 4K 分辨率的视频解析，保留原始画质和音质。</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 card-3d">
+                    <div class="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-lock text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">安全无广告</h3>
+                    <p class="text-gray-600">完全免费的服务，不包含任何恶意软件和广告，保障您的设备安全。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能 -->
+    <section id="features" class="py-20 bg-light/30 animate-on-scroll">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">强大功能，简单操作</h2>
+                <p class="text-gray-600 text-lg">我们提供丰富的视频解析功能，满足您的各种需求</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="mb-10">
+                        <div class="flex items-start mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-download text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">多格式支持</h3>
+                                <p class="text-gray-600">支持 MP4、MKV、WebM、AVI 等多种视频格式，满足不同设备和场景的需求。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-10">
+                        <div class="flex items-start mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-sliders text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">多画质选择</h3>
+                                <p class="text-gray-600">从 1080P 到 4K 超高清，多种画质可供选择，满足不同网络环境和存储需求。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-10">
+                        <div class="flex items-start mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-clock-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">批量解析</h3>
+                                <p class="text-gray-600">支持同时解析多个视频链接，提高工作效率，节省您的宝贵时间。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-10">
+                        <div class="flex items-start mb-4">
+                            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fa fa-mobile text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">全平台适配</h3>
+                                <p class="text-gray-600">完全适配移动设备、平板和桌面端，随时随地解析下载视频，操作简单便捷。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="relative z-10 bg-white rounded-xl shadow-2xl overflow-hidden card-3d">
+                        <div class="p-6">
+                            <div class="text-center mb-8">
+                                <h3 class="text-2xl font-bold mb-2">为什么选择 StreamParse</h3>
+                                <p class="text-gray-600">领先的视频解析技术，满足您的所有需求</p>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-check text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">超兼容的解析接口</h4>
+                                        <p class="text-gray-600 text-sm">兼容市面90%的应用，支持多种协议和加密方式，解析成功率行业领先。</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-check text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">蓝光4K画质</h4>
+                                        <p class="text-gray-600 text-sm">全直链MKV,MP4格式，自建一手解析源，真4K蓝光画质，拒绝模糊压缩。</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-check text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">智能直链算法</h4>
+                                        <p class="text-gray-600 text-sm">全直链格式，自建动态算法解析，拒绝跳帧和图床依赖，稳定高速解析。</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-check text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">隐私保护</h4>
+                                        <p class="text-gray-600 text-sm">不存储任何用户数据和视频内容，严格遵守隐私政策，保护您的个人信息。</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-check text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">7×24小时技术支持</h4>
+                                        <p class="text-gray-600 text-sm">专业技术团队随时为您解决使用中遇到的问题，确保服务稳定运行。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8">
+                                <a href="/index/login" class="block w-full py-3 bg-primary hover:bg-dark text-white rounded-lg transition-colors shadow-lg shadow-primary/20 text-center transform hover:-translate-y-1 duration-300">
+                                    <i class="fa fa-rocket mr-2"></i> 体验全部功能
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="absolute top-1/4 -right-6 w-32 h-32 bg-accent/20 rounded-full blur-2xl -z-10"></div>
+                    <div class="absolute bottom-1/4 -left-8 w-40 h-40 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 价格方案 -->
+    <section id="pricing" class="py-20 bg-white animate-on-scroll">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">选择适合您的方案</h2>
+                <p class="text-gray-600 text-lg">灵活的付费方案，满足不同用户的需求</p>
+                
+                <div class="mt-8 inline-flex p-1 bg-gray-100 rounded-full">
+                    <button class="px-6 py-2 rounded-full bg-white shadow-md text-gray-800 font-medium">月付套餐</button>
+                    <button class="px-6 py-2 rounded-full text-gray-600 font-medium hover:bg-gray-200 transition-colors duration-300">年付套餐（节省20%）</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- 免费方案 -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-2xl card-3d">
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">免费版</h3>
+                        <p class="text-gray-600 mb-6">适合偶尔使用的用户</p>
+                        
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">¥登录查看</span>
+                            <span class="text-gray-500">/月</span>
+                        </div>
+                        
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>支持解析全平台</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>最高支持1080P画质</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>基础解析功能</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>每日5次解析限制</span>
+                            </li>
+                            <li class="flex items-start text-gray-400">
+                                <i class="fa fa-times mt-1 mr-3"></i>
+                                <span>无优先解析权</span>
+                            </li>
+                            <li class="flex items-start text-gray-400">
+                                <i class="fa fa-times mt-1 mr-3"></i>
+                                <span>7×24小时技术支持</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="/shop" class="block w-full py-3 text-center border border-primary text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300">
+                            开始使用
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 标准方案 -->
+                <div class="bg-white rounded-2xl shadow-xl border-2 border-primary overflow-hidden transform scale-105 transition-all duration-300 hover:shadow-2xl relative z-10 card-3d">
+                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 text-sm font-medium">
+                        最受欢迎
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">标准版</h3>
+                        <p class="text-gray-600 mb-6">适合普通用户的最佳选择</p>
+                        
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">¥登录查看</span>
+                            <span class="text-gray-500">/月</span>
+                        </div>
+                        
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>支持解析全平台</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>最高支持2K画质</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>独家授权加密解析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>无限次解析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>优先解析队列</span>
+                            </li>
+                            <li class="flex items-start text-gray-400">
+                                <i class="fa fa-times mt-1 mr-3"></i>
+                                <span>7×24小时技术支持</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="/shop" class="block w-full py-3 text-center bg-primary hover:bg-dark text-white rounded-lg transition-colors shadow-lg shadow-primary/20 transform hover:-translate-y-1 duration-300">
+                            选择标准版
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 高级方案 -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-2xl card-3d">
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold mb-2">高级版</h3>
+                        <p class="text-gray-600 mb-6">适合专业用户的终极选择</p>
+                        
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold">¥登录查看</span>
+                            <span class="text-gray-500">/月</span>
+                        </div>
+                        
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>支持解析全平台</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>最高支持4K画质</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>独家授权加密解析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>无限次解析</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>优先解析队列</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>7×24小时技术支持</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="/shop" class="block w-full py-3 text-center border border-primary text-primary hover:bg-primary/5 rounded-lg transition-colors duration-300">
+                            选择高级版
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center">
+                <p class="text-gray-600 mb-4">需要自定义企业解决方案？</p>
+                <a href="#" class="text-primary hover:text-dark font-medium transition-colors duration-300">
+                    <i class="fa fa-envelope-o mr-1"></i> 联系我们获取企业报价
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20 bg-white animate-on-scroll">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">常见问题</h2>
+                <p class="text-gray-600 text-lg">解答您可能遇到的问题</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                    <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                        <span class="font-bold text-lg">这个服务是否合法？</span>
+                        <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="px-6 pb-6 hidden faq-content transition-all duration-500">
+                        <p class="text-gray-600">
+                            我们的服务仅提供视频解析功能，不存储任何视频内容。下载的视频仅供个人学习和研究使用，请遵守相关法律法规。对于版权内容，请先获得版权所有者的许可。我们不鼓励或支持任何侵犯版权的行为。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                    <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                        <span class="font-bold text-lg">支持哪些平台的视频解析？</span>
+                        <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="px-6 pb-6 hidden faq-content transition-all duration-500">
+                        <p class="text-gray-600">
+                            我们支持大多数主流视频平台，包括国内的腾讯视频、爱奇艺、优酷、芒果TV、B站等。如需查看完整列表，请在解析页面查看支持的平台说明，我们会不断更新支持的平台列表。
+                        </p>
+                    </div>
+                </div>
+                
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                    <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                        <span class="font-bold text-lg">为什么有些视频无法解析？</span>
+                        <i class="fa fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="px-6 pb-6 hidden faq-content transition-all duration-500">
+                        <p class="text-gray-600">
+                            某些视频无法解析可能有以下原因：1. 视频平台采用了新的加密技术，我们正在更新解析算法；2. 视频设置了隐私保护，仅作者或特定人群可见；3. 视频链接已失效或被删除；4. 受版权保护的内容可能无法解析。如果遇到无法解析的视频，请联系我们的技术支持团队。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载APP区域 -->
+    <section class="py-20 bg-gradient-to-r from-primary to-accent text-white animate-on-scroll">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-[clamp(1.8rem,3vw,2.5rem)] font-bold mb-4">立即加入，开启解析之旅</h2>
+                      </div>  
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+                            <i class="fa fa-play-circle text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">{:conf('name')}</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        专业的视频解析服务，让您随时随地畅享精彩内容。突破地域限制，高清画质，快速稳定。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors duration-300">
+                            <i class="fa fa-youtube-play"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">快速链接</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">首页</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors duration-300">功能</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white transition-colors duration-300">价格</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-white transition-colors duration-300">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">关于我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">支持</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">帮助中心</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">联系我们</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">隐私政策</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">服务条款</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">版权声明</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">订阅更新</h4>
+                    <p class="text-gray-400 mb-4">获取最新的功能更新和优惠信息</p>
+                    <form class="mb-4">
+                        <div class="flex">
+                            <input type="email" placeholder="您的邮箱地址" class="px-4 py-2 rounded-l-lg w-full bg-gray-800 border border-gray-700 focus:outline-none focus:border-primary text-white">
+                            <button type="submit" class="px-4 py-2 bg-primary hover:bg-dark rounded-r-lg transition-colors duration-300">
+                                <i class="fa fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="text-gray-500 text-sm">我们尊重您的隐私，不会发送垃圾邮件</p>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>&copy;{:conf('banquan')}。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        // 公告弹窗功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const announcementModal = document.getElementById('announcementModal');
+            const closeAnnouncement = document.getElementById('closeAnnouncement');
+            const confirmAnnouncement = document.getElementById('confirmAnnouncement');
+            const dontShowAgain = document.getElementById('dontShowAgain');
+            
+            // 检查本地存储，判断是否需要显示公告
+            const lastShown = localStorage.getItem('lastAnnouncementShown');
+            const now = new Date().getTime();
+            
+            // 如果7天内没有显示过，或者从未显示过，则显示公告
+            if (!lastShown || (now - lastShown > 7 * 24 * 60 * 60 * 1000)) {
+                setTimeout(() => {
+                    announcementModal.classList.add('active');
+                }, 1000); // 延迟1秒显示，提升用户体验
+            }
+            
+            // 关闭公告的函数
+            function hideAnnouncement() {
+                announcementModal.classList.remove('active');
+                
+                // 如果勾选了"7天内不再显示"，则记录时间
+                if (dontShowAgain.checked) {
+                    localStorage.setItem('lastAnnouncementShown', now.toString());
+                }
+            }
+            
+            closeAnnouncement.addEventListener('click', hideAnnouncement);
+            confirmAnnouncement.addEventListener('click', hideAnnouncement);
+        });
+        
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white', 'shadow-md');
+                navbar.classList.remove('bg-transparent');
+            } else {
+                navbar.classList.remove('bg-white', 'shadow-md');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (!mobileMenu.classList.contains('hidden')) {
+                menuToggle.innerHTML = '<i class="fa fa-times text-xl"></i>';
+                mobileMenu.style.transform = 'translateY(0)';
+            } else {
+                menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+                mobileMenu.style.transform = 'translateY(-100%)';
+            }
+        });
+        
+        // FAQ 折叠功能
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+        
+        faqToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const content = toggle.nextElementSibling;
+                const icon = toggle.querySelector('i');
+                
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+        
+        // 滚动动画
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        animateElements.forEach(element => {
+            observer.observe(element);
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动菜单（如果打开）
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        menuToggle.innerHTML = '<i class="fa fa-bars text-xl"></i>';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

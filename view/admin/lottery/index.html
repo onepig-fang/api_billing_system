@@ -1,0 +1,763 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form" id="lotteryForm" lay-filter="lotteryForm">
+                <div class="layui-tab layui-tab-brief" lay-filter="lotteryTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">基础设置</li>
+                        <li>奖品配置</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <!-- 基础设置 -->
+                        <div class="layui-tab-item layui-show">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>抽奖基础配置</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">抽奖开关</label>
+                                        <div class="layui-input-block">
+                                            <input name="is_enabled" value="0" hidden>
+                                            <input type="checkbox" name="is_enabled" value="1" lay-skin="switch" lay-text="开启|关闭" 
+                                                   <if condition="isset($config['is_enabled']) && $config['is_enabled'] == 1"> checked </if>>
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">每日抽奖次数</label>
+                                        <div class="layui-input-block">
+                                            <input type="number" name="daily_limit" class="layui-input" placeholder="用户每日可抽奖次数" 
+                                                   value="{:isset($config['daily_limit']) ? $config['daily_limit'] : 3}" required min="1" max="100">
+                                            <div class="layui-form-mid layui-word-aux">建议设置3-10次</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        
+                        <!-- 奖品配置 -->
+                        <div class="layui-tab-item">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>奖品设置</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <div class="layui-inline">
+                                            <button type="button" class="layui-btn layui-btn-sm" id="addPrize">添加奖品</button>
+                                        </div>
+                                        <div class="layui-form-mid layui-word-aux">设置奖品的相对中奖权重，数值越大中奖概率越高</div>
+                                    </div>
+                                    
+                                    <!-- 表头 -->
+                                    <div class="prize-header layui-row layui-col-space10">
+                                        <div class="layui-col-md3">奖品名称</div>
+                                        <div class="layui-col-md3">奖品类型</div>
+                                        <div class="layui-col-md3">奖品数值</div>
+                                        <div class="layui-col-md2">中奖概率</div>
+                                        <div class="layui-col-md1" style="text-align: center;">操作</div>
+                                    </div>
+                                    
+                                    <div id="prizeList">
+                                        <if condition="isset($config['prizes']) && is_array($config['prizes'])">
+                                            <volist name="config['prizes']" id="prize" key="index">
+                                                <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                    <!-- 隐藏的排序值 -->
+                                                    <input type="hidden" name="prize_sorts[]" class="sort-input" value="{:isset($prize['sort']) ? $prize['sort'] : $index}">
+                                                    
+                                                    <div class="layui-col-md3">
+                                                        <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="{$prize.name}" required>
+                                                    </div>
+                                                    <div class="layui-col-md3">
+                                                        <select name="prize_types[]" class="layui-input">
+                                                            <option value="points" <if condition="$prize['type'] == 'points'">selected</if>>点数</option>
+                                                            <option value="money" <if condition="$prize['type'] == 'money'">selected</if>>余额</option>
+                                                            <option value="pack_quota" <if condition="$prize['type'] == 'pack_quota'">selected</if>>打包额度</option>
+                                                            <option value="empty" <if condition="$prize['type'] == 'empty'">selected</if>>谢谢参与</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="layui-col-md3">
+                                                        <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="{$prize.value}" min="0" step="0.01">
+                                                    </div>
+                                                    <div class="layui-col-md2">
+                                                        <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="{$prize.probability}" required min="0" max="100">
+                                                    </div>
+                                                    <div class="layui-col-md1" style="text-align: center;">
+                                                        <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                        <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                        <div class="sort-controls">
+                                                            <button type="button" class="move-up" title="上移">↑</button>
+                                                            <button type="button" class="move-down" title="下移">↓</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </volist>
+                                            <else/>
+                                            <!-- 默认奖品配置 -->
+                                            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                <!-- 隐藏的排序值 -->
+                                                <input type="hidden" name="prize_sorts[]" class="sort-input" value="1">
+                                                
+                                                <div class="layui-col-md3">
+                                                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="100点数" required>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <select name="prize_types[]" class="layui-input">
+                                                        <option value="points" selected>点数</option>
+                                                        <option value="money">余额</option>
+                                                        <option value="pack_quota">打包额度</option>
+                                                        <option value="empty">谢谢参与</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="100" min="0" step="0.01">
+                                                </div>
+                                                <div class="layui-col-md2">
+                                                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="30" required min="0" max="100">
+                                                </div>
+                                                <div class="layui-col-md1" style="text-align: center;">
+                                                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                    <div class="sort-controls">
+                                                        <button type="button" class="move-up" title="上移">↑</button>
+                                                        <button type="button" class="move-down" title="下移">↓</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                <!-- 隐藏的排序值 -->
+                                                <input type="hidden" name="prize_sorts[]" class="sort-input" value="2">
+                                                <div class="layui-col-md3">
+                                                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="50点数" required>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <select name="prize_types[]" class="layui-input">
+                                                        <option value="points" selected>点数</option>
+                                                        <option value="money">余额</option>
+                                                        <option value="pack_quota">打包额度</option>
+                                                        <option value="empty">谢谢参与</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="50" min="0" step="0.01">
+                                                </div>
+                                                <div class="layui-col-md2">
+                                                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="35" required min="0" max="100">
+                                                </div>
+                                                <div class="layui-col-md1" style="text-align: center;">
+                                                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                    <div class="sort-controls">
+                                                        <button type="button" class="move-up" title="上移">↑</button>
+                                                        <button type="button" class="move-down" title="下移">↓</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                <!-- 隐藏的排序值 -->
+                                                <input type="hidden" name="prize_sorts[]" class="sort-input" value="3">
+                                                
+
+                                                <div class="layui-col-md3">
+                                                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="1元余额" required>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <select name="prize_types[]" class="layui-input">
+                                                        <option value="points">点数</option>
+                                                        <option value="money" selected>余额</option>
+                                                        <option value="pack_quota">打包额度</option>
+                                                        <option value="empty">谢谢参与</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="1" min="0" step="0.01">
+                                                </div>
+                                                <div class="layui-col-md2">
+                                                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="20" required min="0" max="100">
+                                                </div>
+                                                <div class="layui-col-md1" style="text-align: center;">
+                                                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                    <div class="sort-controls">
+                                                        <button type="button" class="move-up" title="上移">↑</button>
+                                                        <button type="button" class="move-down" title="下移">↓</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                <!-- 隐藏的排序值 -->
+                                                <input type="hidden" name="prize_sorts[]" class="sort-input" value="4">
+                                                
+
+                                                <div class="layui-col-md3">
+                                                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="10次打包额度" required>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <select name="prize_types[]" class="layui-input">
+                                                        <option value="points">点数</option>
+                                                        <option value="money">余额</option>
+                                                        <option value="pack_quota" selected>打包额度</option>
+                                                        <option value="empty">谢谢参与</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="10" min="0" step="0.01">
+                                                </div>
+                                                <div class="layui-col-md2">
+                                                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="10" required min="0" max="100">
+                                                </div>
+                                                <div class="layui-col-md1" style="text-align: center;">
+                                                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                    <div class="sort-controls">
+                                                        <button type="button" class="move-up" title="上移">↑</button>
+                                                        <button type="button" class="move-down" title="下移">↓</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                                                <!-- 隐藏的排序值 -->
+                                                <input type="hidden" name="prize_sorts[]" class="sort-input" value="5">
+                                                
+
+                                                <div class="layui-col-md3">
+                                                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" value="谢谢参与" required>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <select name="prize_types[]" class="layui-input">
+                                                        <option value="points">点数</option>
+                                                        <option value="money">余额</option>
+                                                        <option value="pack_quota">打包额度</option>
+                                                        <option value="empty" selected>谢谢参与</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-col-md3">
+                                                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" value="0" min="0" step="0.01">
+                                                </div>
+                                                <div class="layui-col-md2">
+                                                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" value="5" required min="0" max="100">
+                                                </div>
+                                                <div class="layui-col-md1" style="text-align: center;">
+                                                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                                                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                                                    <div class="sort-controls">
+                                                        <button type="button" class="move-up" title="上移">↑</button>
+                                                        <button type="button" class="move-down" title="下移">↓</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </if>
+                                    </div>
+                                    
+                                    <!-- 奖品配置说明 -->
+                                    
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                <div class="layui-form-item layui-row layui-col-space10">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="lotterySubmit" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<include file="/public/footer">
+<script>
+layui.use(['element', 'form', 'layer', 'admin', 'notice'], function () {
+    var $ = layui.jquery;
+    var element = layui.element;
+    var form = layui.form;
+    var layer = layui.layer;
+    var admin = layui.admin;
+    var notice = layui.notice;
+
+    // 添加奖品
+    $('#addPrize').on('click', function() {
+        var nextSort = $('.prize-item').length + 1;
+        var prizeHtml = `
+            <div class="prize-item layui-row layui-col-space10" style="margin-bottom: 15px;">
+                <!-- 隐藏的排序值 -->
+                <input type="hidden" name="prize_sorts[]" class="sort-input" value="${nextSort}">
+                
+                <div class="layui-col-md3">
+                    <input type="text" name="prize_names[]" class="layui-input" placeholder="奖品名称" required>
+                </div>
+                <div class="layui-col-md3">
+                    <select name="prize_types[]" class="layui-input">
+                        <option value="points">点数</option>
+                        <option value="money">余额</option>
+                        <option value="pack_quota">打包额度</option>
+                        <option value="empty">谢谢参与</option>
+                    </select>
+                </div>
+                <div class="layui-col-md3">
+                    <input type="number" name="prize_values[]" class="layui-input" placeholder="奖品数值" min="0" step="0.01">
+                </div>
+                <div class="layui-col-md2">
+                    <input type="number" name="prize_probabilities[]" class="layui-input" placeholder="概率%" required min="0" max="100">
+                </div>
+                <div class="layui-col-md1" style="text-align: center;">
+                    <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-prize">删除</button>
+                    <!-- 排序按钮在电脑端并行显示，手机端绝对定位 -->
+                    <div class="sort-controls">
+                        <button type="button" class="move-up" title="上移">↑</button>
+                        <button type="button" class="move-down" title="下移">↓</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#prizeList').append(prizeHtml);
+        form.render('select');
+        updateSortNumbers();
+    });
+
+    // 删除奖品
+    $(document).on('click', '.remove-prize', function() {
+        if ($('.prize-item').length <= 1) {
+            layer.msg('至少保留一个奖品配置');
+            return;
+        }
+        $(this).closest('.prize-item').remove();
+        updateSortNumbers();
+    });
+
+    // 上移奖品
+    $(document).on('click', '.move-up', function() {
+        var $item = $(this).closest('.prize-item');
+        var $prev = $item.prev('.prize-item');
+        if ($prev.length > 0) {
+            $item.addClass('sort-success');
+            $item.insertBefore($prev);
+            updateSortNumbers();
+            layer.msg('已上移', {icon: 1, time: 1000});
+            setTimeout(() => $item.removeClass('sort-success'), 300);
+        }
+    });
+
+    // 下移奖品
+    $(document).on('click', '.move-down', function() {
+        var $item = $(this).closest('.prize-item');
+        var $next = $item.next('.prize-item');
+        if ($next.length > 0) {
+            $item.addClass('sort-success');
+            $item.insertAfter($next);
+            updateSortNumbers();
+            layer.msg('已下移', {icon: 1, time: 1000});
+            setTimeout(() => $item.removeClass('sort-success'), 300);
+        }
+    });
+
+    // 更新排序号码
+    function updateSortNumbers() {
+        $('.prize-item').each(function(index) {
+            var $sortInput = $(this).find('input[name="prize_sorts[]"]');
+            var newSortValue = index + 1;
+            $sortInput.val(newSortValue);
+            
+            // 确保值真的被设置了
+            if ($sortInput.val() != newSortValue) {
+                $sortInput.attr('value', newSortValue);
+            }
+        });
+    }
+
+    // 处理下拉框层级问题
+    $(document).on('click', '.layui-form-select', function() {
+        // 重置所有卡片的层级
+        $('.prize-item').css('z-index', '1');
+        // 提升当前卡片的层级
+        $(this).closest('.prize-item').css('z-index', '10');
+    });
+
+    // 下拉框关闭时重置层级
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.layui-form-select').length) {
+            $('.prize-item').css('z-index', '1');
+        }
+    });
+
+    // 表单提交
+    form.on('submit(lotterySubmit)', function(data) {
+        // 提交前强制更新所有排序值
+        updateSortNumbers();
+        
+        // 延迟一点让updateSortNumbers完成
+        setTimeout(function() {
+            // 重新获取表单数据
+            var formData = $('#lotteryForm').serialize();
+            
+            // 继续原来的提交逻辑
+            submitFormData(formData);
+        }, 100);
+        
+        return false; // 阻止默认提交
+    });
+    
+    // 新的提交函数
+    function submitFormData(formData) {
+        
+        // 检查当前激活的tab
+        var activeTab = $('.layui-tab-title .layui-this').text().trim();
+        
+        // 如果是基础设置tab，跳过概率验证
+        if (activeTab === '基础设置') {
+            submitForm(formData);
+            return false;
+        }
+        
+        var totalProbability = 0;
+        var probabilityInputs = [];
+        
+        // 只在奖品配置tab显示时获取概率值
+        var prizeTabContent = $('.layui-tab-content .layui-tab-item').eq(1);
+        if (prizeTabContent.is(':visible')) {
+            prizeTabContent.find('input[name="prize_probabilities[]"]').each(function() {
+                var val = $(this).val();
+                var probability = parseInt(val) || 0;
+                probabilityInputs.push(probability);
+                totalProbability += probability;
+            });
+        }
+        
+        // 概率验证
+        
+        // 完全自由设置，无任何验证限制
+        
+        submitForm(formData);
+    }
+    
+    // 提交表单函数
+    function submitForm(formData) {
+
+        admin.btnLoading('#lotteryForm button[lay-submit]', true);
+        
+        $.ajax({
+            type: 'POST',
+            url: '{:url("/lottery/save")}',
+            data: formData,
+            dataType: 'json',
+            success: function(res) {
+                admin.btnLoading('#lotteryForm button[lay-submit]', false);
+                if (res.code == 0) {
+                    notice.success({
+                        title: '系统提示',
+                        message: res.msg
+                    });
+                } else {
+                    notice.error({
+                        title: '系统提示',
+                        message: res.msg
+                    });
+                }
+            },
+            error: function() {
+                admin.btnLoading('#lotteryForm button[lay-submit]', false);
+                notice.error({
+                    title: '系统提示',
+                    message: '操作失败，请重试'
+                });
+            }
+        });
+    }
+});
+</script>
+
+<style>
+/* 🎨 奖品排序美化样式 */
+.prize-item {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    z-index: 1;
+}
+
+.prize-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    z-index: 2;
+}
+
+/* 选择框悬停时提升层级 */
+.prize-item:has(select:focus),
+.prize-item:focus-within {
+    z-index: 10 !important;
+}
+
+/* Layui下拉框层级调整 */
+.layui-form-select .layui-anim {
+    z-index: 9999 !important;
+}
+
+.layui-form-select dl {
+    z-index: 9999 !important;
+}
+
+.layui-form-selected .layui-anim {
+    z-index: 9999 !important;
+}
+
+/* 确保下拉框容器有足够高的层级 */
+.layui-form-select {
+    z-index: 100 !important;
+    position: relative;
+}
+
+.layui-form-selectup .layui-anim {
+    z-index: 9999 !important;
+}
+
+/* 排序按钮样式 */
+.sort-controls {
+    display: inline-flex;
+    gap: 4px;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+.move-up, .move-down {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0.8;
+    vertical-align: middle;
+}
+
+.sort-controls:hover .move-up,
+.sort-controls:hover .move-down {
+    opacity: 1;
+}
+
+.move-up {
+    background: #409eff !important;
+    color: white !important;
+}
+
+.move-up:hover {
+    background: #66b1ff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(64, 158, 255, 0.3) !important;
+}
+
+.move-down {
+    background: #67c23a !important;
+    color: white !important;
+}
+
+.move-down:hover {
+    background: #85ce61 !important;
+    transform: translateY(1px) !important;
+    box-shadow: 0 3px 6px rgba(103, 194, 58, 0.3) !important;
+}
+
+/* 电脑端操作区域布局 */
+@media screen and (min-width: 769px) {
+    .prize-item .layui-col-md1:last-child {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    
+    .remove-prize {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+    
+    .sort-controls {
+        flex: 0 0 auto;
+        margin-left: 0;
+        display: flex !important;
+        gap: 3px;
+    }
+    
+    .sort-controls .move-up,
+    .sort-controls .move-down {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* 表头美化 */
+.prize-header {
+    background: #f5faff;
+    color: #303133;
+    padding: 12px 15px;
+    border: 1px solid #d1e9ff;
+    border-left: 4px solid #1890ff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    position: relative;
+    z-index: 0;
+}
+
+/* 📱 手机端响应式适配 */
+@media screen and (max-width: 768px) {
+    /* 隐藏桌面端表头 */
+    .prize-header {
+        display: none;
+    }
+    
+    /* 奖品项目变为卡片式布局 */
+    .prize-item {
+        display: block !important;
+        padding: 15px !important;
+        margin-bottom: 12px !important;
+        border-radius: 6px !important;
+    }
+    
+    .prize-item .layui-row {
+        display: block !important;
+    }
+    
+    .prize-item .layui-col-md1,
+    .prize-item .layui-col-md2,
+    .prize-item .layui-col-md3 {
+        width: 100% !important;
+        margin-bottom: 12px !important;
+        display: block !important;
+    }
+    
+    /* 手机端排序按钮调整 - 恢复绝对定位 */
+    .sort-controls {
+        position: absolute !important;
+        top: 6px;
+        right: 6px;
+        display: flex !important;
+        margin-left: 0 !important;
+    }
+    
+    .prize-item .layui-col-md1:last-child {
+        display: block !important;
+        text-align: center !important;
+    }
+    
+    .move-up, .move-down {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 14px !important;
+        opacity: 1 !important;
+    }
+    
+    /* 手机端输入框样式优化 */
+    .prize-item .layui-input,
+    .prize-item select {
+        height: 38px !important;
+        font-size: 16px !important;
+        border-radius: 4px !important;
+        border: 1px solid #dcdfe6 !important;
+    }
+    
+    .prize-item .layui-input:focus,
+    .prize-item select:focus {
+        border-color: #409eff !important;
+        box-shadow: 0 0 4px rgba(64, 158, 255, 0.2) !important;
+    }
+    
+    /* 手机端按钮优化 */
+    .remove-prize {
+        width: 100% !important;
+        height: 38px !important;
+        font-size: 14px !important;
+        border-radius: 4px !important;
+        margin-top: 8px !important;
+    }
+    
+    /* 添加标签样式 */
+    .prize-item .layui-col-md3:nth-of-type(1)::before {
+        content: "奖品名称";
+        display: block;
+        font-weight: 500;
+        color: #606266;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+    
+    .prize-item .layui-col-md3:nth-of-type(2)::before {
+        content: "奖品类型";
+        display: block;
+        font-weight: 500;
+        color: #606266;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+    
+    .prize-item .layui-col-md3:nth-of-type(3)::before {
+        content: "奖品数值";
+        display: block;
+        font-weight: 500;
+        color: #606266;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+    
+    .prize-item .layui-col-md2::before {
+        content: "中奖概率 (%)";
+        display: block;
+        font-weight: 500;
+        color: #606266;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+}
+
+/* 🎯 平板端适配 */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .move-up, .move-down {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+    }
+    
+    .prize-item {
+        padding: 12px;
+    }
+}
+
+/* ✨ 动画效果 */
+@keyframes sortSuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.prize-item.sort-success {
+    animation: sortSuccess 0.3s ease;
+}
+
+/* 🎨 整体美化 */
+#prizeList {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.layui-form-item .layui-form-mid {
+    color: #999;
+    font-size: 13px;
+}
+</style>

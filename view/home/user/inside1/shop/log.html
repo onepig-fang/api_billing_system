@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>套餐购买记录-{:conf('name')}</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+        <include file="/public/header">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .card-shadow {
+                @apply shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .package-card {
+                @apply glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .badge {
+                @apply absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold;
+            }
+            .table-hover-row {
+                @apply hover:bg-gray-50 transition-colors duration-200;
+            }
+        }
+           
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+
+        
+        <!-- 信息卡片 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-history text-primary text-xl"></i>
+                </div>
+                <p class="text-gray-700">本系统中你所有购买套餐的记录。</p>
+            </div>
+        </div>
+        
+        <!-- 记录列表区域 -->
+        <div class="glass-card p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-list-alt text-primary text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">购买记录</h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                   <table id="SK_Table" lay-filter="SK_Table"></table>
+            </div>
+            
+            <!-- 无记录时显示 -->
+            <div id="emptyState" class="py-12 text-center" style="display: none;">
+                <div class="text-gray-400 mb-4">
+                    <i class="fa fa-file-text-o text-5xl"></i>
+                </div>
+                <h3 class="text-xl font-medium text-gray-700 mb-2">暂无购买记录</h3>
+                <p class="text-gray-500 max-w-md mx-auto">您还没有购买任何套餐，前往套餐列表查看并购买适合您的套餐。</p>
+                <div class="mt-6">
+                    <a  ew-href="/shop" class="btn-primary">
+                        查看套餐列表
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // 显示结果消息
+        function showResultMessage(message) {
+            document.getElementById('msg').textContent = message;
+            $('#result').modal('show');
+        }
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以添加一些初始化逻辑
+        });
+    </script>
+    
+ <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'table', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+             var $ = layui.jquery;
+             var table = layui.table;
+ 
+   /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/ajax/shoplist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                var total = res.data.data.total;
+                $('#emptyState').toggle(total <= 0);
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+
+            {field: 'uid', title: '用户UID',  minWidth: 280},
+            {field: 'time', title: '购买时间',  minWidth: 160},
+            {field: 'name', title: '商品名称',  minWidth: 160},
+            {field: 'fs', title: '套餐类型',  minWidth: 160},
+            {field: 'price', title: '价格',  minWidth: 160},
+            ]]
+        });
+        });
+        
+   
+    </script>
+
+</body>
+</html>

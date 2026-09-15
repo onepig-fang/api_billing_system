@@ -1,0 +1,136 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form " id="formBasForm" lay-filter="formBasForm">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+     
+                    <div class="layui-tab-content" >
+                        <div class="layui-tab-item layui-show">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>支付配置</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">支付方式</label>
+                                        <div class="layui-input-block">
+                                         <input  type="radio"  value="1"  name="whatpay" title="易支付"  lay-filter="whatpay" <if condition="!isset($set['whatpay']) || $set['whatpay'] eq 1"> checked </if>/>
+                                          <input  type="radio"  value="2"  name="whatpay" title="当面付" lay-filter="whatpay" <if condition="isset($set['whatpay']) && $set['whatpay'] eq 2"> checked </if>/>
+                                        </div>
+                                    </div>
+                
+                                </div>
+                                       <div id="yzf" style="display: none">
+                                         <div class="layui-form-item">
+                                        <label class="layui-form-label">易支付地址</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="epay_api" class="layui-input" placeholder="" value="{:isset($set.epay_api) ? $set.epay_api : ''}" required>
+                                        </div>
+                                    </div>
+                                       <div class="layui-form-item">
+                                        <label class="layui-form-label">易支付APPID</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="epay_pid" class="layui-input" placeholder="" value="{:isset($set.epay_pid) ? $set.epay_pid : ''}" required>
+                                        </div>
+                                    </div>
+                                       <div class="layui-form-item">
+                                        <label class="layui-form-label">易支付KEY</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="epay_key" class="layui-input" placeholder="" value="{:isset($set.epay_key) ? $set.epay_key : ''}" required>
+                                        </div>
+                                    </div>
+                                     </div>
+                                        <div id="dmf" style="display: none">
+                                        <div class="layui-form-item">
+                                        <label class="layui-form-label">appid</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="appid" class="layui-input" placeholder="" value="{:isset($set.appid) ? $set.appid : ''}" required>
+                                        </div>
+                                    </div>
+                                       <div class="layui-form-item">
+                                        <label class="layui-form-label">	支付宝公钥</label>
+                                        <div class="layui-input-block">
+                                     
+                                          <textarea name="public_key" class="layui-textarea">{:isset($set.public_key) ? $set.public_key : ''}</textarea>
+                                        </div>
+                                    </div>
+                                       <div class="layui-form-item">
+                                        <label class="layui-form-label">支付宝私钥</label>
+                                        <div class="layui-input-block">
+                                      
+                                          <textarea name="private_key" class="layui-textarea">{:isset($set.private_key) ? $set.private_key : ''}</textarea>
+                                        </div>
+                                    </div>
+                                 </div>
+                            </fieldset>
+               
+                        </div>
+           
+            
+                    </div>
+                </div>
+                <hr style="width:0px"><hr>
+                <div class="layui-form-item layui-row layui-col-space10 ">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="noticeBtn" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<include file="/public/footer">
+
+<script>
+    layui.use([ 'layer', 'form', 'admin', 'notice'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var notice = layui.notice;
+
+
+        // 表单提交事件
+        form.on('submit(noticeBtn)', function (data) {
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: '{:url("/Set/payedit")}',
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                },
+                error: function() {
+                    notice.destroy();
+                    notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                }
+            });
+            return false;
+        });
+        <if condition="!isset($set['whatpay']) || $set['whatpay'] eq 1">  $("#yzf").css("display","inherit");    $("#dmf").css("display","none");</if>
+         <if condition="isset($set['whatpay']) && $set['whatpay'] eq 2">  $("#dmf").css("display","inherit");    $("#yzf").css("display","none");</if>
+       form.on('radio(whatpay)', function (data) {
+            var type = data.value;
+        
+            if(type==1){
+              $("#yzf").css("display","inherit");   
+               $("#dmf").css("display","none");
+           
+             
+            }
+         if(type==2){
+              $("#yzf").css("display","none");   
+               $("#dmf").css("display","inherit");
+        
+            }
+           
+        });
+    });
+</script>

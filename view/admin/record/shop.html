@@ -1,0 +1,48 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div>
+    </div>
+</div>
+<include file="/public/footer">
+<script>
+    layui.use(['form', 'table'], function () {
+        var table = layui.table;
+
+        /* 渲染表格 */
+        table.render({
+            elem: '#SK_Table',
+            url: '{:url("/record/shoplist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page',
+                limitName: 'limit'
+            },
+            parseData: function(res){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.data.total,
+                    "data": res.data.data.data
+                };
+            },
+            cols: [[
+                {field: 'id', title: 'ID', sort: true, width: 80},
+                {field: 'user_text', title: '用户', minWidth: 160, templet: function (d) {
+                    return d.username ? d.username + '（' + d.uid + '）' : d.uid;
+                }},
+                {field: 'shop_id', title: '套餐ID', minWidth: 100},
+                {field: 'shop_name', title: '套餐名称', minWidth: 180},
+                {field: 'price', title: '价格', minWidth: 120},
+                {field: 'time', title: '购买时间', minWidth: 160}
+            ]]
+        });
+    });
+</script>

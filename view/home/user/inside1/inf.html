@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户管理中心-{:conf('name')}</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+    <link rel="stylesheet" href="{__LIBS__}layui/css/layui.css"/>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#4080FF',
+                        success: '#00B42A',
+                        danger: '#F53F3F',
+                        warning: '#FF7D00',
+                        glass: 'rgba(255, 255, 255, 0.75)',
+                        glassBorder: 'rgba(220, 223, 230, 0.8)',
+                        glassDark: 'rgba(242, 243, 245, 0.6)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass backdrop-blur-md border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .glass-card-dark {
+                @apply bg-glassDark backdrop-blur-md border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all;
+            }
+            .btn-danger {
+                @apply bg-danger text-white font-medium py-2.5 px-4 rounded-lg shadow-md hover:bg-danger/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all;
+            }
+            .btn-outline {
+                @apply border border-primary text-primary font-medium py-2.5 px-4 rounded-lg hover:bg-primary/5 transition-all;
+            }
+            .card-header {
+                @apply flex items-center justify-between mb-4 pb-2 border-b border-gray-100;
+            }
+            .section-gap {
+                @apply my-6;
+            }
+            .info-item {
+                @apply flex flex-col space-y-1;
+            }
+        }
+        .max-w-5xl {
+    max-width: 95%;
+}
+    </style>
+</head>
+<body class="bg-white min-h-screen font-inter text-gray-800">
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 页面说明卡片 -->
+        <div class="glass-card-dark p-5 mb-8">
+            <div class="flex items-start">
+                <div class="text-primary mr-4 mt-0.5">
+                    <i class="fa fa-info-circle text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-1">账户安全管理</h3>
+                    <p class="text-gray-600 text-sm">在这里您可以查看账户详情、修改密码以及管理第三方登录绑定，保护您的账户安全。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账户详细信息卡片 -->
+        <div class="glass-card p-6 section-gap transform hover:translate-y-[-4px] transition-all duration-300">
+            <div class="card-header">
+                <h2 class="text-xl font-bold flex items-center">
+                    <i class="fa fa-id-card text-primary mr-2"></i>
+                    账户详细信息
+                </h2>
+                <span class="info-badge bg-primary/10 text-primary">
+                    账户信息
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">UID</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.uid}" type="text" disabled>
+                </div>
+                
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">用户名</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.user}" type="text" disabled>
+                </div>
+                
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">账户类型</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.way}" type="text" disabled>
+                </div>
+                
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">注册时间</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.time}" type="text" disabled>
+                </div>
+                
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">绑定邮箱</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.email}" type="text" disabled>
+                </div>
+                
+                <div class="info-item">
+                    <label class="text-xs font-medium text-gray-500">当前套餐每日上限</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.daily_limit}" type="text" disabled>
+                </div>
+                
+                <?php if($user['way']=='包点'){ ?>
+                <div class="info-item md:col-span-2 lg:col-span-3">
+                    <label class="text-xs font-medium text-gray-500">剩余点数</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.points}" type="text" disabled>
+                </div>
+                <?php } else { ?>
+                <div class="info-item md:col-span-2 lg:col-span-3">
+                    <label class="text-xs font-medium text-gray-500">到期时间</label>
+                    <input class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-white input-focus text-sm" value="{$user.bytime}" type="text" disabled>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+
+        <!-- 安全设置区域 - 密码修改与第三方绑定并排 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 section-gap">
+            <!-- 左侧：账号密码修改卡片 -->
+            <div class="glass-card p-6 transform hover:translate-y-[-4px] transition-all duration-300">
+                <div class="card-header">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa fa-lock text-primary mr-2"></i>
+                        账号登录密码修改
+                    </h2>
+                    <span class="info-badge bg-warning/10 text-warning">
+                        安全设置
+                    </span>
+                </div>
+                
+                <form method="POST" class="layui-form space-y-5">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">用户名</label>
+                        <input class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus bg-white" id="username" value="{$user.user}" disabled>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">账户类型</label>
+                        <input class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus bg-white" value="{$user.way}" disabled>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">新密码</label>
+                        <input class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus bg-white" name="password" placeholder="至少6位字符">
+                        <p class="text-sm text-gray-500 flex items-center">
+                            <i class="fa fa-lightbulb-o mr-1 text-warning"></i>
+                            建议使用字母、数字和特殊符号的组合密码
+                        </p>
+                    </div>
+                    
+                    <input name="method" value="password" hidden>
+                    <button 
+                        type="submit" 
+                        name="action" 
+                        value="update_password" 
+                        class="btn-primary w-full" 
+                        lay-submit 
+                        lay-filter="passwordForm"
+                    >
+                        <i class="fa fa-check mr-2"></i> 修改密码
+                    </button>
+                </form>
+            </div>
+            
+            <!-- 右侧：第三方登录绑定卡片 -->
+            <div class="flex flex-col space-y-6">
+                <!-- QQ绑定卡片 -->
+                <div class="glass-card p-6 transform hover:translate-y-[-4px] transition-all duration-300">
+                    <div class="card-header">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fa fa-qq text-primary mr-2"></i>
+                            QQ登录绑定
+                        </h2>
+                        <span class="info-badge bg-primary/10 text-primary">
+                            快捷登录
+                        </span>
+                    </div>
+                    
+                    <?php if(isset($user['access_token']) && !empty($user['access_token'])){ ?>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-success/10 border border-success/30 rounded-lg">
+                            <p class="text-success font-medium flex items-center">
+                                <i class="fa fa-check-circle mr-2"></i>
+                                已绑定QQ账号
+                            </p>
+                        </div>
+                        
+                        <form method='post' class="layui-form">
+                            <!-- 新增：明确解绑类型参数 -->
+                            <input name="method" value="unbind_qq" hidden>
+                            <input name="user_id" value="{$user.uid}" hidden>
+                            <button 
+                                type="submit" 
+                                class="btn-danger w-full" 
+                                lay-submit 
+                                lay-filter="jcqq"
+                            >
+                                <i class="fa fa-unlink mr-2"></i> 解除绑定
+                            </button>
+                        </form>
+                    </div>
+                    <?php } else { ?>
+                    <div class="p-4 bg-gray-50 border border-gray-100 rounded-lg mb-4">
+                        <p class="text-gray-600 font-medium flex items-center">
+                            <i class="fa fa-info-circle mr-2"></i>
+                            绑定QQ后，可使用QQ快捷登录
+                        </p>
+                    </div>
+                    
+                    <button 
+                        type="button" 
+                        class="btn-primary w-full"
+                        onclick="window.open('/api/quick/login?type=qq&terminal=userbd', '_blank')" 
+                    >
+                        <i class="fa fa-link mr-2"></i> 点击绑定QQ账号
+                    </button>
+                    <?php } ?>
+                </div>
+                
+                <!-- 微信登录绑定卡片 -->
+                <div class="glass-card p-6 transform hover:translate-y-[-4px] transition-all duration-300">
+                    <div class="card-header">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fa fa-weixin text-primary mr-2"></i>
+                            微信登录绑定
+                        </h2>
+                        <span class="info-badge bg-primary/10 text-primary">
+                            快捷登录
+                        </span>
+                    </div>
+                    
+                    <?php if(isset($user['access_token_wx']) && !empty($user['access_token_wx'])){ ?>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-success/10 border border-success/30 rounded-lg">
+                            <p class="text-success font-medium flex items-center">
+                                <i class="fa fa-check-circle mr-2"></i>
+                                已绑定微信账号
+                            </p>
+                        </div>
+                        
+                        <form method='post' class="layui-form">
+                            <input name="method" value="2" hidden>
+                            <button 
+                                type="submit" 
+                                class="btn-danger w-full" 
+                                lay-submit 
+                                lay-filter="jcwx"
+                            >
+                                <i class="fa fa-unlink mr-2"></i> 解除绑定
+                            </button>
+                        </form>
+                    </div>
+                    <?php } else { ?>
+                    <div class="p-4 bg-gray-50 border border-gray-100 rounded-lg mb-4">
+                        <p class="text-gray-600 font-medium flex items-center">
+                            <i class="fa fa-info-circle mr-2"></i>
+                            绑定微信后，可使用微信快捷登录
+                        </p>
+                    </div>
+                    
+                    <button 
+                        type="button" 
+                        class="btn-primary w-full"
+                        onclick="window.open('/api/quick/login?type=wx&terminal=userbd', '_blank')" 
+                    >
+                        <i class="fa fa-link mr-2"></i> 点击绑定微信账号
+                    </button>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 安全提示卡片 -->
+        <div class="glass-card-dark p-5 mt-8">
+            <h3 class="font-semibold mb-3 flex items-center">
+                <i class="fa fa-shield text-primary mr-2"></i>
+                账户安全建议
+            </h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-start">
+                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                    <span>定期更换密码，使用复杂密码提高账户安全性</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                    <span>绑定至少一种第三方登录方式，以便账号找回</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                    <span>不要向他人泄露您的账号信息和登录凭证</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                    <span>如发现异常登录，请立即修改密码并联系客服</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+    <script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var $ = layui.jquery;
+            
+            // 修改密码
+            form.on('submit(passwordForm)', function(data){
+                layer.load(1, {
+                    shade: [0.3, '#fff'],
+                    content: '正在更新密码...',
+                    success: function(layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding-top': '30px',
+                            'textAlign': 'center'
+                        });
+                    }
+                });
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/edit',
+                    data: data.field,
+                    dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code === 0){
+                            layer.msg(res.msg, {
+                                icon: 1,
+                                time: 1500,
+                                shade: 0.3
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2, shade: 0.3});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2, shade: 0.3});
+                    }
+                });
+                return false;
+            });
+            
+            // 解绑QQ（修复部分）
+            form.on('submit(jcqq)', function(data){
+                // 1. 增加参数验证
+                if(!data.field.user_id || !data.field.method){
+                    layer.msg('参数错误，请刷新页面重试', {icon: 2, shade: 0.3});
+                    return false;
+                }
+                
+                layer.confirm('确定要解除QQ绑定吗？解绑后将无法使用QQ快捷登录。', {
+                    title: '确认解绑',
+                    icon: 3,
+                    shade: 0.3
+                }, function(index){
+                    layer.close(index);
+                    
+                    layer.load(1, {
+                        shade: [0.3, '#fff'],
+                        content: '正在解除绑定...',
+                        success: function(layero) {
+                            layero.find('.layui-layer-content').css({
+                                'padding-top': '30px',
+                                'textAlign': 'center'
+                            });
+                        }
+                    });
+                    
+                    // 2. 修正请求URL和数据传递
+                    $.ajax({
+                        type: 'POST',
+                        url: '/user/jcqq',  // 确保此URL正确处理QQ解绑
+                        data: {
+                            method: data.field.method,
+                            user_id: data.field.user_id,
+                            action: 'unbind'  // 增加明确的操作类型
+                        },
+                        dataType: "json",
+                        // 3. 增加请求超时处理
+                        timeout: 10000,
+                        success: function(res){
+                            layer.closeAll('loading');
+                            if(res.code === 0){
+                                layer.msg(res.msg, {
+                                    icon: 1,
+                                    time: 1500,
+                                    shade: 0.3
+                                }, function(){
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg || '解绑失败', {icon: 2, shade: 0.3});
+                            }
+                        },
+                        error: function(xhr, status, error){
+                            layer.closeAll('loading');
+                            // 4. 更详细的错误提示
+                            if(status === 'timeout'){
+                                layer.msg('请求超时，请稍后再试', {icon: 2, shade: 0.3});
+                            } else {
+                                layer.msg('网络错误或服务器异常', {icon: 2, shade: 0.3});
+                            }
+                        }
+                    });
+                });
+                
+                return false;
+            });
+            
+            // 解绑微信
+            form.on('submit(jcwx)', function(data){
+                layer.confirm('确定要解除微信绑定吗？解绑后将无法使用微信快捷登录。', {
+                    title: '确认解绑',
+                    icon: 3,
+                    shade: 0.3
+                }, function(index){
+                    layer.close(index);
+                    
+                    layer.load(1, {
+                        shade: [0.3, '#fff'],
+                        content: '正在解除绑定...',
+                        success: function(layero) {
+                            layero.find('.layui-layer-content').css({
+                                'padding-top': '30px',
+                                'textAlign': 'center'
+                            });
+                        }
+                    });
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '/user/jcwx',
+                        data: data.field,
+                        dataType: "json",
+                        success: function(res){
+                            layer.closeAll('loading');
+                            if(res.code === 0){
+                                layer.msg(res.msg, {
+                                    icon: 1,
+                                    time: 1500,
+                                    shade: 0.3
+                                }, function(){
+                                    location.reload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon: 2, shade: 0.3});
+                            }
+                        },
+                        error: function(){
+                            layer.closeAll('loading');
+                            layer.msg('操作失败，请稍后再试', {icon: 2, shade: 0.3});
+                        }
+                    });
+                });
+                
+                return false;
+            });
+            
+            // 处理URL参数中的提示信息
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('act');
+            const type = urlParams.get('type');
+            
+            if (message) {
+                let decodedMessage = message.replace(/\\u([\d\w]{4})/gi, (match, grp) => 
+                    String.fromCharCode(parseInt(grp, 16))
+                );
+                decodedMessage = decodeURIComponent(decodedMessage);
+                
+                layer.msg(decodedMessage, {
+                    icon: type === 'warning' ? 2 : 1,
+                    time: 2000,
+                    shade: 0.3
+                });
+            }
+            
+            // 添加页面加载动画
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('opacity-100');
+                document.body.classList.remove('opacity-0');
+            });
+        });
+    </script>
+</body>
+</html>

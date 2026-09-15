@@ -1,0 +1,180 @@
+<include file="/public/header">
+<link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+.updatesystem-icon {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(0 102 255 / 5%);
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+}
+
+.updatesystem-icon i {
+      font-size: 48px;
+      color: #06f;
+}    
+.updatesystem-open {
+      width: 600px;
+      height: 400px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+}
+
+.updatesystem-open-title {
+      font-size: 32px;
+      color: #ff8b2a;
+      position: relative;
+      height: 48px;
+      line-height: 48px;
+      width: fit-content;
+}
+
+.updatesystem-open-title::after {
+      position: absolute;
+      content: '';
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background-color:  #ff8b2a;
+      border-radius: 10px;
+}
+
+.updatesystem-open-v {
+      margin-top: 20px;
+      font-size: 14px;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 15px;
+      border-radius: 20px;
+      background-color: rgb(255 139 42 / 10%);
+      color: #ff8b2a;
+}
+
+.updatesystem-open-content {
+      margin: 20px 0;
+      width: 80%;
+      height: 180px;
+      padding: 15px;
+      background-color: rgb(0 0 0 / 3%);
+      border-radius: 10px;
+      line-height: 1.5;
+      font-size: 14px;
+      color: #4d555e;
+      overflow-y: auto;
+}
+
+@media screen and (max-width: 600px) {
+      .updatesystem-open {
+            width: 100%;
+          }
+}
+
+    
+</style>
+<div class="layui-fluid">
+ <div class="layui-card-body">
+      <div class="layui-form layui-card" >
+     <div class="layui-form-item">
+        <div class="layui-fluid layui-container" style=" margin:0 auto;width:250px;height:220px;">
+        <div class="shuka-card shuka-card-mt shuka-card-mb">
+            <div class="shuka-card-header">
+                <em><i></i>系统版本更新</em>
+            </div>
+            <div class="updatesystem" style="">
+                <div class="updatesystem-icon">
+                    <i class="bi bi-cloud-upload"></i>
+                </div>
+       
+                <div class="updatesystem-text">您的当前系统版本为:{$version}</div>
+                <button type="button" class="layui-btn shuka-bg-blue" onclick="check_version()">检查更新</button>
+            </div>
+        </div>
+    </div>
+         </div>
+     </div>
+      </div>    </div>
+      
+    
+   
+      
+<include file="/public/footer">
+
+        <script src="{__JS__}/jquery.min.js"></script>
+        <script>
+        function check_version(){ //检查是否有新版本
+            $.ajax({
+                url: "{:url('/Update/check_version')}",
+                data: {
+
+                },
+                type: 'post',		// 请求方式，get、post
+                dataType: 'json',	// 返回值类型， json、text等
+                success: function (res) { // 请求成功执行此方法，res为返回值，名称自定义
+                    if(res.code == 201){
+                        layer.alert("系统已是最新版本！")
+                    }else if(res.code == 200){
+                        var html = '';
+                        html += '<div id="updemo" class="updatesystem-open" >';
+                        html += '<div class="updatesystem-open-title">有新版本</div>';
+                        html += '<div class="updatesystem-open-v">'+res.data.version+'</div>';
+                        html += '<div class="updatesystem-open-content"><textarea  class="layui-textarea layui-disabled" style="height:98%" disabled>';
+                      //  var contentArr = res.content.split("");
+                      // if(contentArr.length > 0){
+                         //  for(index in contentArr){
+                             //  html += contentArr[index]+'<br>';
+                          //// }
+                     //  }else{
+                           html += res.data.content+'</textarea>';
+                      //  }
+
+                        html += ' </div>';
+                        html += '<button type="button" class="layui-btn ksy-bg-blue" onclick="system_update()">立即更新</button>';
+                        html += '</div>';
+                        layer.open({
+                            type: 1,
+                            title: '系统有新版本:'+res.data.version,
+                            shadeClose: true,
+                            area: 'auto',
+                            maxWidth: '800',
+                            scrollbar: false,
+                            content: html
+                        });
+
+                    }else{
+                        layer.alert(res.msg);
+                    }
+                },
+            })
+        }
+        function system_update(){
+            layer.msg('系统更新中,请勿离开或刷新页面...', {time: 99999, icon: 16});
+            $.ajax({
+                url: "{:url('/Update/system_update')}",
+                data: {
+
+                },
+                type: 'post',		// 请求方式，get、post
+                dataType: 'json',	// 返回值类型， json、text等
+                success: function (res) { // 请求成功执行此方法，res为返回值，名称自定义
+                    layer.closeAll('loading');
+                    if(res.code==0){
+                    layer.alert(res.msg)
+                     setTimeout(function() {
+   parent.location.reload();  // 刷新页面
+    }, 1000); // 1000毫秒后执行
+                    }else{
+                       layer.msg(res.msg)   
+                    }
+                
+                },
+            })
+        }
+    </script>
+</body>
+</html>

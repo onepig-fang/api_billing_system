@@ -1,0 +1,125 @@
+<include file="/public/header">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .editor-content {
+            margin-bottom: 20px;
+        }
+        .editor-area {
+            width: 100%;
+            height: 500px;
+            padding: 10px;
+            border: 1px solid #e6e6e6;
+            border-radius: 2px;
+            resize: none;
+        }
+        .editor-actions {
+            text-align: right;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 2px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-container">
+        <div class="header">
+            <h1>编辑页面: <span id="pageName">home/{$subDir}/{$pageName}</span></h1>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="editor-content">
+
+         <textarea id="editor"  class="editor-area" rows="30" data-view-path="{$viewPath}">{$content}</textarea>
+        </div>
+        
+        <div class="editor-actions">
+            <button id="saveBtn" class="layui-btn layui-btn-normal">保存更改</button>
+        </div>
+    </div>
+<include file="/public/footer">
+            <script type="text/javascript" src="/Assets/libs/tinymce/tinymce.min.js"></script>
+    <script>
+        layui.use(['layer', 'form'], function(){
+            var layer = layui.layer;
+            var form = layui.form;
+            var $ = layui.jquery;
+              const subDir = '{$subDir}';
+
+
+            // 显示消息
+            function showMessage(msg, type) {
+                var messageEl = $('#message');
+                messageEl.removeClass('success error');
+                messageEl.addClass(type);
+                messageEl.text(msg);
+                
+                // 5秒后自动隐藏
+                setTimeout(function() {
+                    messageEl.fadeOut(300);
+                }, 5000);
+            }
+            
+            // 保存内容
+            $('#saveBtn').on('click', function() {
+                var content = $('#editor').val();
+                var pageName = $('#pageName').text();
+                
+                // 发送保存请求
+                $.ajax({
+                    url: 'save',
+                    type: 'POST',
+                    data: {
+                        pagename: pageName,
+                         subdir: subDir,
+                        content: encodeURIComponent(content)
+                    },
+                    success: function(res) {
+                        if (res.code === 0) {
+                            showMessage(res.msg, 'success');
+                        } else {
+                            showMessage(res.msg, 'error');
+                        }
+                    },
+                    error: function() {
+                        showMessage('保存失败，请检查网络连接', 'error');
+                    }
+                });
+            });
+        });
+const loadContent = async () => {
+    const subdir = 'index3'; // 你的子目录
+    const filename = 'index.html'; // 你的文件名
+    
+    try {
+        const response = await fetch(`load?subdir=${encodeURIComponent(subdir)}&filename=${encodeURIComponent(filename)}`);
+        const result = await response.json();
+        
+        if (result.code === 0) {
+            document.getElementById('editor').value = result.content;
+        } else {
+            alert('加载失败: ' + result.msg);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('请求失败');
+    }
+};
+    </script>
+</body>
+</html>

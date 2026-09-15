@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>使用教程-{:conf('name')}</title>
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .tab-btn {
+                @apply py-3 px-4 font-medium text-gray-600 hover:text-primary transition-colors duration-200;
+            }
+            .tab-btn-active {
+                @apply text-primary border-b-2 border-primary;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .step-card {
+                @apply bg-white border border-gray-200 rounded-lg p-5 mb-4 shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .step-number {
+                @apply w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-3;
+            }
+        }
+           
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+   <!--     <div class="glass-card mb-6">
+            <div class="p-5 text-center">
+                <h1 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-gray-800">使用教程</h1>
+            </div>
+        </div>-->
+        
+        <!-- 教程卡片 -->
+        <div class="glass-card card-hover">
+            <div class="p-6">
+                <!-- 标签页导航 -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex" id="tabs">
+                        <button class="tab-btn tab-btn-active" data-tab="khd">
+                            <i class="fa fa-desktop mr-2"></i> 客户端
+                        </button>
+                        <button class="tab-btn" data-tab="reurl">
+                            <i class="fa fa-upload mr-2"></i> 资源提交
+                        </button>
+                        <button class="tab-btn" data-tab="other">
+                            <i class="fa fa-ellipsis-h mr-2"></i> 其他
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- 标签页内容 -->
+                <div class="tab-content">
+                    <!-- 客户端标签页 -->
+                    <div class="tab-pane active" id="khd">
+                        <div class="space-y-6">
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">1</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">下载客户端</h3>
+                                        <p class="text-gray-600">点击网站首页的"下载客户端"按钮，选择适合您操作系统的版本进行下载。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">2</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">安装客户端</h3>
+                                        <p class="text-gray-600">运行下载的安装程序，按照提示完成安装。安装过程中可以选择安装位置和其他设置。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">3</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">登录账号</h3>
+                                        <p class="text-gray-600">安装完成后，打开客户端，输入您的账号和密码进行登录。如果您还没有账号，可以点击"注册"按钮进行注册。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">4</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">开始使用</h3>
+                                        <p class="text-gray-600">登录成功后，您可以在客户端中搜索和播放视频，也可以管理您的收藏和历史记录。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 资源提交标签页 -->
+                    <div class="tab-pane hidden" id="reurl">
+                        <div class="space-y-6">
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">1</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">找到资源链接</h3>
+                                        <p class="text-gray-600">在网页上找到您想要提交的视频资源链接，复制该链接地址。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">2</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">进入资源提交页面</h3>
+                                        <p class="text-gray-600">登录网站后，点击导航栏中的"资源提交"按钮，进入资源提交页面。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">3</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">填写提交信息</h3>
+                                        <p class="text-gray-600">在资源提交表单中，粘贴您复制的视频链接，填写视频标题、描述等信息，然后点击"提交"按钮。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">4</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">等待审核</h3>
+                                        <p class="text-gray-600">提交成功后，我们的工作人员会尽快审核您提交的资源。审核通过后，您将收到通知，并且该资源将在网站上可见。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 其他标签页 -->
+                    <div class="tab-pane hidden" id="other">
+                        <div class="space-y-6">
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">1</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">账号管理</h3>
+                                        <p class="text-gray-600">登录后，点击右上角的头像，选择"个人中心"，可以管理您的账号信息、修改密码、查看积分等。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">2</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">积分兑换</h3>
+                                        <p class="text-gray-600">在个人中心页面，点击"积分兑换"，可以使用您的积分兑换各种福利和服务。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">3</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">反馈建议</h3>
+                                        <p class="text-gray-600">如果您有任何问题、建议或反馈，可以在网站底部点击"联系我们"，选择合适的方式与我们取得联系。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="step-card">
+                                <div class="flex items-start">
+                                    <div class="step-number">4</div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">常见问题</h3>
+                                        <p class="text-gray-600">在网站底部点击"常见问题"，可以查看和搜索用户经常遇到的问题和解决方案。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 模态框 -->
+ <!--   <div aria-hidden="true" class="modal modal-va-middle fade" id="result" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-xs">
+            <div class="modal-content">
+                <div class="modal-inner">
+                    <p class="h5 margin-top-sm text-black-hint" id="msg"></p>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-right">
+                        <button class="btn btn-flat btn-brand-accent waves-attach" data-dismiss="modal" type="button" id="result_ok">知道了</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('#tabs .tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有标签的激活状态
+                    tabs.forEach(t => {
+                        t.classList.remove('tab-btn-active');
+                    });
+                    
+                    // 添加当前标签的激活状态
+                    tab.classList.add('tab-btn-active');
+                    
+                    // 隐藏所有标签页内容
+                    tabPanes.forEach(pane => {
+                        pane.classList.add('hidden');
+                        pane.classList.remove('active');
+                    });
+                    
+                    // 显示当前标签页内容
+                    const target = tab.getAttribute('data-tab');
+                    const activePane = document.getElementById(target);
+                    activePane.classList.remove('hidden');
+                    activePane.classList.add('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

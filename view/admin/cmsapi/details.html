@@ -1,0 +1,262 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form">
+                <input name="cmsapi_id" value="{:isset($shop.cmsapi_id) ? $shop.cmsapi_id : ''}" type="hidden"/>
+                
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">采集接口名称:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="cmsapi_name" value="{:isset($shop.cmsapi_name) ? $shop.cmsapi_name : ''}" 
+                               placeholder="请输入采集接口名称" class="layui-input" lay-verType="tips" lay-verify="required"/>
+                    </div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">采集接口地址:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="cmsapi_url" placeholder="请填写采集接口 建议：只需要到/vod/即可,例如：http://baidu.com/api.php/provide/vod/" 
+                               value="{:isset($shop.cmsapi_url) ? $shop.cmsapi_url : ''}" class="layui-input"/>
+                    </div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">生效的解析套餐:</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="enable_package" id="enable_package" lay-skin="primary" 
+                               lay-filter="enable_package" onchange="togglePackageSelection()" <?php echo !empty($shop['cmsapi_type']) ? 'checked' : ''; ?>>
+                        <label for="enable_package">启用套餐选择-开启则此接口为：买解析套餐自动赠送</label>
+                    </div>
+                </div>
+       
+                <div class="layui-form-item" id="package_selection" style="display:<?php echo !empty($shop['cmsapi_type']) ? '' : 'none'; ?> ;">
+                    <style>
+                        label {
+    font-weight: 500;
+    color: #323a46;
+}.form-check-label {
+    margin-bottom: 0;
+}
+.form-check {
+    position: relative;
+    display: block;
+ //   padding-left: 1.25rem;
+}
+.form-check-input {
+    position: absolute;
+    margin-top: 0.3rem;
+    margin-left: -1.25rem;
+}.layui-form-checkbox i {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #d2d2d2;
+    border-radius: 0 2px 2px 0;
+    font-weight: bolder;
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+}
+        .layui-form-checkbox {
+  
+    height: 16px;
+    line-height: 15px;
+
+
+}  
+          .layui-form-item .layui-form-checkbox {
+ margin-top: 0px; 
+
+}         </style>
+                    <div class="layui-input-block">
+                        
+                        <volist name="list" id="v">
+                            <?php     $checked = in_array($v['id'], $ids) ? 'checked' : '';?>
+                                 <div class='form-check'>
+                            <input type="checkbox" name="cmsapi_type[]" value="{$v['id']}" id="shop_{$v['id']}" class="form-check" {$checked}>
+                            <label for="shop_{$v['id']}">生效ID: {$v['id']} + 解析套餐名: {$v['name']}</label>
+                            <small>注意：未勾选的解析套餐不会赠送，只要勾选的套餐才会赠送当前采集接口授权</small>
+                            </div>
+                        </volist>
+                    </div> 
+                </div>
+                          <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">采集接口格式:</label>
+                    <div class="layui-input-block">
+                          <select class="layui-input" id="cmsapi_format" name="cmsapi_format" required>
+                                    <option value="json"  <if isset($shop.cmsapi_format) && $shop.cmsapi_format=='json'>selected</if>>JSON</option>
+                                    <option value="xml"  <if isset($shop.cmsapi_format) && $shop.cmsapi_format=='xml'>selected</if>>XML</option>
+                                </select>
+                    </div>
+                </div>
+                 <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">是否授权:</label>
+                    <div class="layui-input-block">
+                  <select class="layui-input" id="cmsapi_auth" name="cmsapi_auth" required>
+                                    <option value="1"  <if isset($shop.cmsapi_auth) && $shop.cmsapi_auth==1>selected</if>>是</option>
+                                    <option value="0"  <if isset($shop.cmsapi_auth) && $shop.cmsapi_auth==0>selected</if>>否</option>
+                                </select>
+                    </div>
+                </div>              <!-- 月价格和月时长 -->
+                    <div class="layui-form-item" id="month_price_selection">
+                    <label class="layui-form-label layui-form-required">月价格:</label>
+                    <div class="layui-input-block">
+               <input type="number" step="0.01" class="layui-input" id="cmsapi_price_month" name="cmsapi_price_month" required min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"      value="{:isset($shop.cmsapi_price_month) ? $shop.cmsapi_price_month : ''}">
+                    </div>
+                </div> 
+                  <div class="layui-form-item" id="month_price_selection">
+                    <label class="layui-form-label layui-form-required" id="duration_month_label"><?php echo !empty($shop['cmsapi_type']) ? '免费接口赠送时长（天）' : '月时长（天）'; ?>:</label>
+                    <div class="layui-input-block">
+                  <input type="number" class="layui-input" id="cmsapi_duration_month" name="cmsapi_duration_month" required min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');"      value="{:isset($shop.cmsapi_duration_month) ? $shop.cmsapi_duration_month : '30'}">
+                    </div>
+                </div> 
+                         <!-- 季价格和季时长 -->
+                <div id="quarter_selection">
+                   <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">季价格:</label>
+                    <div class="layui-input-block">
+                       <input type="number" step="0.01" class="layui-input" id="cmsapi_price_quarter" name="cmsapi_price_quarter" required min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); " value="{:isset($shop.cmsapi_price_quarter) ? $shop.cmsapi_price_quarter : ''}">
+                    </div>
+                </div> 
+                   <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">季时长（天）:</label>
+                    <div class="layui-input-block">
+                 <input type="number" class="layui-input" id="cmsapi_duration_quarter" name="cmsapi_duration_quarter" required min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');"      value="{:isset($shop.cmsapi_duration_quarter) ? $shop.cmsapi_duration_quarter : '90'}">
+                    </div>
+                </div> 
+                </div>
+                     <!-- 半年价格和半年时长 -->
+                <div id="half_year_selection">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">半年价格:</label>
+                    <div class="layui-input-block">
+                 <input type="number" step="0.01" class="layui-input" id="cmsapi_price_half_year" name="cmsapi_price_half_year" required min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"      value="{:isset($shop.cmsapi_price_half_year) ? $shop.cmsapi_price_half_year : ''}">
+                    </div>
+                </div> 
+                   <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">半年时长（天）:</label>
+                    <div class="layui-input-block">
+                      <input type="number" class="layui-input" id="cmsapi_duration_half_year" name="cmsapi_duration_half_year" required min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');"      value="{:isset($shop.cmsapi_duration_half_year) ? $shop.cmsapi_duration_half_year : '180'}">
+                    </div>
+                </div>      
+                </div>
+            <!-- 年价格和年时长 -->
+                <div id="year_selection">
+                  <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">年价格:</label>
+                    <div class="layui-input-block">
+              <input type="number" step="0.01" class="layui-input" id="cmsapi_price_year" name="cmsapi_price_year" required min="0" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"      value="{:isset($shop.cmsapi_price_year) ? $shop.cmsapi_price_year : ''}">
+                    </div>
+                </div> 
+                   <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">年时长（天）:</label>
+                    <div class="layui-input-block">
+                    <input type="number" class="layui-input" id="cmsapi_duration_year" name="cmsapi_duration_year" required min="0" oninput="this.value = this.value.replace(/[^0-9]/g, '');"      value="{:isset($shop.cmsapi_duration_year) ? $shop.cmsapi_duration_year : '365'}">
+                    </div>
+                </div>      
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">备注:</label>
+                    <div class="layui-input-block">
+                <textarea class="layui-textarea" id="cmsapi_remark" name="cmsapi_remark" rows="3">
+                    {:isset($shop.cmsapi_remark) ? $shop.cmsapi_remark : '<p>稳定官方采集接口</p>
+                    <p>全天售后客服在线</p>
+                    <p>请先导入播放器，绑定分类再采集</p>
+                    <p>包含五大站官方地址采集</p>'}
+
+                                </textarea>
+                    </div>
+                </div>
+                <hr style="width:0px"><hr>
+                
+                <div class="layui-form-item">
+                    <div class="layui-btn-container">
+                        <button type="button" class="layui-btn" lay-submit lay-filter="submitBtn">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<include file="/public/footer">
+<script>
+layui.use(['form', 'jquery', 'layer'], function() {
+    var form = layui.form;
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    // 初始化表单
+    form.render();
+         var packageSelection = $('#package_selection');
+        var monthPriceInput = $('#cmsapi_price_month');
+        var monthPriceSelection = $('#month_price_selection');
+        var quarterSelection = $('#quarter_selection');
+        var halfYearSelection = $('#half_year_selection');
+        var yearSelection = $('#year_selection');
+        var durationMonthLabel = $('#duration_month_label');
+    <empty name='shop.cmsapi_type'>
+    <else/>
+      quarterSelection.css('display', 'none');
+            halfYearSelection.css('display', 'none');
+            yearSelection.css('display', 'none');
+               monthPriceSelection.css('display', 'none');
+    </empty>
+    // 监听复选框变化
+    form.on('checkbox(enable_package)', function(data) {
+
+        // 控制季度、半年和年的价格和时长输入框的显示和必填属性
+       if (data.elem.checked) {
+            packageSelection.css('display', '');
+            quarterSelection.css('display', 'none');
+            halfYearSelection.css('display', 'none');
+            yearSelection.css('display', 'none');
+               monthPriceSelection.css('display', 'none');
+  
+        } else {
+               packageSelection.css('display', 'none');
+            quarterSelection.css('display', '');
+            halfYearSelection.css('display', '');
+            yearSelection.css('display', '');
+               monthPriceSelection.css('display', '');
+        }
+        
+      // 修改月时长的标题
+        durationMonthLabel.text(data.elem.checked ? '免费接口赠送时长（天）' : '月时长（天）');
+    });
+    
+  // 渲染表单（如果复选框是动态生成的，需要这步）
+  form.render('checkbox');
+    
+    // 表单提交
+    form.on('submit(submitBtn)', function(data) {
+        layer.msg('正在执行中..', {icon: 4, time: 1000});
+        
+        $.ajax({
+            type: "POST",
+            url: "{:url('/cmsapi/edit')}",
+            data: data.field,
+            dataType: "json",
+            success: function(data) {
+                layer.closeAll('loading');
+                if (data.code == 0) {
+                    layer.msg(data.msg, {icon: 1});
+                    var index = parent.layer.getFrameIndex(window.name);
+                    setTimeout(function () {
+                        parent.layer.close(index);     parent.location.reload();
+                    }, 500);
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.msg('请求失败，请稍后重试', {icon: 2});
+            }
+        });
+        
+        return false;
+    });
+});
+</script>

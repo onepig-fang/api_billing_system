@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据管理面板</title>
+    <script src="/template/inside1/css/3.4.16"></script>
+    <link href="/template/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="/template/inside1/css/chart.umd.min.js"></script>
+    <link href="/template/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="/template/inside1/css/layui.min.js"></script>
+    <link href="/template/inside1/css/layui.min.css" rel="stylesheet">
+    <include file="/public/header">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#14c9ff',
+                        secondary: '#69b1ff',
+                        success: '#10c469',
+                        danger: '#ff5b5b',
+                        glass: 'rgba(255, 255, 255, 0.15)',
+                        glassDark: 'rgba(30, 41, 59, 0.15)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(255, 255, 255, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            }
+            .glass-effect-dark {
+                backdrop-filter: blur(10px);
+                background-color: rgba(30, 41, 59, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+            }
+            .badge {
+                @apply inline-block px-2 py-1 text-xs font-bold rounded whitespace-nowrap;
+            }
+            .badge-success {
+                @apply bg-success text-white;
+            }
+            .badge-danger {
+                @apply bg-danger text-white;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen font-inter"> <!-- 修改背景为白色 -->
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- 调用排行榜卡片 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl p-5 shadow-md hover-lift border border-gray-100"> <!-- 修改卡片样式 -->
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa fa-trophy text-primary mr-2"></i>
+                        调用排行榜(前十)
+                    </h2>
+                    <div class="space-y-4">
+                        <!-- 排行榜项目 - 使用示例数据 -->
+                                     <volist name="user" id="v">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"> <!-- 修改背景 -->
+                            <notempty name="v.qq">
+                            <img src="//q1.qlogo.cn/g?b=qq&amp;nk={$v.qq}&amp;s=100" alt="用户头像" class="w-12 h-12 rounded-full object-cover mr-4" onerror="this.onerror=null;this.src='/template/CDN/adminto/assets/images/users/user-1.jpg';">
+                            <else/>
+                            <img src="/template/CDN/adminto/assets/images/users/user-1.jpg" alt="用户头像" class="w-12 h-12 rounded-full object-cover mr-4">
+                            </notempty>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-800">{$v.jx_name}【{$v.uid}】</h3>
+                                <p class="text-sm text-gray-600">今日调用：{$v.daynum}</p>
+                            </div>
+                            <button class="bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded transition-colors" name="but" data-id='{$v.id}'>
+                                编辑
+                            </button>
+                        </div>
+                    </volist>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据统计卡片 -->
+            <div class="lg:col-span-2 space-y-6">
+         
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl p-5 shadow-md hover-lift border border-gray-100"> <!-- 修改卡片样式 -->
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">总调用次数</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">{$cunt}</h3>
+                                <p class="text-success text-sm mt-2 flex items-center">
+                                  <if $log.type=='上升'>
+                                    <i class="fa fa-arrow-up mr-1"></i>
+                                  <elseif $log.type=='下降'/>
+                                    <i class="fa fa-arrow-down mr-1"></i>
+                                  <else/>
+                                    <i class="fa fa-minus mr-1"></i>
+                                  </if>
+                                    {$log.percentage}% <span class="text-gray-500 ml-1">较昨日{$log.type}</span>
+                                </p>
+                            </div>
+                            <div class="bg-primary/20 p-3 rounded-lg">
+                                <i class="fa fa-bolt text-primary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-5 shadow-md hover-lift border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">活跃用户</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">{$cuntuser}</h3>
+                                <p class="text-success text-sm mt-2 flex items-center">
+                                     <if $usera.type=='上升'>
+                                    <i class="fa fa-arrow-up mr-1"></i>
+                                    <elseif $usera.type=='下降'/>
+                                     <i class="fa fa-arrow-down mr-1"></i>
+                                    <else/>
+                                     <i class="fa fa-minus mr-1"></i>
+                                    </if> {$usera.percentage}% <span class="text-gray-500 ml-1">较昨日{$usera.type}</span>
+                                </p>
+                            </div>
+                            <div class="bg-secondary/20 p-3 rounded-lg">
+                                <i class="fa fa-users text-secondary text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-5 shadow-md hover-lift border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm">成功率</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-1">{$cuntsuccess}%</h3>
+                                <p class="text-danger text-sm mt-2 flex items-center">
+                                    <if $succes.type=='上升'>
+                                    <i class="fa fa-arrow-up mr-1"></i>
+                                    <elseif $succes.type=='下降'/>
+                                     <i class="fa fa-arrow-down mr-1"></i>
+                                    <else/>
+                                     <i class="fa fa-minus mr-1"></i>
+                                    </if> {$succes.percentage}% <span class="text-gray-500 ml-1">较昨日{$succes.type}</span>
+                                </p>
+                            </div>
+                            <div class="bg-success/20 p-3 rounded-lg">
+                                <i class="fa fa-check-circle text-success text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 表格区域 -->
+                <div class="bg-white rounded-xl p-5 shadow-md hover-lift border border-gray-100"> <!-- 修改卡片样式 -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fa fa-table text-primary mr-2"></i>
+                            调用记录
+                        </h2>
+            
+                    </div>
+                    
+                    <!-- 表格 -->
+                    <div class="overflow-x-auto">
+                        <table id="SK_Table" class="layui-table" lay-filter="SK_Table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 表格状态列 -->
+    <script type="text/html" id="SK_TbState">
+        {{String(d.status).indexOf('成功') === 0 ? '<span class="badge badge-success">成功</span>' : '<span class="badge badge-danger">失败</span>'}}
+    </script>
+<include file="/public/footer">
+    <script>
+        layui.use(['layer', 'form', 'table', 'admin', 'notice', 'laydate'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var table = layui.table;
+            var admin = layui.admin;
+            var notice = layui.notice;
+            var laydate = layui.laydate;
+
+            /* 渲染表格 */
+            var insTb = table.render({
+                elem: '#SK_Table',
+                url: '{:url("/record/userlist")}',
+                method: 'post',
+                page: true,
+                skin: 'line',
+                size: 'lg',
+                cellMinWidth: 100,
+                request: {
+                    pageName: 'current_page',
+                    limitName: 'limit'
+                },
+                parseData: function(res){
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.data.total,
+                        "data": res.data.data.data
+                    };
+                },
+                cols: [[
+                    {field: 'uid', title: 'UID', minWidth: 150},
+                    {field: 'url', title: 'URL', minWidth: 280},
+                    {field: 'ip', title: 'IP地址', minWidth: 160},
+                    {field: 'intime', title: '时间', minWidth: 160},
+                    {field: 'uselogjxtime', title: '耗时', minWidth: 100, templet: function (d) {
+                        return '<span style="color: #1890ff;">'+d.uselogjxtime+'秒</span>';
+                    }},
+                    {field: 'status', title: '状态', toolbar: '#SK_TbState', minWidth: 160}
+                ]]
+            });
+
+            /* 表格工具条点击事件 */
+            table.on('tool(SK_Table)', function (obj) {
+                if (obj.event === 'del') {
+                    doDel(obj);
+                }
+                laydate.render({
+                    elem: '#test',
+                    mark: {
+                        '0-3-15': 'SF'
+                    },
+                    type: 'datetime',
+                    trigger: 'click'
+                });
+            });
+
+            /* 表格头工具栏点击事件 */
+            table.on('toolbar(SK_Table)', function (obj) {
+                if (obj.event === 'del') {
+                    var checkRows = table.checkStatus('SK_Table');
+                    if (checkRows.data.length === 0) {
+                        notice.msg('请选择要删除的数据！', {icon: 3, audio:'1'});
+                        return;
+                    }
+                    var ids = checkRows.data.map(function (d) {
+                        return d.id;
+                    });
+                    console.log(ids);
+                    doDel({ids: ids});
+                }
+                laydate.render({
+                    elem: '#test',
+                    mark: {
+                        '0-3-15': 'SF'
+                    },
+                    type: 'datetime',
+                    trigger: 'click'
+                });
+            });
+
+            $('button[name="but"]').on('click', function(){
+                var dataId = $(this).data('id');
+                admin.popupRight({
+                    type: 2,
+                    title: '查看下级用户',
+                    area: ['95%', '90%'],
+                    content: '{:url("/user/details")}?id='+dataId
+                });
+            });
+            /* 删除 */
+            function doDel(obj) {
+                layer.confirm('确定要删除选中数据吗？', {
+                    skin: 'layui-layer-admin',
+                    icon: 3,
+                    shade: .1
+                }, function (i) {
+                    layer.close(i);
+                    notice.msg('正在执行中..', {icon: 4, close: true});
+                    $.ajax({
+                        type: "POST",
+                        url: obj.data ? '{:url("/record/userDel")}' : '{:url("/record/userDel")}',
+                        data: {id: obj.data ? obj.data.id : obj.ids.join(',')},
+                        dataType: "json",
+                        success: function(data) {
+                            notice.destroy();
+                            if (data.code == 0) {
+                                table.reload('SK_Table');
+                                notice.msg(data.msg, {icon: 1, audio:'1'});
+                            } else {
+                                notice.msg(data.msg, {icon: 2, audio:'1'});
+                            }
+                        },
+                        error: function() {
+                            notice.destroy();
+                            notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>    

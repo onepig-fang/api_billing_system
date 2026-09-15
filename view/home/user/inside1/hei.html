@@ -1,0 +1,277 @@
+<include file="/public/header">
+     <script src="{template}/inside1/css/3.4.16"></script>
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">内&emsp;容</label>
+                        <div class="layui-input-inline">
+                            <input name="text" class="layui-input" placeholder="ip"/>
+                        </div>
+                    </div>
+        
+                    <div class="layui-inline layui-btn-container">&emsp;&emsp;
+                        <button class="layui-btn icon-btn" lay-filter="SK_TbSearch" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                    </div>
+                                         <div class="layui-form-item layui-form-text" style="    color: red;">
+                          注意事项：如果解析接口被盗或被中转，请在本功能里添加对方IP即可有效防止被盗与中转。对方IP可在详情管理-接口调用记录中查看！
+                           </div>
+                                               </div>
+                </div>
+         
+            </form>
+            <!-- 数据表格 -->
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div>
+    </div>
+</div>
+<!-- 表格操作列 -->
+<script type="text/html" id="SK_TbBar">
+    <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+<!-- 表格状态列 -->
+<script type="text/html" id="SK_TbState">
+    <input type="checkbox" lay-filter="SK_TbStateCk" value="{{d.id}}" lay-skin="switch"
+           lay-text="正常|封禁" {{d.status==1?'checked':''}} style="display: none;"/>
+</script>
+<script type="text/html" id="SK_TbPermanent_Switch">
+    <input type="checkbox" lay-filter="SK_TbPermanent_SwitchCk" value="{{d.id}}" lay-skin="switch"
+           lay-text="开启|关闭" {{d.permanent_switch==1?'checked':''}} style="display: none;"/>
+</script>
+<script type="text/html" id="SK_Beta_Switch">
+    <input type="checkbox" lay-filter="SK_Beta_SwitchCk" value="{{d.id}}" lay-skin="switch"
+           lay-text="开启|关闭" {{d.beta==1?'checked':''}} style="display: none;"/>
+</script>
+<script type="text/html" id="SK_Tbid">
+    <span id="SK_span_{{d.id}}">{{d.status==1?'<span class="layui-badge-dot layui-bg-sf-indigo" style="height: 6px;width: 6px;position: relative;top: -2px"></span></span> '+d.id:'<span class="layui-badge-dot layui-bg-red" style="height: 6px;width: 6px;position: relative;top: -2px"></span></span> '+d.id}}
+</script>
+<!-- 表单弹窗 -->
+<script type="text/html" id="SK_EditDialog">
+    <form id="SK_EditForm" lay-filter="SK_EditForm" class="layui-form model-form">
+        <input name="id" type="hidden"/>
+
+   
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">IP:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="ip" placeholder="请输入要拉黑的ip" class="layui-input"
+                          />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">备注:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="notes" placeholder="请输入备注信息" class="layui-input"
+                         />
+                </div>
+            </div>
+       
+        
+    
+        <div class="layui-form-item text-right">
+            <button class="layui-btn" lay-filter="SK_EditSubmit" lay-submit>保存</button>
+            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        </div>
+    </form>
+</script>
+
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form', 'table', 'admin', 'notice', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var admin = layui.admin;
+        var notice = layui.notice;
+        var laydate = layui.laydate;
+
+        /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/ajax/heilist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+            toolbar: ['<p>',
+                '<button lay-event="add" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>&nbsp;',
+                '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
+                '</p>'].join(''),
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+                {type: 'checkbox', fixed: true},
+                {field: 'id', title: 'ID', templet: '#SK_Tbid', sort: true, width: 80, fixed: true},
+
+                {field: 'ip', title: '黑名单ip', sort: true, minWidth: 160},
+                {field: 'notes', title: '备注信息', sort: true, minWidth: 160},
+                {field: 'time', title: '添加时间', sort: true, minWidth: 180},
+           
+                {title: '操作', toolbar: '#SK_TbBar', align: 'center', minWidth: 210}
+            ]]
+        });
+
+
+
+    
+  
+
+        /* 表格搜索 */
+        form.on('submit(SK_TbSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+
+        /* 表格工具条点击事件 */
+        table.on('tool(SK_Table)', function (obj) {
+            if (obj.event === 'edit') { // 修改
+                showEditModel(obj.data);
+            } else if (obj.event === 'del') { // 删除
+                doDel(obj);
+            }
+            laydate.render({
+                elem: '#test', //指定元素
+                mark: {
+                    '0-3-15': 'SF'
+                },
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+        window.copy = function (){
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            var e = document.getElementById("copy");
+            e.select();
+            document.execCommand("Copy");//执行复制
+            notice.destroy();
+            notice.msg('复制成功！', {icon: 1, audio:'1'});
+        }
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(SK_Table)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                showEditModel();
+            } else if (obj.event === 'del') { // 删除
+                var checkRows = table.checkStatus('SK_Table');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要删除的数据！', {icon: 3, audio:'1'});
+                    return;
+                }
+                var ids = checkRows.data.map(function (d) {
+                    return d.id;
+                });
+                console.log(ids)
+                doDel({ids: ids});
+            }
+            laydate.render({
+                elem: '#test', //指定元素
+                mark: {
+                    '0-3-15': 'SF'
+                },
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+
+        /* 显示表单弹窗 */
+        function showEditModel(mData) {
+            admin.popupRight({
+                type: 1,
+                title: (mData ? '修改' : '添加') + '黑名单ip',
+                content: $('#SK_EditDialog').html(),
+                success: function (layero, dIndex) {
+                    // 回显表单数据
+                    if(mData){
+                        $("#form_data").css("display", "inherit");
+                        form.render();
+                       form.val('SK_EditForm', mData);
+                  
+                    }else{
+                        form.render();
+                        $("#form_data").css("display","none");
+                        $("#type").css("display", "none");
+                        $("#diy").css("display", "none");
+                    }
+
+                    // 表单提交事件
+                    form.on('submit(SK_EditSubmit)', function (data) {
+                        notice.msg('正在执行中..', {icon: 4, close: true});
+                        $.ajax({
+                            type: "POST",
+                            url: '{:url("/ajax/heiedit")}',
+                            data: data.field,
+                            dataType: "json",
+                            success: function(data) {
+                                notice.destroy();
+                                if (data.code == 0) {
+                                    table.reload('SK_Table');
+                                    notice.msg(data.msg, {icon: 1, audio:'1'});
+                                } else {
+                                    notice.msg(data.msg, {icon: 2, audio:'1'});
+                                }
+                            },
+                            error: function() {
+                                notice.destroy();
+                                notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                            }
+                        });
+                        return false;
+                    });
+                    // 禁止弹窗出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                }
+            });
+        }
+
+        /* 删除 */
+        function doDel(obj) {
+            layer.confirm('确定要删除选中数据吗？', {
+                skin: 'layui-layer-admin',
+                icon: 3,
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                notice.msg('正在执行中..', {icon: 4, close: true});
+                $.ajax({
+                    type: "POST",
+                    url: obj.data ? '{:url("/ajax/heidel")}' : '{:url("/ajax/heidel")}',
+                    data: {id: obj.data ? obj.data.id : obj.ids.join(',')},
+                    dataType: "json",
+                    success: function(data) {
+                        notice.destroy();
+                        if (data.code == 0) {
+                            table.reload('SK_Table');
+                            notice.msg(data.msg, {icon: 1, audio:'1'});
+                        }else{
+                            notice.msg(data.msg, {icon: 2, audio:'1'});
+                        }
+                    },
+                    error: function() {
+                        notice.destroy();
+                        notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                    }
+                });
+            });
+        }
+
+    });
+</script>

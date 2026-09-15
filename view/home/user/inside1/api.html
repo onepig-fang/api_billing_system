@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户端设置 - {:conf('name')}</title>
+    <!-- 引入Tailwind CSS -->
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- 引入Clipboard.js用于复制功能 -->
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1890ff',
+                        secondary: '#4096ff',
+                        accent: '#e6f7ff',
+                        success: '#10B981',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                        gray: {
+                            50: '#FFFFFF',
+                            100: '#F9FAFB',
+                            200: '#F3F4F6',
+                            300: '#E5E7EB',
+                            400: '#D1D5DB',
+                            500: '#9CA3AF',
+                            600: '#6B7280',
+                            700: '#4B5563',
+                            800: '#374151',
+                            900: '#1F2937',
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200;
+            }
+            .btn-hover {
+                @apply hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .step-badge {
+                @apply w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-4 flex-shrink-0;
+            }
+        }
+           
+    </style>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen">
+<!--    <!-- 顶部导航 -->
+<!--    <header class="bg-primary text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-center text-2xl font-bold">解析设置</h1>
+        </div>
+    </header>-->
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- 使用说明卡片 -->
+        <section class="mb-8">
+            <div class="glass rounded-2xl card-shadow p-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-0 flex items-center">
+                        <i class="fa fa-book text-primary mr-3"></i> 使用说明
+                    </h2>
+                </div>
+                 <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="step-badge">1</div>
+                        <div>
+                            <p class="text-gray-700 font-medium">最新ART弹幕播放器后台版</p>
+                            <div class="flex flex-wrap items-center mt-2">
+                                <a target="_blank" href="{:conf('khd')}" class="bg-primary hover:bg-primary/90 text-white px-4 py-1.5 rounded-lg btn-hover mr-3 flex items-center">
+                                    <i class="fa fa-download mr-1"></i> 前往下载
+                                </a>
+                                <span class="bg-danger/10 text-danger text-sm px-3 py-1 rounded-full">使用方法: 下载先看文件中安装教程！</span>
+                            </div>
+                        </div>
+                    </div>
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="step-badge">2</div>
+                        <div>
+                            <p class="text-gray-700 font-medium">ART弹幕原生播放器</p>
+                            <div class="flex flex-wrap items-center mt-2">
+                                <a target="_blank" href="/user/download?key={$user.key}&url=" class="bg-primary hover:bg-primary/90 text-white px-4 py-1.5 rounded-lg btn-hover mr-3 flex items-center">
+                                    <i class="fa fa-download mr-1"></i> 前往生成
+                                </a>
+                                <span class="bg-danger/10 text-danger text-sm px-3 py-1 rounded-full">注意事项: 在客户端配置好后去生成下载上传到自己服务器即可使用无需修改！</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                      
+                    
+                        
+                        <!--  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                                <h3 class="font-medium text-gray-900 mb-2 flex items-center">
+                                    <i class="fa fa-comment text-primary mr-2"></i> 弹幕播放器说明
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">下载打开config.php文件在第42行添加json接口地址</p>
+                                <a href="#" data-clipboard-text="{:conf('ym')}/api/?key={$user.my}&url=" class="copy-text text-primary hover:underline text-sm flex items-center">
+                                    <i class="fa fa-copy mr-1"></i> 点我复制
+                                </a>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                                <h3 class="font-medium text-gray-900 mb-2 flex items-center">
+                                    <i class="fa fa-play text-primary mr-2"></i> DP播放器说明
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-2">下载打开index.php文件在第7行中添加json接口地址</p>
+                                <a href="#" data-clipboard-text="{:conf('ym')}/api/?key={$user.my}&url=" class="copy-text text-primary hover:underline text-sm flex items-center">
+                                    <i class="fa fa-copy mr-1"></i> 点我复制
+                                </a>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </section>
+
+        <!-- 主内容区 -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 客户端配置 -->
+            <div class="lg:col-span-5">
+                <div class="glass rounded-2xl card-shadow overflow-hidden">
+                    <div class="bg-primary/5 p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fa fa-cog text-primary mr-3"></i> 客户端配置
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <form id="configForm"   name="configForm" method="POST"  class="layui-form">
+                            <input name="method" type="hidden" value="khd">
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label for="jxname" class="block text-sm font-medium text-gray-700 mb-2">平台名</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-globe"></i>
+                                        </span>
+                                        <input type="text" name="jxname" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.client_name) ? $user.client_name : ''}' required>
+                                        <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入平台名称</div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="img" class="block text-sm font-medium text-gray-700 mb-2">视频封面图（留空则不设置）</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-image"></i>
+                                        </span>
+                                        <input type="url" name="img" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.img) ? $user.img : ''}'>
+                                    <!--    <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入有效的URL</div>-->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">播放器logo（留空则不设置）</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-signal"></i>
+                                        </span>
+                                        <input type="url" name="logo" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.logo) ? $user.logo : ''}'>
+                                      <!--  <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入有效的URL</div>-->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="button" class="block text-sm font-medium text-gray-700 mb-2">播放器右键按钮</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-mouse-pointer"></i>
+                                        </span>
+                                        <input type="text" name="button" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.button) ? $user.button : ''}'>
+                                   <!--     <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入按钮名称</div>-->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="href" class="block text-sm font-medium text-gray-700 mb-2">跳转链接</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-link"></i>
+                                        </span>
+                                        <input type="url" name="you_href" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.you_href) ? $user.you_href : ''}'>
+                      <!--                  <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入有效的URL</div>-->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                
+                                    <label for="dmkupass" class="block text-sm font-medium text-gray-700 mb-2">是否开启弹幕（0代表关闭，1代表开启）</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-comments"></i>
+                                        </span>
+                                        <input type="number" name="dmkupass" min="0" max="1" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.dmkupass) ? $user.dmkupass : '0'}' required>
+                                        <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入0或1</div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="dmfirst" class="block text-sm font-medium text-gray-700 mb-2">暂停广告(留空关闭) 格式：图片链接,跳转链接</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-pause"></i>
+                                        </span>
+                                        <input type="text" name="dmfirst" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.dmfirst) ? $user.dmfirst : ''}'>
+                                        <div class="invalid-feedback d-block text-danger text-sm mt-1">格式应为：图片链接,跳转链接</div>
+                                    </div>
+                                </div>
+                              	<link rel="stylesheet" href="{__LIBS__}layui/css/layui.css"/>
+                                <div>
+                                    <label for="defense" class="block text-sm font-medium text-gray-700 mb-2">是否开启反调试（建议开启）</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-shield"></i>
+                                        </span>
+                                         
+                                        <select name="defense" class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg input-focus appearance-none bg-white">
+                                            <option value="1"  <if isset($user.defense) && $user.defense==1>selected</if>>开启</option>
+                                            <option value="0"  <if isset($user.defense) && $user.defense==0>selected</if>>关闭</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                            <i class="fa fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="player" class="block text-sm font-medium text-gray-700 mb-2">播放器类型</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-play"></i>
+                                        </span>
+                                        <select name="player" class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg input-focus appearance-none bg-white layui-select">
+                                            <option value="dm"  <if isset($user.player) && $user.player=="dm">selected</if>>ART播放器</option>
+                                       <!--     <option value="dp"  <if isset($user.player) && $user.player=="dp">selected</if>>DP播放器</option>
+                                            <option value="xigua"  <if isset($user.player) && $user.player=="xigua">selected</if>>西瓜播放器</option>
+                                            <option value="url"  <if isset($user.player) && $user.player=="url">selected</if>>直链播放器</option>-->
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                                            <i class="fa fa-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8">
+                                    <button type="submit" lay-submit lay-filter="Forma" class="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg btn-hover flex items-center justify-center">
+                                    <i class="fa fa-check mr-2"></i> 确认修改
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他信息 -->
+            <div class="lg:col-span-7">
+                <div class="glass rounded-2xl card-shadow overflow-hidden">
+                    <div class="bg-primary/5 p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <i class="fa fa-info-circle text-primary mr-3"></i> 其他信息
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <form name="otherConfigForm" novalidate class="layui-form">
+                            <input name="method" type="hidden" value="khd2">
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label for="cont" class="block text-sm font-medium text-gray-700 mb-2">URL不正确提示代码</label>
+                                    <div class="relative">
+                                        <span class="absolute top-3 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-code"></i>
+                                        </span>
+                                        <textarea name="cont" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus resize-none" rows="6">{:isset($user.you_index) ? $user.you_index : ''}</textarea>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="tj" class="block text-sm font-medium text-gray-700 mb-2">播放前广告（格式：pic/video, 内容外链, 跳转链接, 图片广告时间）</label>
+                                    <div class="relative">
+                                        <span class="absolute top-3 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-ad"></i>
+                                        </span>
+                                        <textarea name="tj" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus resize-none" rows="6">{:isset($user.tj) ? $user.tj : ''}</textarea>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="byjx" class="block text-sm font-medium text-gray-700 mb-2">备用解析（留空不设置）</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-exchange"></i>
+                                        </span>
+                                        <input type="url" name="byjx" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.byjx) ? $user.byjx : ''}'>
+                              <!--          <div class="invalid-feedback d-block text-danger text-sm mt-1">请输入有效的URL</div>-->
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="referer" class="block text-sm font-medium text-gray-700 mb-2">防盗链[不带http](留空不设置， | 号隔开域名)</label>
+                                    <div class="relative">
+                                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                        <input type="text" name="referer" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg input-focus" value='{:isset($user.referer) ? $user.referer : ''}'>
+                                    </div>
+                                    <p class="text-sm text-danger mt-2 flex items-center">
+                                        <i class="fa fa-exclamation-circle mr-1"></i> 
+                                        <span>因为国内环境特殊，务必添加防盗链</span>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8">
+                                <button type="submit" lay-submit lay-filter="Forms" class="w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg btn-hover flex items-center justify-center">
+                                    <i class="fa fa-check mr-2"></i> 确认修改
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <script>
+        // 初始化Clipboard.js
+        new ClipboardJS('.copy-text');
+        
+        // 复制成功提示
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.copy-text')) {
+                const button = e.target.closest('.copy-text');
+                button.innerHTML = '<i class="fa fa-check mr-1"></i> 已复制';
+                button.classList.add('text-success');
+                
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fa fa-copy mr-1"></i> 点我复制';
+                    button.classList.remove('text-success');
+                }, 2000);
+            }
+        });
+        
+  /*      // 表单提交功能
+          function khd1() {
+            if (!$('#configForm')[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+            
+            showLoadingModal("更新中...");
+            $.ajax({
+                 url: "/user/update", // 明确API端点
+                type: 'POST',
+                data: $('#configForm').serialize(),
+                dataType: 'json',
+                success: function(res) {
+                    hideLoadingModal();
+                    if (res.code === 200) {
+                        showSuccessModal("更新成功");
+                        setTimeout(() => {
+                            window.location.href = './?act=更新成功';
+                        }, 1500);
+                    } else {
+                        showErrorModal(res.message || "更新失败，请重试");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    hideLoadingModal();
+                    showErrorModal("程序出错，请稍后再试");
+                    console.error('AJAX错误:', error);
+                }
+            });
+        }
+        
+        function khd2() {
+            if (!$('#otherConfigForm')[0].checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+            
+            showLoadingModal("更新中...");
+            $.ajax({
+                 url: "/user/update", // 明确API端点
+                type: 'POST',
+                data: $('#otherConfigForm').serialize(),
+                dataType: 'json',
+                success: function(res) {
+                    hideLoadingModal();
+                    if (res.code === 200) {
+                        showSuccessModal("更新成功");
+                        setTimeout(() => {
+                            window.location.href = './?act=更新成功';
+                        }, 1500);
+                    } else {
+                        showErrorModal(res.message || "更新失败，请重试");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    hideLoadingModal();
+                    showErrorModal("程序出错，请稍后再试");
+                    console.error('AJAX错误:', error);
+                }
+            });
+        }*/
+        
+
+    </script>
+    <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'table', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+             var $ = layui.jquery;
+             var table = layui.table;
+
+            form.on('submit(Forma)', function(data){
+                layer.load(1);
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/update',
+                       data: data.field,
+                      dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code ===0){
+                            layer.msg(res.msg, {icon: 1});
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2});
+                    }
+                });
+                return false;
+
+        });
+           form.on('submit(Forms)', function(data){
+                layer.load(1);
+                $.ajax({
+                    type: 'POST',
+                    url: '/user/update',
+                         data: data.field,
+                      dataType: "json",
+                    success: function(res){
+                        layer.closeAll('loading');
+                        if(res.code ===0){
+                            layer.msg(res.msg, {icon: 1});
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    },
+                    error: function(){
+                        layer.closeAll('loading');
+                        layer.msg('操作失败，请稍后再试', {icon: 2});
+                    }
+                });
+                return false;
+
+        });
+        });   
+        
+    </script>
+</body>
+</html>

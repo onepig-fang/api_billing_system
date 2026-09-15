@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户登录/注册 - {:conf('name')}</title>
+    <link rel="stylesheet" href="/template/inside1/css/styles.css">
+    <!-- 引入 Font Awesome 图标库 -->
+  <link rel="stylesheet" href="../template/CDN/all.min.css">
+    <!-- 引入 SweetAlert2 CSS -->
+    <link rel="stylesheet" href="/template/CDN/css/sweetalert2.min.css">
+    <script src="/template/CDN/js/jquery.min.js"></script>
+    <!-- 引入 SweetAlert2 JS -->
+    <script src="/template/CDN/js/sweetalert2.min.js"></script>
+    <style>
+        /* 第三方登录按钮样式 */
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .social-login p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .wechat-btn {
+            background-color: #07C160;
+            color: white;
+        }
+        
+        .qq-btn {
+            background-color: #12B7F5;
+            color: white;
+        }
+        
+        .google-btn {
+            background-color: #EA4335;
+            color: white;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .social-login {
+                margin-top: 15px;
+            }
+            
+            .social-btn {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <!-- 登录表单 -->
+                <form  name="form1" id='form1' autocomplete="off" class="sign-in-form">
+                    <div class="logo-container">
+                        <a href="/"><img class="logo" src="{:conf('logo')}" alt="Logo"></a>
+                    </div>
+                    <h2 class="title">用户登录</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text"  name="user" placeholder="邮箱/用户名" required>
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password"  name="pass" placeholder="密码" required>
+                    </div>
+                    
+                    <!-- 新增：图形验证码 -->
+                    <div class="input-field captcha-field">
+                        <i class="fas fa-shield-alt"></i>
+                        <input type="text" name="codes" placeholder="验证码" required>
+                        <div class="captcha-container">
+                            <img id="captchaImg" src="{:url('/captcha')}" alt="验证码" onclick="refreshCaptcha()">
+                         
+                        </div>
+                    </div>
+
+                    <input type="submit" value="点 我 登 录" class="btn solid"  id="loginBtn">
+                    
+                    <!-- 新增：第三方登录 -->
+                      <if conf('quick_type')==1>
+                    <div class="social-login">
+                        <p>或使用以下方式登录</p>
+                        <div class="social-buttons">
+                            <div class="social-btn wechat-btn" onclick="window.location.href='/api/quick/login?type=wx&terminal=index'">
+                                <i class="fab fa-weixin fa-lg"></i>
+                            </div>
+                            <div class="social-btn qq-btn" onclick="window.location.href='/api/quick/login?type=qq&terminal=index'">
+                                <i class="fab fa-qq fa-lg"></i>
+                            </div>
+                        
+                        </div>
+                    </div></if>
+                    
+                    <!-- 服务条款提示 -->
+                    <p class="terms-text"><a href="/service.html" class="terms-text" style="color: #666;">服务条款</a> 登录即代表同意 </p>
+                    <p class="terms-text">
+                        <a href="/" class="terms-text">返回首页</a>/<a href='/index/reset.html' target='_blank'>找回密码</a>
+                    </p>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>新用户？</h3>
+                    <p>欢迎加入{:conf('name')}！请注册一个新账户。</p>
+                    <button class="btn transparent" id="sign-up-btn">注 册 账 号</button>
+                </div>
+                <img src="/template/inside1/img/dm_white.webp" class="image" alt="">
+            </div>
+      
+        </div>
+    </div>
+     <script type="text/javascript" src="{__LIBS__}layui/layui.js"></script>
+<script type="text/javascript" src="{__JS__}common.js?v=318"></script>
+<script>
+  layui.use(['layer', 'form', 'admin', 'notice'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var notice = layui.notice;
+        
+        // 刷新验证码函数
+        window.refreshCaptcha = function() {
+            var captchaImg = document.getElementById('captchaImg');
+            captchaImg.src = '{:url('/captcha')}?t=' + new Date().getTime();
+        };
+        
+       
+        
+   $('#sign-up-btn').click(function() {
+       window.location.href = "/index/register";
+   });
+   $('#loginBtn').click(function() {
+                var user = $("input[name='user']").val();
+                var pass = $("input[name='pass']").val();
+                var captcha = $("input[name='codes']").val();
+                
+                if(!user){
+                    notice.warning({
+                    
+                        message: '请填写用户名！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                if(!pass){
+                    notice.warning({
+                     
+                        message: '请填写密码！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                if(!captcha){
+                    notice.warning({
+                     
+                        message: '请填写验证码！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                
+                admin.btnLoading(' #loginBtn');
+                admin.showLoading('#divLoading', 2, '.8');
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/ajax/login')}",
+                     data:$('#form1').serialize(), 
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.code == 0) {
+                            notice.success({
+                                title: '登录通知',
+                                message: data.msg,
+                                animateInside:true,
+                                position:'topCenter',
+                                transitionOut:'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode:'2',
+                                audio:'1'
+                            });
+                            setTimeout(function (){
+                        
+                               location.href="{:url('/user/index')}";
+                            
+                            },2000)
+                        } else {
+                            // 登录失败时刷新验证码
+                            refreshCaptcha();
+                            
+                            notice.error({
+                                title: '系统提示您',
+                                message: data.msg,
+                                animateInside:true,
+                                position:'topCenter',
+                                transitionOut:'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode:'2',
+                                audio:'1'
+                            });
+                        }
+                        admin.removeLoading('#divLoading', true, true);
+                        admin.btnLoading(' #loginBtn', false);
+                    }, error: function () {
+                        notice.error({
+                            title: '系统提示您',
+                            message: '服务器错误，请稍后重试~',
+                            animateInside:true,
+                            position:'topCenter',
+                            transitionOut:'flipOutX',
+                            transitionOutMobile: 'flipOutX',
+                            timeout:false,
+                            displayMode:'2',
+                            audio:'1'
+                        });
+                        admin.removeLoading('#divLoading', true, true);
+                        admin.btnLoading(' #loginBtn', false);
+                        return false;
+                    }
+                });
+            });
+       
+    });
+
+</script>
+</body>
+</html>
+    

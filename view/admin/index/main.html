@@ -1,0 +1,476 @@
+<include file="/public/header">
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商业管理仪表盘</title>
+    <script src="/template/index2/css/3.1.4"></script>
+    <link href="/template/index2/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        dark: '#1D2129',
+                        'dark-2': '#4E5969',
+                        'light-1': '#F2F3F5',
+                        'light-2': '#E5E6EB'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.06);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
+            }
+            .stat-number {
+                font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+                letter-spacing: -0.025em;
+            }
+            .animate-fade-in {
+                animation: fadeIn 0.3s ease-in-out;
+            }
+            .notice-content p {
+                margin-bottom: 1rem;
+                line-height: 1.6;
+            }
+            .notice-content ul {
+                margin-left: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .notice-content li {
+                margin-bottom: 0.5rem;
+                line-height: 1.6;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-dark min-h-screen">
+    
+
+    <main class="container mx-auto px-4 py-6 max-w-7xl">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <!-- 今日用户调用 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">今日用户调用</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.todayuse}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <i class="fa fa-users text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 全站总调用 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">全站总调用</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.usecount}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                        <i class="fa fa-line-chart text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 今日销售额 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">今日销售额</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.todaymoney}￥</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+                        <i class="fa fa-credit-card text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 总销售额 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">总销售额</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.czmoney}￥</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                        <i class="fa fa-money text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 次要业务指标卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <!-- 代理总数 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">代理总数</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.agent}个</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <i class="fa fa-handshake-o text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 替换资源 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">替换资源</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.unmm}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                        <i class="fa fa-exchange text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 待审核资源 -->
+            <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-dark-2 text-sm font-medium">待审核资源</p>
+                        <h3 class="text-2xl font-bold mt-1 stat-number">{$array.examine}</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-danger/10 flex items-center justify-center">
+                        <i class="fa fa-clock-o text-danger"></i>
+                    </div>
+                </div>
+            </div>
+
+         <div class="bg-white rounded-xl p-5 card-shadow card-hover">
+                <div class="border-b border-light-1 pb-4 mb-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-semibold">账户信息</h3>
+                        <span class="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
+                           {$user.name}：{$user.username}
+                        </span>
+                    </div>
+                </div>
+                    <div class="flex flex-wrap gap-2 pt-2">
+     <if $user.ban==1>
+                            <span class="px-2 py-1 text-xs rounded-full bg-success/10 text-success">正常</span>
+                        <else/>
+                            <span class="px-2 py-1 text-xs rounded-full bg-danger/10 text-danger">关闭</span>
+                        </if>
+                         <span class="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
+                            <?php echo $user['auth']=='超级管理员'?"管理员":"代理" ?>
+                        </span>
+                        <if $user.json==1>
+                            <span class="px-2 py-1 text-xs rounded-full bg-light-1 text-dark-2">解析</span>
+                        </if>
+                        <if $user.shop==1>
+                            <span class="px-2 py-1 text-xs rounded-full bg-light-1 text-dark-2">套餐</span>
+                        </if>
+                        <if $user.pay==1>
+                            <span class="px-2 py-1 text-xs rounded-full bg-light-1 text-dark-2">支付</span>
+                        </if>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公告与系统信息组合区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- 公告区域 -->
+            <div class="lg:col-span-1 bg-white rounded-xl p-5 card-shadow">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="font-semibold flex items-center">
+                        <i class="fa fa-bullhorn text-warning mr-2"></i>
+                        系统公告
+                    </h3>
+                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">最新</span>
+                </div>
+                
+                <div class="space-y-4 max-h-80 overflow-y-auto pr-2 scrollbar-thin">
+                    <volist name="$new" id="vo">
+                    <div class="p-3 border border-light-2 rounded-lg gonggao cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" data-id="{$vo.id}">
+                        <div class="flex justify-between items-start mb-1">
+                            <p class="font-medium text-sm truncate">{$vo.name}</p>
+                            <span class="text-xs text-dark-2">{$vo.time}</span>
+                        </div>
+                        <p class="text-dark-2 text-xs line-clamp-2">{$vo.content|mb_substr=0,30,'utf-8'}...</p>
+                    </div>
+                    </volist>
+                </div>
+                
+                <button class="w-full mt-4 py-2 text-center text-primary text-sm border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors">
+                    查看全部公告
+                </button>
+            </div>
+
+            <!-- 系统信息表格 -->
+            <div class="lg:col-span-2 bg-white rounded-xl card-shadow overflow-hidden">
+                <div class="px-5 py-4 border-b border-light-1">
+                    <h3 class="font-semibold flex items-center">
+                        <i class="fa fa-server text-primary mr-2"></i>
+                        系统信息
+                    </h3>
+                </div>
+                <div class="p-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div class="flex justify-between py-3 border-b border-light-1">
+                            <span class="text-dark-2 text-sm">当前时间</span>
+                            <span class="text-sm font-medium">
+                                <?php
+                                header("content-type:text/html;charset=gb2312");
+                                date_default_timezone_set("PRC");
+                                echo '<div id="time"></div>
+                                <script type="text/javascript">
+                                var dayNames = new Array("星期日","星期一","星期二","星期三","星期四","星期五","星期六");
+                                function get_obj(time){
+                                return document.getElementById(time);
+                                }
+                                var ts='.(round(microtime(true)*1000)).';
+                                function getTime(){
+                                var t=new Date(ts);
+                                with(t){
+                                var _time=""+getFullYear()+"-"+(getMonth()+1)+"-"+getDate()+" "+(getHours()<10 ? "0" :"")+getHours()+":"+(getMinutes()<10 ? "0" :"")+getMinutes()+":"+(getSeconds()<10 ? "0" :"")+getSeconds()+" "+dayNames[t.getDay()];
+                                }
+                                get_obj("time").innerHTML=_time;
+                                setTimeout("getTime()",1000);
+                                ts+=1000;
+                            }
+                            getTime();
+                            </script>';
+                            ?>
+                        </span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3 border-b border-light-1">
+                        <span class="text-dark-2 text-sm">PHP版本</span>
+                        <span class="text-sm font-medium"><?php echo PHP_VERSION;?></span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3 border-b border-light-1">
+                        <span class="text-dark-2 text-sm">操作系统</span>
+                        <span class="text-sm font-medium"><?php echo PHP_OS;?></span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3 border-b border-light-1">
+                        <span class="text-dark-2 text-sm">服务端</span>
+                        <span class="text-sm font-medium"><?php echo $_SERVER ['SERVER_SOFTWARE'];?></span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3 border-b border-light-1">
+                        <span class="text-dark-2 text-sm">上传限制</span>
+                        <span class="text-sm font-medium"><?php echo get_cfg_var ("upload_max_filesize")?get_cfg_var ("upload_max_filesize"):"不允许";?></span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3 border-b border-light-1">
+                        <span class="text-dark-2 text-sm">执行时间</span>
+                        <span class="text-sm font-medium"><?PHP echo get_cfg_var("max_execution_time")."秒 "; ?></span>
+                    </div>
+                    
+
+                    
+                    <div class="flex justify-between py-3">
+                        <span class="text-dark-2 text-sm">授权终端</span>
+                        <span class="text-sm font-medium">auth.58km.cn</span>
+</div>
+                       <div class="flex justify-between py-3">
+                        <span class="text-dark-2 text-sm">技术支持</span>
+                        <span class="text-sm font-medium">QQ 692000321</span>
+                    </div>
+                             
+                       <div class="flex justify-between py-3">
+                        <span class="text-dark-2 text-sm">温馨提示</span>
+                        <span class="text-sm font-medium">本程序使用任何服务，需遵循国家相关法律法规。严令禁止任何侵犯版权的行为。</span>
+                    </div>
+                    <div class="flex justify-between py-3">
+                        <span class="text-dark-2 text-sm">温馨提示</span>
+                        <span class="text-sm font-medium">任何违反使用条款的用户，我们将会删除违规账户并收回使用本站服务的权利！</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form', 'admin'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+      
+        // 公告点击事件 - 美化弹窗UI
+        $('.gonggao').on('click', function() {
+            let id = $(this).attr('data-id');
+            $.ajax({
+                url: 'ver/',
+                data: {
+                    uid: id
+                },
+                dataType: "json",
+                success: function(asd) { 
+                    if (asd.code == 1) {
+                        // 构建富文本弹窗内容
+                        let noticeContent = `
+                            <div class="animate-fade-in">
+                                <!-- 公告头部 -->
+                                <div class="border-b border-light-2 pb-4 mb-4">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-lg font-semibold text-dark">${asd.data.name}</h3>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
+                                            系统公告
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center mt-2 text-sm text-dark-2">
+                                        <i class="fa fa-clock-o mr-1"></i>
+                                        <span>发布时间: ${asd.data.time}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 公告内容 -->
+                                <div class="notice-content text-dark-2 leading-relaxed">
+                                    ${asd.data.content}
+                                </div>
+                                
+                                <!-- 公告底部 -->
+                                <div class="mt-6 pt-4 border-t border-light-2 flex justify-end">
+                                    <button class="notice-close-btn px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                                        关闭
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // 打开弹窗
+                        var noticeIndex = layer.open({
+                            type: 1,
+                            title: false, // 不显示默认标题栏
+                            area: ['90%', '80%'],
+                            maxWidth: '700px',
+                            maxHeight: '80vh',
+                            anim: 4,
+                            shade: 0.3, // 半透明遮罩
+                            shadeClose: true,
+                            scrollbar: false, // 禁止浏览器滚动
+                            content: noticeContent,
+                            // 自定义样式
+                            skin: 'layui-layer-notice',
+                            success: function(layero) {
+                                // 添加自定义类名用于样式控制
+                                layero.addClass('rounded-xl overflow-hidden shadow-xl');
+                                
+                                // 关闭按钮事件
+                                layero.find('.notice-close-btn').on('click', function() {
+                                    layer.close(noticeIndex);
+                                });
+                            }
+                        });
+                    } else {
+                        // 错误提示弹窗
+                        layer.open({
+                            type: 1,
+                            title: '提示',
+                            area: '300px',
+                            anim: 6,
+                            content: `<div class="p-4 text-center">
+                                <div class="w-12 h-12 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fa fa-exclamation-circle text-danger text-xl"></i>
+                                </div>
+                                <p class="text-dark-2">${asd.msg}</p>
+                                <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                                    确定
+                                </button>
+                            </div>`,
+                            success: function(layero) {
+                                layero.find('button').on('click', function() {
+                                    layer.closeAll();
+                                });
+                            }
+                        });
+                    }
+                },
+                error: function() {
+                    // 网络错误提示
+                    layer.open({
+                        type: 1,
+                        title: '网络错误',
+                        area: '300px',
+                        anim: 6,
+                        content: `<div class="p-4 text-center">
+                            <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa fa-wifi text-warning text-xl"></i>
+                            </div>
+                            <p class="text-dark-2">加载失败，请重试</p>
+                            <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm">
+                                重试
+                            </button>
+                        </div>`,
+                        success: function(layero) {
+                            layero.find('button').on('click', function() {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // 为卡片添加加载动画效果
+        setTimeout(() => {
+            $('.card-hover').addClass('opacity-100');
+            $('.card-hover').removeClass('opacity-0');
+        }, 100);
+    });
+</script>
+<!-- 弹窗样式补充 -->
+<style>
+.layui-layer-notice .layui-layer-content {
+    padding: 24px !important;
+    overflow-y: auto !important;
+    max-height: calc(80vh - 48px) !important;
+}
+.layui-layer-notice .layui-layer-content::-webkit-scrollbar {
+    width: 6px;
+}
+.layui-layer-notice .layui-layer-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.layui-layer-notice .layui-layer-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+.layui-layer-notice .layui-layer-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+</style>
+</body>
+</html>

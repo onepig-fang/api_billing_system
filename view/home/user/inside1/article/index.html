@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>新闻公告-{:conf('name')}</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(220, 220, 220, 0.6)',
+                        cardBg: 'rgba(255, 255, 255, 0.95)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .glass-card-hover {
+                @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-100 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-200 transition-all duration-300;
+            }
+            .tab-btn {
+                @apply py-3 px-4 font-medium text-gray-600 hover:text-primary transition-colors duration-200 whitespace-nowrap;
+            }
+            .tab-btn-active {
+                @apply text-primary border-b-2 border-primary;
+            }
+            .news-card {
+                @apply glass-card rounded-xl p-4 mb-4 cursor-pointer bg-cardBg;
+            }
+            .news-title {
+                @apply text-lg font-semibold text-gray-800 mb-1 line-clamp-1 md:line-clamp-1;
+            }
+            .news-meta {
+                @apply text-sm text-gray-500 flex flex-wrap items-center;
+            }
+            .meta-item {
+                @apply mr-4 mb-1 flex items-center;
+            }
+            .nav-shadow {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen font-inter text-gray-800">
+    <!-- 顶部导航栏 -->
+    <header class="glass-card nav-shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fa fa-newspaper-o text-primary text-2xl mr-3"></i>
+                <h1 class="text-xl font-bold">新闻公告</h1>
+            </div>
+        <!--    <div class="flex items-center space-x-2">
+                <button class="btn-secondary hidden sm:flex items-center">
+                    <i class="fa fa-search mr-2"></i> 搜索
+                </button>
+                <button class="btn-secondary sm:flex items-center">
+                    <i class="fa fa-filter mr-2"></i> 筛选
+                </button>
+                
+            </div>-->
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <!-- 新闻列表区域 -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="khd">
+                <div class="space-y-4">
+                    <!-- 新闻项目 -->
+                    <volist name="new" id="v">
+                    <div class="news-card glass-card-hover" ew-href="/Article/details?id={$v.id}">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                            <div class="mb-3 sm:mb-0">
+                                <h3 class="news-title">{$v.title}</h3>
+                                <div class="news-meta">
+                                    <div class="meta-item">
+                                        <i class="fa fa-user-o mr-1"></i>
+                                        <span>发布人:管理员</span>
+                                    </div>
+                                <!--    <div class="meta-item">
+                                        <i class="fa fa-eye mr-1"></i>
+                                        <span>阅读: 234</span>
+                                    </div>-->
+                                </div>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-1"></i>
+                                <span>{$v.time|date='Y-m-d H:i:s'}</span>
+                                <i class="fa fa-angle-right ml-3 text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                    </volist>
+                    
+              
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+    <script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        // 标签页切换功能
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有活动状态
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('tab-btn-active');
+                });
+                // 添加当前活动状态
+                button.classList.add('tab-btn-active');
+            });
+        });
+        
+        // 新闻卡片点击效果
+        document.querySelectorAll('.news-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const href = card.getAttribute('ew-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+    

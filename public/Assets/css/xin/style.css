@@ -1,0 +1,114 @@
+.login-container {
+	width:100%;
+	height:100%;
+	background:url(png/login-bg.af96d53f.png) no-repeat center center;
+	background-size:100% 100%
+}
+.login-container .login-position {
+	height:100%;
+	display:flex;
+	align-items:center;
+	justify-content:center
+}
+.login-container .login-position .login-box {
+	width:800px;
+	height:400px;
+	display:flex;
+	background:#fff;
+	border-radius:15px;
+	overflow:hidden
+}
+.login-container .login-position .login-box .login-bg {
+	flex:1;
+	position:relative
+}
+.login-container .login-position .login-box .login-bg .login-banner {
+	-webkit-user-select:none;
+	user-select:none;
+	-webkit-user-drag:none
+}
+.login-container .login-position .login-box .login-bg .title-mask {
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	color:#fff;
+	display:flex;
+	align-items:center;
+	flex-direction:column;
+	padding:15px 0;
+	-webkit-user-select:none;
+	user-select:none
+}
+.login-container .login-position .login-box .login-bg .title-mask .title {
+	font-size:28px
+}
+.login-container .login-position .login-box .login-bg .title-mask .desc {
+	font-size:16px;
+	padding-top:5px
+}
+.login-container .login-position .login-box .login-content {
+	flex:1;
+	padding:10px 30px;
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center
+}
+.login-container .login-position .login-box .login-content .logo-container {
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+	width:100%
+}
+.login-container .login-position .login-box .login-content .logo-container .logo {
+	width:110px;
+	height:45px;
+	border-radius:4px
+}
+.login-container .login-position .login-box .login-content .logo-container .title {
+	font-size:16px;
+	padding-top:10px
+}
+.login-container .login-position .login-box .login-content .form-container {
+	display:flex;
+	flex-direction:column;
+	width:100%
+}
+.login-container .login-position .login-box .login-content .form-container .item,.login-container .login-position .login-box .login-content .form-container .submit-button {
+	margin-top:20px
+}
+.login-container .login-position .login-box .login-content .form-container .submit-button .submit {
+	width:100%;
+	height:40px
+}
+.login-container .login-position .login-box .login-content .form-container .register-password {
+	display:flex;
+	justify-content:space-between;
+	margin-top:15px;
+	font-size:14px;
+	color:#555
+}
+.login-container .login-position .login-box .login-content .form-container .other-login .other-conntent {
+	display:flex;
+	justify-content:center;
+	gap:20px
+}
+.login-container .login-position .login-box .login-content .form-container .other-login .other-conntent .other-item {
+	cursor:pointer
+}
+.login-container .login-position .login-box .login-content .form-container .other-login .other-conntent .other-item .other-logo {
+	width:30px;
+	height:30px
+}
+.login-container .xladmin-copyright {
+	position:fixed;
+	bottom:0;
+	left:0;
+	right:0;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	height:38px
+}

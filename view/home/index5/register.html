@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户注册 - {:conf('name')}</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../template/CDN/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        starDark: '#fafafa',
+                        starLight: '#ffffff',
+                        starBlue: '#1890ff',
+                        brandSoft: '#e6f7ff',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-star-gradient {
+                background: #1890ff;
+            }
+            .text-star-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: none;
+            }
+            .input-focus {
+                @apply focus:border-starBlue focus:ring-2 focus:ring-starBlue/20 focus:outline-none;
+            }
+            .btn-effect {
+                @apply transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0;
+            }
+        }
+    </style>
+    
+    <style>
+        /* 基础动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .form-container {
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        /* 加载动画 */
+        .loader {
+            border-top-color: #3b82f6;
+            animation: spinner 0.6s linear infinite;
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 星空背景基础样式 */
+        body {
+            background: #fafafa;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 md:py-16 flex flex-col lg:flex-row items-center justify-center min-h-screen">
+        <!-- 左侧信息面板（星空风格） -->
+        <div class="w-full lg:w-1/2 mb-10 lg:mb-0 lg:pr-10 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="bg-white rounded-2xl p-8 md:p-12 shadow-sm border border-gray-200 text-gray-800 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-50 rounded-full"></div>
+                <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-blue-50 rounded-full"></div>
+
+                <div class="relative z-10">
+                    <div class="mb-8">
+                        <img src="{:conf('logo')}" alt="{:conf('name')}" class="h-16 md:h-20 rounded-lg bg-white p-2 shadow-sm border border-gray-100">
+                    </div>
+
+                    <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold mb-4 leading-tight text-gray-900">
+                        欢迎来到<br>{:conf('name')}
+                    </h2>
+
+                    <p class="text-gray-600 text-lg mb-8 max-w-md">
+                        加入我们的平台，体验高效便捷的服务。已有账号？请直接登录。
+                    </p>
+
+                    <button id="sign-in-btn" class="bg-blue-50 text-blue-600 font-medium px-6 py-3 rounded-lg border border-blue-100 hover:bg-blue-100 transition-all btn-effect">
+                        <i class="fas fa-sign-in-alt mr-2"></i>登 录 账 号
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧表单容器（星空玻璃拟态） -->
+        <div class="w-full lg:w-1/2 max-w-md animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="form-container bg-white rounded-2xl shadow-sm p-8 md:p-10 border border-gray-200">
+                <div class="text-center mb-8">
+                    <h3 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-900">用户注册</h3>
+                    <p class="text-gray-600 mt-2">创建账号，开始使用我们的服务</p>
+                </div>
+
+                <form name="form1" id='form1' autocomplete="off" class="space-y-5">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="register-email" name="email"
+                               class="w-full pl-10 pr-36 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                               placeholder="邮箱" required>
+
+                        <if conf('mailreg')==1>
+                            <button name="codd" class="btn send-code-btn absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm btn-effect" id="send-code-btn">
+                                发送验证码
+                            </button>
+                        </if>
+                    </div>
+
+                    <if conf('mailreg')==1>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-key text-gray-400"></i>
+                            </div>
+                            <input type="text" id="register-code" name="code"
+                                   class="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                                   placeholder="验证码">
+                        </div>
+                    </if>
+
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="register-username" name="user"
+                               class="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                               placeholder="用户名" required>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="register-password" name="pass"
+                               class="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                               placeholder="密码" required>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-server text-gray-400"></i>
+                        </div>
+                        <input type="text" id="register-jxname" name="jxname"
+                               class="w-full pl-10 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                               placeholder="解析平台名" required>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-shield-alt text-gray-400"></i>
+                        </div>
+                        <input type="text" name="codes"
+                               class="w-full pl-10 pr-40 py-3 bg-white border border-gray-300 rounded-lg input-focus transition-all placeholder-gray-400 text-gray-900"
+                               placeholder="验证码" required>
+
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                            <img src="{:url('/captcha')}" alt="验证码"
+                                 class="h-10 w-32 object-cover rounded cursor-pointer hover:opacity-90 transition-opacity border border-gray-200"
+                                 onclick="this.src='{:url('/captcha')}?'+Math.random()">
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" id="loginBtn"
+                                class="w-full bg-blue-600 text-white font-medium py-3 px-4 rounded-lg shadow-sm hover:bg-blue-500 btn-effect flex items-center justify-center transition-all">
+                            <i class="fas fa-user-plus mr-2"></i>点 我 注 册
+                        </button>
+                    </div>
+
+                    <div class="text-center text-sm text-gray-500 space-y-2 pt-2">
+                        <p class="terms-text">
+                            注册即代表同意<a href='/service.html' target='_blank' class="text-blue-600 hover:underline">服务条款</a>
+                        </p>
+                        <p class="terms-text">
+                            <a href="/" class="text-blue-600 hover:underline">返回首页</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 (星空风格) -->
+    <div id="divLoading" class="fixed inset-0 bg-starDark/70 z-50 flex items-center justify-center hidden">
+        <div class="bg-starLight/30 backdrop-blur-md p-6 rounded-lg shadow-lg flex items-center border border-starBlue/20">
+            <div class="loader w-6 h-6 border-2 border-starBlue rounded-full mr-3"></div>
+            <span class="text-white">处理中，请稍候...</span>
+        </div>
+    </div>
+
+    <script>
+        // 发送验证码功能（保留原有逻辑，样式适配星空主题）
+        $(document).ready(function() {
+            // 验证码发送状态
+            let isSending = false;
+            let countdown = 60;
+            let countdownTimer = null;
+            
+            // 点击发送验证码按钮
+            $('#send-code-btn').on('click', function(e) {
+                e.preventDefault(); // 阻止表单默认提交行为
+                
+                // 如果正在发送中，则不处理
+                if (isSending) return;
+                
+                // 获取邮箱
+                const email = $('#register-email').val().trim();
+                
+                // 验证邮箱格式
+                if (!validateEmail(email)) {
+                    Swal.fire({
+                        title: '错误',
+                        text: '请输入有效的邮箱地址',
+                        icon: 'error',
+                        confirmButtonText: '确定',
+                        confirmButtonColor: '#3b82f6'
+                    });
+                    return;
+                }
+                
+                // 标记为正在发送
+                isSending = true;
+                
+                // 发送验证码请求
+                $.ajax({
+                    url: '/ajax/code',
+                    type: 'POST',
+                    data: {
+                        email: email
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.code === 1) {
+                            // 显示成功消息
+                            Swal.fire({
+                                title: '成功',
+                                text: '验证码已发送，请查收',
+                                icon: 'success',
+                                confirmButtonText: '确定',
+                                confirmButtonColor: '#3b82f6'
+                            });
+                            
+                            // 开始倒计时
+                            startCountdown();
+                        } else {
+                            // 显示错误消息
+                            Swal.fire({
+                                title: '错误',
+                                text: response.msg || '发送验证码失败',
+                                icon: 'error',
+                                confirmButtonText: '确定',
+                                confirmButtonColor: '#3b82f6'
+                            });
+                            
+                            // 重置发送状态
+                            isSending = false;
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // 显示错误消息
+                        Swal.fire({
+                            title: '错误',
+                            text: '发送验证码时发生错误',
+                            icon: 'error',
+                            confirmButtonText: '确定',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        
+                        // 重置发送状态
+                        isSending = false;
+                    }
+                });
+            });
+            
+            // 验证邮箱格式
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            // 开始倒计时
+            function startCountdown() {
+                // 修改按钮文本和禁用状态
+                const $btn = $('#send-code-btn');
+                $btn.prop('disabled', true);
+                
+                // 设置倒计时
+                $btn.text(`重新发送(${countdown}s)`);
+                
+                // 清除之前的定时器
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                }
+                
+                // 启动新的定时器
+                countdownTimer = setInterval(function() {
+                    countdown--;
+                    
+                    if (countdown <= 0) {
+                        // 倒计时结束
+                        clearInterval(countdownTimer);
+                        countdown = 60;
+                        
+                        // 恢复按钮状态
+                        $btn.prop('disabled', false);
+                        $btn.text('发送验证码');
+                        
+                        // 重置发送状态
+                        isSending = false;
+                    } else {
+                        // 更新按钮文本
+                        $btn.text(`重新发送(${countdown}s)`);
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+    
+    <script type="text/javascript" src="{__LIBS__}layui/layui.js"></script>
+    <script type="text/javascript" src="{__JS__}common.js?v=318"></script>
+    <script>
+        layui.use(['layer', 'form', 'admin', 'notice'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var admin = layui.admin;
+            var notice = layui.notice;
+            
+            // 登录按钮跳转（保留原有逻辑）
+            $('#sign-in-btn').click(function() {
+                window.location.href = "/index/login";
+            });
+            
+            // 注册按钮点击事件（保留原有逻辑）
+            $('#loginBtn').click(function() {
+                admin.btnLoading('#loginBtn');
+                $('#divLoading').removeClass('hidden');
+                
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/ajax/reg')}",
+                    data: $('#form1').serialize(), 
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.code == 0) {
+                            notice.success({
+                                title: '注册通知',
+                                message: data.msg,
+                                animateInside: true,
+                                position: 'topCenter',
+                                transitionOut: 'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode: '2',
+                                audio: '1'
+                            });
+                            
+                            setTimeout(function () {
+                                location.href = "{:url('/user/index')}";
+                            }, 2000);
+                        } else {
+                            notice.error({
+                                title: '系统提示',
+                                message: data.msg,
+                                animateInside: true,
+                                position: 'topCenter',
+                                transitionOut: 'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode: '2',
+                                audio: '1'
+                            });
+                        }
+                        
+                        $('#divLoading').addClass('hidden');
+                        admin.btnLoading('#loginBtn', false);
+                    }, 
+                    error: function () {
+                        notice.error({
+                            title: '系统提示',
+                            message: '服务器错误，请稍后重试~',
+                            animateInside: true,
+                            position: 'topCenter',
+                            transitionOut: 'flipOutX',
+                            transitionOutMobile: 'flipOutX',
+                            timeout: false,
+                            displayMode: '2',
+                            audio: '1'
+                        });
+                        
+                        $('#divLoading').addClass('hidden');
+                        admin.btnLoading('#loginBtn', false);
+                        return false;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

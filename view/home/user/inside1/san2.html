@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <title>支付页面加载中</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/Assets/jquery/3.5.1/mdui.min.css">
+        <script src="/Assets/jquery/3.5.1/mdui.min.js"></script>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #f6f6f6;
+            }
+            .page-wrap {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 16px;
+            }
+            .card {
+                background: #fff;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,.08);
+            }
+            .meta {
+                padding: 18px 20px 8px 20px;
+            }
+            .meta h2 {
+                margin: 0 0 8px 0;
+                font-size: 22px;
+                font-weight: 500;
+            }
+            .meta p {
+                margin: 6px 0;
+                color: #666;
+                word-break: break-all;
+            }
+            .tips {
+                padding: 0 20px 16px 20px;
+                color: #999;
+                font-size: 14px;
+            }
+            .frame-wrap {
+                border-top: 1px solid #f0f0f0;
+                background: #fafafa;
+            }
+            .frame-wrap iframe {
+                width: 100%;
+                height: 78vh;
+                min-height: 640px;
+                border: none;
+                background: #fff;
+            }
+            .actions {
+                padding: 12px 20px 20px 20px;
+            }
+            .actions a {
+                display: inline-block;
+                margin-right: 10px;
+                color: #1976d2;
+                text-decoration: none;
+            }
+            @media (max-width: 768px) {
+                .frame-wrap iframe {
+                    height: 70vh;
+                    min-height: 520px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page-wrap">
+            <div class="card">
+                <div class="meta">
+                    <h2>充值支付页面</h2>
+                    <p>充值金额：{$pay.money} 元</p>
+                    <p>充值账号 UID：{$user.uid}</p>
+                    <p>订单号：{$pay.order_id}</p>
+                </div>
+                <div class="tips">
+                    当前页面直接加载支付链接。如果支付页面未正常显示，可点击下方“打开支付页”在新窗口访问。
+                </div>
+                <div class="frame-wrap">
+                    <iframe src="{:htmlspecialchars_decode((string)$pay['qr_code'], ENT_QUOTES)}" referrerpolicy="no-referrer"></iframe>
+                </div>
+                <div class="actions">
+                    <a href="{:htmlspecialchars_decode((string)$pay['qr_code'], ENT_QUOTES)}" target="_blank">打开支付页</a>
+                    <a href="/user/san?id={$pay.id}">切换回二维码版</a>
+                </div>
+            </div>
+        </div>
+
+        <script src="/Assets/jquery/3.5.1/jquery.js"></script>
+        <script>
+            function getStatus() {
+                $.ajax({
+                    method: 'GET',
+                    url: '/ajax/pay',
+                    timeout: 10000,
+                    data: {
+                        outTradeNo: '{$pay.order_id}'
+                    },
+                    dataType:'json',
+                    success: function(data) {
+                        if (data.code == 1) {
+                            alert('充值成功，即将跳转到充值记录页');
+                            setTimeout(function () {
+                                window.location.href = '../user/recharge';
+                            }, 1000);
+                        }
+                    }
+                });
+            }
+            var g = setInterval(getStatus, 3000);
+        </script>
+    </body>
+</html>

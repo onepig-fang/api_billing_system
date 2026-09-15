@@ -1,0 +1,89 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+           <!-- 表格工具栏 -->
+     <form class="layui-form toolbar">
+                <div class="layui-form-item">
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">条&emsp;件&emsp;</label>
+                        <div class="layui-input-inline">
+                            <select name="status" class="ew-select-fixed">
+                                <option value="">选择条件</option>
+                                <option value="1">成功</option>
+                                <option value="2">失败</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-btn-container">&emsp;&emsp;
+                        <button class="layui-btn icon-btn" lay-filter="Sk_TbSearch" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                    </div>
+            </div>
+
+            </form>
+
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div>
+    </div>
+</div>
+<style>
+    .badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.badge-danger {
+    color: #fff;
+    background-color: #ff5b5b;
+}
+.badge-success {
+    color: #fff;
+    background-color: #10c469;
+}
+</style>
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form', 'table', 'admin', 'notice'], function () {
+        var form = layui.form;
+        var table = layui.table;
+
+        /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/record/toplist")}',
+            method: 'post',
+            page: false,
+            skin: 'line',
+            size: 'lg',
+            cellMinWidth: 100,
+            parseData: function(res){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": res.data.data.total,
+                    "data": res.data.data.data
+                };
+            },
+            cols: [[
+                {field: 'url', title: 'URL', minWidth: 280},
+                {field: 'num', title: '次数', minWidth: 160}
+            ]]
+        });
+
+        /* 表格搜索 */
+        form.on('submit(Sk_TbSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+    });
+</script>

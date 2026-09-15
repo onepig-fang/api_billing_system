@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>邀请注册-{:conf('name')}</title>
+    <!-- 引入Tailwind CSS -->
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    <include file="/public/header">
+    <!-- 引入Clipboard.js用于复制功能 -->
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .table-hover-row {
+                @apply hover:bg-gray-50 transition-colors duration-200;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .invite-link {
+                @apply bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-mono text-sm break-all overflow-hidden;
+            }
+            .badge-success {
+                @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium;
+            }
+            .badge-error {
+                @apply bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium;
+            }
+        }
+          
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+  
+        
+        <!-- 邀请说明卡片 -->
+        <div class="glass-card mb-6 card-hover">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-info-circle text-blue-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800">邀请说明</h2>
+                </div>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                    <p class="text-gray-700">您每邀请1位用户注册：</p>
+                    <p class="text-gray-700 mt-2">对方充值时您还会获得对方的的返利。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 邀请链接卡片 -->
+        <div class="glass-card mb-6 card-hover">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-link text-green-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800">邀请链接</h2>
+                </div>
+                
+                <div class="relative">
+                    <div class="invite-link flex items-center">
+                     <span class="flex-grow" id="urlInput">http://{:conf('ym')}/index/register/?invite={$user['uid']}</span>
+                        <button id="copy-btn" class="ml-2 px-3 py-1 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors duration-200 copy-btn" data-clipboard-target="#urlInput">
+                            <i class="fa fa-copy mr-1"></i> 复制
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-sm text-gray-500 mt-3">将此链接分享给您的朋友，通过此链接注册的用户将被视为您的邀请用户。</p>
+            </div>
+        </div>
+        
+        <!-- 邀请记录卡片 -->
+        <div class="glass-card card-hover">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-history text-blue-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800">邀请记录</h2>
+                </div>
+                
+                <div class="overflow-x-auto">
+                <table id="SK_Table" lay-filter="SK_Table"></table>
+                </div>
+                
+          
+            </div>
+        </div>
+    </main>
+    
+  
+    
+        <script>
+  new ClipboardJS('.copy-btn').on('success', function(e) {
+    Swal.fire({
+    
+      title: '复制成功',
+      text: '链接已复制到剪贴板',
+      timer: 1500,
+      showConfirmButton: false
+    });
+    e.clearSelection();
+  }).on('error', function(e) {
+    Swal.fire({
+   
+      title: '复制失败',
+      text: '请手动复制链接',
+      timer: 1500,
+      showConfirmButton: false
+    });
+  });
+
+    </script>
+
+ <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+    <script>
+        layui.use(['form', 'table', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+             var $ = layui.jquery;
+             var table = layui.table;
+   
+   /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/ajax/reglist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+           {field: 'time', title: '时间',  minWidth: 280},
+           {field: 'inviteuser', title: '被邀请用户ID',  minWidth: 160},
+          {field: 'fan', title: '获得返利',  minWidth: 160},
+
+            ]]
+        });
+        });
+        
+   
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+
+
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div>
+    </div>
+</div>
+<!-- 表格操作列 -->
+<script type="text/html" id="SK_TbBar">
+    <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+
+
+<style>
+    .badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.badge-danger {
+    color: #fff;
+    background-color: #ff5b5b;
+}
+.badge-success {
+    color: #fff;
+    background-color: #10c469;
+}
+</style>
+<!-- 表格状态列 -->
+<script type="text/html" id="SK_TbState">
+     {{d.examine==1?'<span class="badge badge-success">通过</span>':'<span class="badge badge-danger">待审</span>'}} 
+</script>
+
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form','layedit', 'table', 'util', 'admin', 'notice', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        var notice = layui.notice;
+         var layedit = layui.layedit;
+           var laydate = layui.laydate;
+             layedit.build('demo'); //建立编辑器
+
+        /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/url/selectlist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+            toolbar: ['<p>',
+                '<button lay-event="all" class="layui-btn layui-btn-sm icon-btn"><i class="layui-icon">&#xe654;</i>通过</button>&nbsp;',
+                '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
+                '</p>'].join(''),
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'id', title: '#',  sort: true, width: 80},
+                 {field: 'name', title: '名称',  minWidth: 100, templet: function (d) {
+                            return '<span style="color: #1890ff;">'+d.name+'</span>';
+                    },
+                },
+   
+                {field: 'old_url', title: '链接',  minWidth: 160},
+                {field: 'new_url', title: '新链接',  minWidth: 160},
+     
+                {field: 'auth', title: 'UID',  minWidth: 160},
+                {field: 'intime', title: '时间',  minWidth: 160},
+                {field: 'examine', title: '审核状态',toolbar: '#SK_TbState',  minWidth: 160},
+                {title: '操作', toolbar: '#SK_TbBar', align: 'right', minWidth: 180,fixed: 'right'}
+            ]]
+        });
+
+    /* 表格搜索 */
+        form.on('submit(Sk_TbSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+        /* 表格工具条点击事件 */
+        table.on('tool(SK_Table)', function (obj) {
+            if (obj.event === 'edit') { // 修改
+                showEditModel(obj.data);
+            } else if (obj.event === 'del') { // 删除
+                doDel(obj);
+            }
+            laydate.render({
+                elem: '#test', //指定元素
+                mark: {
+                    '0-3-15': 'SF'
+                },
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(SK_Table)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                showEditModel();
+            } else if (obj.event === 'del') { // 删除
+                var checkRows = table.checkStatus('SK_Table');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要删除的数据！', {icon: 3, audio:'1'});
+                    return;
+                }
+                var ids = checkRows.data.map(function (d) {
+                    return d.id;
+                });
+                console.log(ids)
+                doDel({ids: ids});
+            } else if (obj.event === 'all') { // 删除
+                var checkRows = table.checkStatus('SK_Table');
+                if (checkRows.data.length === 0) {
+                    notice.msg('请选择要操作的数据！', {icon: 3, audio:'1'});
+                    return;
+                }
+                var ids = checkRows.data.map(function (d) {
+                    return d.id;
+                });
+                console.log(ids)
+                all({ids: ids});
+            }
+            laydate.render({
+                elem: '#test', //指定元素
+                mark: {
+                    '0-3-15': 'SF'
+                },
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+
+        /* 显示表单弹窗 */
+        function showEditModel(mData) {
+            var id = mData && mData.id || '';
+            admin.popupRight({
+                type: 2,
+                title: (mData ? '修改' : '添加') + '',
+                area: ['95%', '90%'],
+                 content: '{:url("/url/details")}?id='+id
+            
+            });
+        }
+
+        /* 删除 */
+        function doDel(obj) {
+            layer.confirm('确定要删除选中数据吗？', {
+                skin: 'layui-layer-admin',
+                icon: 3,
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                notice.msg('正在执行中..', {icon: 4, close: true});
+                $.ajax({
+                    type: "POST",
+                    url: obj.data ? '{:url("/url/del")}' : '{:url("/url/del")}',
+                    data: {id: obj.data ? obj.data.id : obj.ids.join(',')},
+                    dataType: "json",
+                    success: function(data) {
+                        notice.destroy();
+                        if (data.code == 0) {
+                            table.reload('SK_Table');
+                            notice.msg(data.msg, {icon: 1, audio:'1'});
+                        }else{
+                            notice.msg(data.msg, {icon: 2, audio:'1'});
+                        }
+                    },
+                    error: function() {
+                        notice.destroy();
+                        notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                    }
+                });
+            });
+        }
+  /* 删除 */
+        function all(obj) {
+            layer.confirm('确定要通过选中数据吗？', {
+                skin: 'layui-layer-admin',
+                icon: 3,
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                notice.msg('正在执行中..', {icon: 4, close: true});
+                $.ajax({
+                    type: "POST",
+                    url: obj.data ? '{:url("/url/examineall")}' : '{:url("/url/examineall")}',
+                    data: {id: obj.data ? obj.data.id : obj.ids.join(',')},
+                    dataType: "json",
+                    success: function(data) {
+                        notice.destroy();
+                        if (data.code == 0) {
+                            table.reload('SK_Table');
+                            notice.msg(data.msg, {icon: 1, audio:'1'});
+                        }else{
+                            notice.msg(data.msg, {icon: 2, audio:'1'});
+                        }
+                    },
+                    error: function() {
+                        notice.destroy();
+                        notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                    }
+                });
+            });
+        }
+        
+       
+    });
+</script>

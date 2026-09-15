@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日抽奖</title>
+    <link rel="stylesheet" href="/Assets/libs/layui/css/layui.css">
+    <style>
+        .lottery-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .lottery-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            margin: 20px auto;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24, #6c5ce7, #a29bfe);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .lottery-wheel:hover {
+            transform: scale(1.05);
+        }
+        
+        .lottery-wheel .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .prize-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .prize-points { background: #1976d2; }
+        .prize-money { background: #388e3c; }
+        .prize-time { background: #f57c00; }
+        .prize-empty { background: #757575; }
+        
+        .record-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .btn-lottery {
+            width: 200px;
+            height: 60px;
+            font-size: 18px;
+            border-radius: 30px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="lottery-container">
+        <!-- 页面标题 -->
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2 style="margin: 0; text-align: center;">
+                    <i class="layui-icon layui-icon-gift"></i> 每日抽奖
+                </h2>
+            </div>
+        </div>
+
+        <div class="layui-row layui-col-space20">
+            <!-- 左侧：抽奖区域 -->
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">抽奖转盘</div>
+                    <div class="layui-card-body" style="text-align: center;">
+                        <div class="lottery-wheel" id="lotteryWheel">
+                            <div class="center-text">
+                                点击<br>抽奖
+                            </div>
+                        </div>
+                        
+                        <button class="layui-btn layui-btn-danger btn-lottery" id="drawBtn">
+                            <i class="layui-icon layui-icon-play"></i> 开始抽奖
+                        </button>
+                        
+                        <div style="margin-top: 20px; color: #666;">
+                            <p>今日剩余次数: <span class="remaining-count" style="color: #ff5722; font-weight: bold;">{$remainingCount}</span> 次</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：统计和记录 -->
+            <div class="layui-col-md6">
+                <!-- 统计信息 -->
+                <div class="layui-card">
+                    <div class="layui-card-header">抽奖统计</div>
+                    <div class="layui-card-body">
+                        <div class="layui-row layui-col-space10">
+                            <div class="layui-col-md4">
+                                <div class="stats-card">
+                                    <div class="remaining-count" style="font-size: 24px; color: #4ecdc4; font-weight: bold;">{$remainingCount}</div>
+                                    <div style="font-size: 14px; color: #666;">剩余次数</div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="stats-card">
+                                    <div style="font-size: 24px; color: #ff6b6b; font-weight: bold;">{$todayCount}</div>
+                                    <div style="font-size: 14px; color: #666;">今日已抽</div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="stats-card">
+                                    <div style="font-size: 24px; color: #45b7d1; font-weight: bold;">{$config['daily_limit']}</div>
+                                    <div style="font-size: 14px; color: #666;">每日限制</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 奖品列表 -->
+                <div class="layui-card">
+                    <div class="layui-card-header">奖品列表</div>
+                    <div class="layui-card-body">
+                        <volist name="config['prizes']" id="prize">
+                            <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>{$prize['name']}</span>
+                                
+                            </div>
+                        </volist>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 抽奖记录 -->
+        <div class="layui-card" style="margin-top: 20px;">
+            <div class="layui-card-header">最近抽奖记录</div>
+            <div class="layui-card-body">
+                <if condition="$records">
+                    <volist name="records" id="record">
+                        <div class="record-item">
+                            <div class="layui-row">
+                                <div class="layui-col-md4">
+                                    <strong>{$record['prize_name']}</strong>
+                                </div>
+                                <div class="layui-col-md4">
+                                    <if condition="$record['prize_type'] == 'points'">
+                                        <span class="prize-tag prize-points">点数奖品</span>
+                                    </if>
+                                    <if condition="$record['prize_type'] == 'money'">
+                                        <span class="prize-tag prize-money">余额奖品</span>
+                                    </if>
+                                    <if condition="$record['prize_type'] == 'time'">
+                                        <span class="prize-tag prize-time">包时奖品</span>
+                                    </if>
+                                    <if condition="$record['prize_type'] == 'empty'">
+                                        <span class="prize-tag prize-empty">谢谢参与</span>
+                                    </if>
+                                </div>
+                                <div class="layui-col-md4" style="text-align: right;">
+                                    <span style="color: #999; font-size: 12px;">{$record['create_time']}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </volist>
+                <else/>
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <i class="layui-icon layui-icon-face-cry" style="font-size: 48px; display: block; margin-bottom: 10px;"></i>
+                        暂无抽奖记录
+                    </div>
+                </if>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Assets/libs/layui/layui.js"></script>
+    <script>
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+            
+            var prizes = [];
+            <volist name="config['prizes']" id="prize">
+                prizes.push({
+                    type: '{$prize["type"]}',
+                    name: '{$prize["name"]}',
+                    value: {$prize["value"]},
+                    probability: {$prize["probability"]}
+                });
+            </volist>
+            
+            var remainingCount = {$remainingCount};
+            var isDrawing = false;
+            
+            // 抽奖按钮点击事件
+            document.getElementById('drawBtn').addEventListener('click', function() {
+                if (isDrawing) {
+                    layer.msg('正在抽奖中，请稍候...', {icon: 16});
+                    return;
+                }
+                
+                if (remainingCount <= 0) {
+                    layer.msg('今日抽奖次数已用完', {icon: 5});
+                    return;
+                }
+                
+                startDraw();
+            });
+            
+            // 开始抽奖
+            function startDraw() {
+                isDrawing = true;
+                var btn = document.getElementById('drawBtn');
+                btn.innerHTML = '<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 抽奖中...';
+                btn.disabled = true;
+                
+                // 发送抽奖请求
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/user/doLottery', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            try {
+                                var result = JSON.parse(xhr.responseText);
+                                handleDrawResult(result);
+                            } catch (e) {
+                                layer.msg('抽奖失败，请重试', {icon: 5});
+                                resetDrawButton();
+                            }
+                        } else {
+                            layer.msg('网络错误，请重试', {icon: 5});
+                            resetDrawButton();
+                        }
+                    }
+                };
+                xhr.send('action=draw');
+            }
+            
+            // 处理抽奖结果
+            function handleDrawResult(result) {
+                setTimeout(function() {
+                    if (result.success) {
+                        // 显示中奖结果
+                        layer.open({
+                            type: 1,
+                            title: '🎉 恭喜中奖！',
+                            content: '<div style="padding: 30px; text-align: center;">' +
+                                    '<div style="font-size: 48px; margin-bottom: 15px;">🎁</div>' +
+                                    '<h2 style="color: #ff5722; margin-bottom: 10px;">' + result.msg + '</h2>' +
+                                    '<p style="color: #666; font-size: 14px;">奖品已自动发放到您的账户</p>' +
+                                    '<p style="color: #999; font-size: 12px; margin-top: 15px;">点击确定查看最新数据</p>' +
+                                    '</div>',
+                            area: ['450px', '280px'],
+                            shadeClose: false,
+                            closeBtn: 1,
+                            btn: ['太棒了！'],
+                            yes: function(index) {
+                                layer.close(index);
+                                // 延迟刷新，确保用户看到了弹窗
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 500);
+                            }
+                        });
+                        
+                        // 更新剩余次数显示（不刷新页面）
+                        if (result.data && result.data.remaining_count !== undefined) {
+                            remainingCount = result.data.remaining_count;
+                            // 更新页面上的剩余次数显示
+                            var remainingElements = document.querySelectorAll('.remaining-count');
+                            remainingElements.forEach(function(el) {
+                                el.textContent = result.data.remaining_count;
+                            });
+                        }
+                    } else {
+                        layer.msg(result.msg || '抽奖失败', {icon: 5});
+                    }
+                    resetDrawButton();
+                }, 2000);
+            }
+            
+            // 重置抽奖按钮
+            function resetDrawButton() {
+                isDrawing = false;
+                var btn = document.getElementById('drawBtn');
+                btn.innerHTML = '<i class="layui-icon layui-icon-play"></i> 开始抽奖';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

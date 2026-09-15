@@ -1,0 +1,152 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form " id="formBasForm" lay-filter="formBasForm">
+       
+     
+                    <div class="layui-tab-content" >
+                        <div class="layui-tab-item layui-show">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>新增替换</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">名称</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="name" class="layui-input" placeholder=""  required>
+                                        </div>
+                                    </div>
+                                   <div class="layui-form-item">
+                                        <label class="layui-form-label">解析原地址</label>
+                                        <div class="layui-input-block">
+                                          <textarea type="text" name="old_url" class="layui-textarea"  ></textarea>
+                                          需要替换的解析地址,多地址一行一个
+                                        </div>
+                                    </div>
+                                     <div class="layui-form-item">
+                                        <label class="layui-form-label">解析新地址</label>
+                                        <div class="layui-input-block">
+                                          <input type="text" name="new_url" class="layui-input" placeholder=""  required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </fieldset>
+               
+                        </div>
+           
+            
+                    </div>
+  
+                <hr style="width:0px"><hr>
+                <div class="layui-form-item layui-row layui-col-space10 ">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="noticeBtn" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+                   <form class="layui-form " id="formBasForms" lay-filter="formBasForms">
+       
+     
+                    <div class="layui-tab-content" >
+                        <div class="layui-tab-item layui-show">
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <legend>批量替换</legend>
+                                <div class="layui-field-box">
+                                
+                                   <div class="layui-form-item">
+                                        <label class="layui-form-label">解析原地址</label>
+                                        <div class="layui-input-block">
+                                          <textarea type="text" name="content" class="layui-textarea"  ></textarea>
+                                     规则（$隔开,一行一个）例如：斗罗大陆01$https://123.com$https://456.com$
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                
+                            </fieldset>
+               
+                        </div>
+           
+            
+                    </div>
+  
+                <hr style="width:0px"><hr>
+                <div class="layui-form-item layui-row layui-col-space10 ">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="noticeBtns" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<include file="/public/footer">
+
+<script>
+    layui.use([ 'layer', 'form', 'admin', 'notice'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var admin = layui.admin;
+        var notice = layui.notice;
+
+
+        // 表单提交事件
+        form.on('submit(noticeBtn)', function (data) {
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: '{:url("/url/edit")}',
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                             
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                        
+                         var index = parent.layer.getFrameIndex(window.name);
+                  setTimeout(function () {
+                parent.layer.close(index);
+                           parent.location.reload();
+                  },500);
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                },
+                error: function() {
+                    notice.destroy();
+                    notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                }
+            });
+            return false;
+        });
+     // 表单提交事件
+        form.on('submit(noticeBtns)', function (data) {
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: '{:url("/url/alledit")}',
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                             parent.location.reload();
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                },
+                error: function() {
+                    notice.destroy();
+                    notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                }
+            });
+            return false;
+        });
+    });
+</script>

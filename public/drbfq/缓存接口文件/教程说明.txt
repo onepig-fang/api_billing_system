@@ -1,0 +1,17 @@
+这个文件是用于解析部分解析接口不能播放的问题，因为近期有些接口增加了多重加密导致部分视频地址不能播放器
+
+使用方法：
+1、打开jiexi.php这个文件在第11行添加你需要缓存的接口地址，然后将这个文件你自定义放置位置，
+
+2、调用方法：你的域名+jiexi.php?url=视频地址或者将：域名+jiexi.php?url=放进播放器后台解析设置--官方接口设置
+
+3、为了防止别人盗用你的，此文件已经增加了IP授权，只要是在当前播放器的情况下，获自动通过，其他人调用则需要授权，
+
+4、如果还担心的话，你可以将jiexi.php这个文件名修改成你自定义的文件名，相对于的你其他放的地址也要修改成你修改后的文件名接口
+
+5、缓存文件需要增加跨域伪静态
+
+--------宝塔--伪静态---添加下面设置跨域代码--------
+    add_header Access-Control-Allow-Origin * always;
+    add_header Access-Control-Allow-Methods GET,POST,DELETE;
+    add_header Access-Control-Allow-Header Content-Type,*;

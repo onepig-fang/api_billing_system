@@ -1,0 +1,24 @@
+*.log
+.env
+composer.phar
+composer.lock
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+/vendor
+/runtime
+/public/cache
+/install.lock
+/public/install.lock
+/.settings
+/.buildpath
+/.project
+
+docs/
+.claude/
+
+# 大体积源码打包文件（GitHub 单文件建议 <50MB）
+/仿聚合解析计费系统.zip
+docs/
+.claude/

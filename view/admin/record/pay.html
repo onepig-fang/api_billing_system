@@ -1,0 +1,147 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div>
+    </div>
+</div>
+<!-- 表格操作列 -->
+<script type="text/html" id="SK_TbBar">
+
+    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+<style>
+    .badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.badge-danger {
+    color: #fff;
+    background-color: #ff5b5b;
+}
+.badge-success {
+    color: #fff;
+    background-color: #10c469;
+}
+</style>
+<!-- 表格状态列 -->
+<script type="text/html" id="SK_TbState">
+     {{d.status==1?'<span class="badge badge-success">成功</span>':'<span class="badge badge-danger">失败</span>'}} 
+</script>
+
+<script type="text/html" id="SK_Tbid">
+    <span id="SK_span_{{d.id}}">{{d.status==1?'<span class="layui-badge-dot layui-bg-sf-indigo" style="height: 6px;width: 6px;position: relative;top: -2px"></span></span> '+d.id:'<span class="layui-badge-dot layui-bg-red" style="height: 6px;width: 6px;position: relative;top: -2px"></span></span> '+d.id}}
+</script>
+
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form', 'table', 'admin', 'notice', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var admin = layui.admin;
+        var notice = layui.notice;
+        var laydate = layui.laydate;
+
+        /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/record/paylist")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+    
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+        
+                {field: 'id', title: 'ID	',  sort: true, width: 80},
+                {field: 'order_id', title: '订单号',  minWidth: 280},
+                {field: 'fs', title: '充值方式',  minWidth: 120},
+                {field: 'kami', title: '卡密信息',  minWidth: 160, templet: function (d) {
+                    return d.kami || '-';
+                }},
+                {field: 'money', title: '金额',  minWidth: 160},
+                {field: 'status', title: '状态',toolbar: '#SK_TbState',  minWidth: 160},
+                {field: 'user_text', title: '使用者',  minWidth: 180},
+                {field: 'time_text', title: '提交时间',  minWidth: 170},
+                {field: 'intime_text', title: '充值时间',  minWidth: 170},
+
+                {title: '操作', toolbar: '#SK_TbBar',  minWidth: 180,fixed: 'right'}
+            ]]
+        });
+
+
+
+        /* 表格工具条点击事件 */
+        table.on('tool(SK_Table)', function (obj) {
+            if (obj.event === 'del') { // 删除
+                doDel(obj);
+            }
+            laydate.render({
+                elem: '#test', //指定元素
+                mark: {
+                    '0-3-15': 'SF'
+                },
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+
+        /* 删除 */
+        function doDel(obj) {
+            layer.confirm('确定要删除选中数据吗？', {
+                skin: 'layui-layer-admin',
+                icon: 3,
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                notice.msg('正在执行中..', {icon: 4, close: true});
+                $.ajax({
+                    type: "POST",
+                    url: obj.data ? '{:url("/record/paydel")}' : '{:url("/record/paydel")}',
+                    data: {id: obj.data ? obj.data.id : obj.ids.join(',')},
+                    dataType: "json",
+                    success: function(data) {
+                        notice.destroy();
+                        if (data.code == 0) {
+                            table.reload('SK_Table');
+                            notice.msg(data.msg, {icon: 1, audio:'1'});
+                        }else{
+                            notice.msg(data.msg, {icon: 2, audio:'1'});
+                        }
+                    },
+                    error: function() {
+                        notice.destroy();
+                        notice.msg("服务器错误！", {icon: 2, audio:'1'});
+                    }
+                });
+            });
+        }
+
+    });
+</script>

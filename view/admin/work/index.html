@@ -1,0 +1,116 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+   
+         <div data-v-8df1f572="" class="el-card is-never-shadow">
+            <!-- 数据表格 -->
+            <table id="SK_Table" lay-filter="SK_Table"></table>
+        </div> 
+        </div>
+    </div>
+</div>
+<!-- 表格操作列 -->
+<script type="text/html" id="SK_TbBar">
+    <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="edit">查看</a>
+  
+</script>
+
+
+<include file="/public/footer">
+<script>
+    layui.use(['layer', 'form', 'table', 'admin', 'notice', 'dropdown'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var admin = layui.admin;
+        var notice = layui.notice;
+
+        /* 渲染表格 */
+        var insTb = table.render({
+            elem: '#SK_Table',
+            url: '{:url("/work/list")}',
+            method: 'post',
+            page: true,
+            skin: 'line',
+            size: 'lg',
+            toolbar: ['<p>',
+               '<button lay-event="add" class="layui-btn layui-btn-sm icon-btn">添加</button>&nbsp;',
+            
+                '</p>'].join(''),
+            cellMinWidth: 100,
+            request: {
+                pageName: 'current_page' //页码的参数名称，默认：page
+                ,limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            parseData: function(res){ //res 即为原始返回的数据
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.data.total, //解析数据长度
+                    "data": res.data.data.data //解析数据列表
+                };
+            },
+            cols: [[
+              /*  {type: 'checkbox', fixed: true},*/
+                {field: 'name', title: '工单标题',  minWidth: 120, templet: function (d) {
+                return '<span class="demoh">'+d.name+'</span>';
+                }},
+                {field: 'time', title: '提交时间', minWidth: 150, templet: function (d) {
+                    if(d.time!=null){
+                        return '<a  class="demoh" >'+d.time+'</a>';
+                    }else{
+                   return '<a  class="demoh ">---</a>';
+                    }
+                    }
+                },
+                {field: 'state', title: '工单类型', sort: true, width: 180, templet: function (d) {
+                        if (d.state == 1) {
+                            return '<span class="layui-badge layui-badge-green">处理中</span> ';
+                        }if (d.state == 2) {
+                            return '<span class="layui-badge layui-badge-blue" >处理完成</span> ';
+                        } else {
+                            return '<span class="layui-badge  layui-badge-red" >未受理</span> ';
+                        }
+                    }
+                },
+                {title: '操作', toolbar: '#SK_TbBar', align: 'center', minWidth: 180}
+            ]]
+        });
+
+        /* 表格搜索 */
+        form.on('submit(SK_TbSearch)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+    
+
+        /* 表格工具条点击事件 */
+        table.on('tool(SK_Table)', function (obj) {
+            if (obj.event === 'edit') {
+                showEditModel(obj.data);
+            }
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(SK_Table)', function (obj) {
+            if (obj.event === 'add') {
+                showEditModel();
+            }
+        });
+
+        /* 显示表单弹窗 */
+        function showEditModel(mData) {
+            var id = mData && mData.id ? mData.id : '';
+            admin.open({
+                type: 2,
+                title: (id ? '查看' : '添加') + '工单',
+                area: ['75%', '750px'],
+                content: '{:url("/work/details")}?id=' + id
+            });
+        }
+    });
+</script>

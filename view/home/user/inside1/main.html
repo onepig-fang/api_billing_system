@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:conf('name')}-数据管理面板</title>
+     <script src="{template}/inside1/css/3.4.16"></script>
+    <link rel="stylesheet" href="{__LIBS__}layui/css/layui.css"/>
+    <script src="{template}/inside1/css/chart.umd.min.js"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="/template/CDN/js/clipboard.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#14c9ff',
+                        secondary: '#69b1ff',
+                        success: '#10c469',
+                        danger: '#ff5b5b',
+                        warning: '#ff9800',
+                        info: '#2196F3',
+                        glass: 'rgba(255, 255, 255, 0.7)',
+                        glassDark: 'rgba(30, 41, 59, 0.15)',
+                        mizhi: '#399af2',
+                        blueSoft: '#e6f7ff',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(255, 255, 255, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+            .glass-effect-hover {
+                transition: all 0.3s ease;
+            }
+            .glass-effect-hover:hover {
+                backdrop-filter: blur(15px);
+                background-color: rgba(255, 255, 255, 0.85);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            }
+            .badge {
+                @apply inline-block px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap;
+            }
+            .progress-bar {
+                @apply h-2 rounded-full overflow-hidden bg-gray-200;
+            }
+            .progress-value {
+                @apply h-full transition-all duration-700 ease-out;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .colored-text {
+                @apply font-bold;
+            }
+            /* 新增：弹窗居中样式 */
+            .swal2-center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+       
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-inter">
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-12">
+
+        <!-- 用户信息卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800">账户类型</h3>
+                    <span class="badge bg-primary/20 text-primary">
+                    
+                         <?php if($user['way']=='包点'){ ?>
+                        点数用户
+                          <?php } else { ?>
+                           时效用户 
+                          <?php }?>
+                        
+                        </span>
+                </div>
+                <div class="flex flex-col space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">状态</span>
+                        <span class="badge bg-success text-white">
+                           <?php if(($user['way'] ?? '')=='包点'){ ?>
+                           <if $user.points<=0>
+                               点数不足
+                               <else/>
+                               点数正常
+                               </if>
+                            <?php }else{?>
+                           <if $daysLeft<=0 >
+                               到期
+                               <else/>
+                           时效正常
+                           </if>
+                            <?php }?>
+                            </span>
+                    </div>
+                
+                          <?php if(($user['way'] ?? '')!='包点'){ ?>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">到期时间</span>
+                        <span class="font-medium text-gray-800">{$user.bytime}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">今日调用</span>
+                        <span class="font-medium text-gray-800">{$todayCount}/{$user.fullnum}次</span>
+                    </div>
+                    <?php }else{ ?>
+                       <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">剩余点数</span>
+                        <span class="font-medium text-gray-800">{$user.points}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">今日调用</span>
+                        <span class="font-medium text-gray-800">{$todayCount}/{$user.daily_limit}次</span>
+                    </div>
+                    <?php }?>
+                    
+                    <button class="mt-2 w-full py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors text-sm font-medium user" name="user"   type="button" >
+                        切换<?php if(($user['way'] ?? '')=='包点'){ ?>
+                        时效用户
+                          <?php } else { ?>
+                        点数用户
+                          <?php }?>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800">账户余额</h3>
+                    <span class="badge bg-secondary/20 text-secondary">充值记录</span>
+                </div>
+                <div class="flex flex-col space-y-3">
+                    <div class="text-2xl font-bold text-gray-800">{$user.money}元</div>
+                    <div class="progress-bar">
+                        <div class="progress-value bg-secondary" style="width: 65%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">共充值</span>
+                        <span class="font-medium text-gray-800">{$payc}次</span>
+                    </div>
+                    <div class="flex space-x-2 mt-2">
+                     <button class="flex-1 py-2 bg-secondary/10 hover:bg-secondary/20 text-secondary rounded-lg transition-colors text-sm font-medium" ew-href='/user/recharge' >
+                            在线充值
+                        </button>
+                  
+                        <button class="flex-1 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors text-sm font-medium" ew-href='/user/card'  style="
+    color: #1890ff;
+    background-color: #e6f7ff;
+">
+                            卡密充值
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800">
+                         <?php if(($user['way'] ?? '')=='包点'){ ?>
+                        剩余点数
+                        <?php }else{ ?>
+                        剩余时间
+                        <?php }?>
+                        </h3>
+                    <span class="badge bg-success/20 text-success">可购买</span>
+                </div>
+                <div class="flex flex-col space-y-3">
+                    <div class="text-2xl font-bold text-gray-800">
+                          <?php if(($user['way'] ?? '')=='包点'){ ?>
+                        {$user.points} 点
+                          <?php }else{ ?>
+                       {$daysLeft}天
+                        <?php }?>
+    
+                        </div>
+                    <div class="progress-bar">
+                        <div class="progress-value bg-success" style="width: 85%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">今日使用</span>
+                        <span class="font-medium text-gray-800">{$todayCount}点</span>
+                    </div>
+                    <button class="mt-2 w-full py-2 bg-success/10 hover:bg-success/20 text-success rounded-lg transition-colors text-sm font-medium" ew-href='/shop'>
+                        购买更多点数
+                    </button>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800">账户信息</h3>
+                    <span class="badge bg-info/20 text-info"  ew-href='/user/inf'>管理</span>
+                </div>
+                <div class="flex flex-col space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">UID</span>
+                        <span class="font-medium text-gray-800">{$user.uid}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">用户名</span>
+                        <span class="font-medium text-gray-800">{$user.user}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">API KEY</span>
+                        <div class="flex items-center">
+                            <span class="font-medium text-gray-800 truncate max-w-[120px]">{$user.my}</span>
+                            <button class="ml-2 text-gray-400 hover:text-primary copy-text" data-clipboard-text="{$user.my}">
+                                <i class="fa fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="mt-2 w-full py-2 bg-info/10 hover:bg-info/20 text-info rounded-lg transition-colors text-sm font-medium generate" name="key"   type="button" >
+                        更换API KEY
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- API接口信息 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center">
+                        <i class="fa fa-link text-primary mr-2"></i>
+                        JSON解析接口
+                    </h3>
+                    <span class="badge bg-success text-white"><empty name='$user.auth_ip'>请授权IP<else/>已授权IP</empty>
+            </span>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-white/50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-600">影视API</span>
+                            <button class="text-primary hover:text-primary/80 text-sm flex items-center copy-text" data-clipboard-text="{$Request.domain}/api.php/?uid={$user.uid}&key={$user.my}&url=" >
+                                <i class="fa fa-copy mr-1"></i> 复制
+                            </button>
+                        </div>
+                        <div class="bg-gray-50 rounded-md p-2 text-sm overflow-x-auto scrollbar-hide">
+                         {$Request.domain}/api.php?uid={$user.uid}&key={$user.my}&url=
+                        </div>
+                    </div>
+                
+                    
+                    <div class="bg-white/50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-600">网页播放接口</span>
+                            <button class="text-primary hover:text-primary/80 text-sm flex items-center copy-text" data-clipboard-text="{$Request.domain}/api/bfq/?uid={$user.uid}&key={$user.my}&url=" >
+                                <i class="fa fa-copy mr-1"></i> 复制
+                            </button>
+                        </div>
+                        <div class="bg-gray-50 rounded-md p-2 text-sm overflow-x-auto scrollbar-hide">
+                             {$Request.domain}/api/bfq/?uid={$user.uid}&key={$user.my}&url=
+                        </div>
+                        <div class="mt-2 text-xs text-red-500">
+                            仅用于测试，请勿上线使用，容易被盗用！
+                        </div>
+                    </div>
+                   
+
+                </div>
+            </div>
+            
+            <!-- 账户详情卡片 -->
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center">
+                        <i class="fa fa-user text-primary mr-2"></i>
+                        账户详情
+                    </h3>
+                    <a ew-href='/user/inf' class="text-primary text-sm hover:underline">编辑</a>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                        <span class="text-sm text-gray-600">绑定QQ</span>
+                        <span class="font-medium text-gray-800">
+                            <empty name='user.access_token'>
+                            未绑定QQ
+                            <else/>
+                            已绑定
+                            </empty>
+                            </span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                        <span class="text-sm text-gray-600">绑定邮箱</span>
+                        <span class="font-medium text-gray-800">{$user.email}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                        <span class="text-sm text-gray-600">注册时间</span>
+                        <span class="font-medium text-gray-800">{$user.time}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                        <span class="text-sm text-gray-600">客户端名</span>
+                        <span class="font-medium text-gray-800">{$user.client_name}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-2 bg-white/50 rounded-lg">
+                        <span class="text-sm text-gray-600">账户类型</span>
+                        <span class="font-medium text-gray-800">{$user.way}用户</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 采集接口部分 -->
+        <div class="glass-effect rounded-xl p-5 glass-effect-hover mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-gray-800 flex items-center">
+                    <i class="fa fa-cubes text-primary mr-2"></i>
+                    采集接口地址
+                </h3>
+                <a ew-href='/shop/cms' class="badge bg-secondary text-white hover:bg-secondary/90 transition-colors">
+                    去购买采集接口套餐
+                </a>
+            </div>
+            
+            <div class="space-y-4">
+                
+                     <volist name="list" id="v">
+                <div class="bg-white/50 rounded-lg p-3 border border-gray-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">{$v.cmsapi_name} - ID: {$v.cmsapi_id}</span>
+                        <button class="text-primary hover:text-primary/80 text-sm flex items-center copy-text" data-clipboard-text="{:conf('ym')}/api/cms/?cmsapi_id={$v.cmsapi_id}&uid={$user.uid}">
+                            <i class="fa fa-copy mr-1"></i> 复制
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 rounded-md p-2 text-sm overflow-x-auto scrollbar-hide">
+                       {:conf('ym')}/api/cms/?cmsapi_id={$v.cmsapi_id}&uid={$user.uid}
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="badge bg-blue-100 text-blue-600">
+                            <a href="#" class="hover:underline"><empty name='$user.cj_auth_ip'>请授权IP<else/>已授权IP</empty></a>
+                        </span>
+                        <span class="badge bg-green-100 text-green-600">
+                            <?php 
+                            $byTime = strtotime($v['end_time'] ?? 'now'); // 假设是数组
+                            $days = ($byTime - time()) / 86400;
+                            $day=$days >= 0?intval($days):"0";
+                            ?>
+                            到期: {$v.end_time} (有效 {$day} 天)
+                        </span>
+                    </div>
+                </div>
+                </volist>
+         
+            </div>
+        </div>
+        
+        <!-- 统计图表和公告 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 最新公告 -->
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center">
+                        <i class="fa fa-bullhorn text-primary mr-2"></i>
+                        最新公告
+                    </h3>
+                </div>
+                
+                <div class="border-l-4 border-primary pl-3 py-3">
+                {:conf('notices')}
+                </div>
+            </div>
+            
+            <!-- 统计信息 -->
+            <div class="glass-effect rounded-xl p-5 glass-effect-hover lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center">
+                        <i class="fa fa-chart-line text-primary mr-2"></i>
+                        使用统计
+                    </h3>
+       
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">API调用量</h4>
+                        <div class="bg-white/50 rounded-lg p-3 h-64">
+                            <canvas id="apiCallsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">剩余点数</h4>
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <div class="flex items-end justify-between mb-2">
+                                    <div>
+                                        <p class="text-2xl font-bold text-gray-800">{$user.points}</p>
+                                        <p class="text-xs text-gray-500">剩余点数</p>
+                                    </div>
+                                    <div class="text-green-500 text-sm flex items-center">
+                                        <i class="fa fa-arrow-up mr-1"></i>  {$user.points/($user.points+$todayCount)}%
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value bg-success" style="width: {$user.points/$user.points+$todayCount}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">服务有效期</h4>
+                            <div class="bg-white/50 rounded-lg p-3">
+                                <div class="flex items-end justify-between mb-2">
+                                    <div>
+                                        <p class="text-2xl font-bold text-gray-800">{$daysLeft} </p>
+                                        <p class="text-xs text-gray-500">剩余时间</p>
+                                    </div>
+                                    <div class="text-gray-500 text-sm">
+                                        到期: {$user.bytime}
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-value bg-primary" style="width: 90%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        
+    $(function () {
+        new Clipboard('.copy-text');
+    });
+
+    $(".copy-text").click(function () {
+       showNotification('复制成功！');
+    });
+
+        // 显示通知 - 优化弹窗位置使其居中
+        function showNotification(message) {
+            // 检测设备类型，手机端强制居中，电脑端可选择居中或默认位置
+            const isMobile = window.innerWidth < 768;
+            const position = isMobile ? 'center' : 'top-end';
+            
+            Swal.fire({
+                position: position,
+                icon: 'success',
+                title: message,
+                showConfirmButton: false,
+                timer: 1500,
+                // 添加自定义类名以增强居中效果
+                customClass: {
+                    container: 'swal2-center'
+                }
+            });
+        }
+         //生成对接key
+        $('.generate').click(function(){
+            $.ajax({
+            type: "POST",
+            url: "/user/user_generate_key",        
+            dataType:'json',
+                success: function(data){
+                    if(data.code==0){
+                              showNotification(data.msg);
+                    setTimeout(function(){
+                                    location.reload();
+                                }, 1000);
+                    }else{
+                         showNotification(data.msg);
+                    }
+              
+                }
+            });
+        });
+         //生成对接key
+        $('.user').click(function(){
+            $.ajax({
+            type: "POST",
+            url: "/user/user",        
+            dataType: "json",
+                success: function(data){
+                    if(data.code==0){
+                           showNotification(data.msg);
+                    setTimeout(function(){
+                                    location.reload();
+                                }, 1000);
+                    }else{
+                         showNotification(data.msg);
+                    }
+                }
+            });
+        });
+        // API调用量图表
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('apiCallsChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:59'],
+                    datasets: [{
+                        label: 'API调用量',
+                        data: [{$api}],
+                        backgroundColor: 'rgba(20, 201, 255, 0.1)',
+                        borderColor: '#14c9ff',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
+<script>
+    // 检查 auth_ip 是否为空
+    <?php if (conf('authip') == 1 && empty($user['auth_ip'])): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: '温馨提示<br>你未授权解析IP',
+                html: '用户名:<?php echo $user['user']; ?> UID: <?php echo $user['uid']; ?>，<br>你当前并未添加授权IP，请先授权IP后再使用解析接口。',
+                icon: 'warning',
+                showCancelButton: true, // 显示取消按钮
+                confirmButtonText: '去添加授权', // 确认按钮文本
+                cancelButtonText: '我明白了', // 取消按钮文本
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showCloseButton: false,
+                showConfirmButton: true,
+                timer: 0,
+                timerProgressBar: false,
+                didOpen: () => {
+                    Swal.disableConfirmButton();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 点击“添加授权”按钮后，跳转到授权页面
+                    window.location.href = '/user/auth';
+                }
+            });
+        });
+    <?php endif; ?>
+   /*  <?php if (conf('cjip') == 1 && empty($user['cj_auth_ip'])): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: '温馨提示<br>你未授权解析IP',
+                html: '用户名:<?php echo $user['user']; ?> UID: <?php echo $user['uid']; ?>，<br>你当前并未添加采集授权IP，请先授权IP后再使用解析接口。',
+                icon: 'warning',
+                showCancelButton: true, // 显示取消按钮
+                confirmButtonText: '去添加授权', // 确认按钮文本
+                cancelButtonText: '我明白了', // 取消按钮文本
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showCloseButton: false,
+                showConfirmButton: true,
+                timer: 0,
+                timerProgressBar: false,
+                didOpen: () => {
+                    Swal.disableConfirmButton();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 点击“添加授权”按钮后，跳转到授权页面
+                    window.location.href = '/user/inf';
+                }
+            });
+        });
+    <?php endif; ?>*/
+  /*   <?php if (conf('checkqq') == 1 && empty($user['qq'])): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: '温馨提示<br>你未绑定QQ',
+                html: '用户名:<?php echo $user['user']; ?> UID: <?php echo $user['uid']; ?>，<br>你当前未绑定QQ，先去绑定吧。',
+                icon: 'warning',
+                showCancelButton: true, // 显示取消按钮
+                confirmButtonText: '去绑定QQ', // 确认按钮文本
+                cancelButtonText: '我明白了', // 取消按钮文本
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showCloseButton: false,
+                showConfirmButton: true,
+                timer: 0,
+                timerProgressBar: false,
+                didOpen: () => {
+                    Swal.disableConfirmButton();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 点击“添加授权”按钮后，跳转到授权页面
+                    window.location.href = '/user/inf';
+                }
+            });
+        });
+    <?php endif; ?>*/
+</script>
+     <script type="text/javascript" src="/Assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="/Assets/js/common.js?v=318"></script>
+</body>
+</html>

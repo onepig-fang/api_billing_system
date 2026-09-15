@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>服务条款 - 解析系统</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <!-- 外部资源 -->
+    <script src="/template/index2/css/3.1.4"></script>
+    <link href="/template/index2/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F3460',
+                        secondary: '#1A73E8',
+                        accent: '#E63946',
+                        neutral: '#F5F7FA',
+                        'neutral-dark': '#E8EAED'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .section-fade-in {
+                animation: fadeIn 0.8s ease-out forwards;
+                opacity: 0;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+    </style>
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .bg-gradient-business {
+            background: linear-gradient(135deg, #0F3460 0%, #1A3A8F 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #1A73E8;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-800">
+    
+
+    <!-- 主横幅 -->
+   
+    <!-- 条款内容 -->
+    <section id="terms" class="py-16 md:py-24 bg-neutral">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden section-fade-in" style="animation-delay: 0.2s;">
+                <div class="p-6 md:p-10">
+                    <div class="mb-10">
+                        <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6 flex items-center">
+                            <i class="fa fa-shield text-secondary mr-3 text-xl"></i>
+                            隐私安全
+                        </h2>
+                        <ul class="space-y-4 text-gray-700 pl-1">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span>邮箱为本站服务的唯一凭证，请自行妥善保管。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span>本站会以SHA256加密存储用户密码，所有服务器以无日志形式运行，保障您的信息安全。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span>我们不会向第三方泄露您的个人信息，除非法律法规要求或获得您的明确授权。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <hr class="my-8 border-neutral-dark">
+                    
+                    <div class="mb-10">
+                        <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6 flex items-center">
+                            <i class="fa fa-gavel text-secondary mr-3 text-xl"></i>
+                            使用条款
+                        </h2>
+                        <ul class="space-y-4 text-gray-700 pl-1">
+                            <li class="flex items-start">
+                                <i class="fa fa-angle-right text-secondary mt-1 mr-3"></i>
+                                <span>禁止使用本站服务进行任何违法或恶意活动，包括但不限于侵犯他人权益、传播非法内容等。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-angle-right text-secondary mt-1 mr-3"></i>
+                                <span>使用任何服务，需遵循服务所属国家和地区的相关法律法规。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-angle-right text-secondary mt-1 mr-3"></i>
+                                <span>对于免费用户，我们有权在不通知的情况下删除长期未活跃的账户。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-angle-right text-secondary mt-1 mr-3"></i>
+                                <span>任何违反使用条款的用户，我们将会删除违规账户并收回使用本站服务的权利。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-angle-right text-secondary mt-1 mr-3"></i>
+                                <span>我们保留随时更新本协议的权利，更新后的协议将在网站公布，建议您定期查阅。</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <hr class="my-8 border-neutral-dark">
+                    
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6 flex items-center">
+                            <i class="fa fa-info-circle text-secondary mr-3 text-xl"></i>
+                            服务说明
+                        </h2>
+                        <p class="text-gray-700 mb-4">
+                            解析系统致力于为用户提供稳定、高效的服务。我们将尽力保障服务的连续性和安全性，但不对任何因系统故障、网络问题等不可抗力导致的服务中断或数据损失承担责任。
+                        </p>
+                        <p class="text-gray-700">
+                            如有任何疑问或建议，请通过<a href="http://auth.58km.cn" class="text-secondary hover:underline font-medium">联系我们</a>与我们取得联系。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+
+   
+
+    <!-- JavaScript -->
+    <script src="/CDN/FFSirAPI/jquery.min.js"></script>
+    <script src="/CDN/FFSirAPI/notyf.min.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移除预加载器
+            setTimeout(function() {
+                document.querySelector('.preloader').style.opacity = '0';
+                setTimeout(function() {
+                    document.querySelector('.preloader').style.display = 'none';
+                }, 500);
+            }, 600);
+            
+            // 滚动时导航栏样式变化
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('shadow-md');
+                    header.classList.remove('shadow-sm');
+                } else {
+                    header.classList.remove('shadow-md');
+                    header.classList.add('shadow-sm');
+                }
+            });
+            
+            // 初始化通知组件
+            const notyf = new Notyf({
+                duration: 3000,
+                position: { x: 'right', y: 'top' },
+                types: [
+                    { type: 'success', background: '#10B981', icon: true },
+                    { type: 'error', background: '#EF4444', icon: true }
+                ]
+            });
+            
+            // 条款部分动画触发
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.section-fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

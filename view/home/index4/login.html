@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户登录 - {:conf('name')}</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../template/CDN/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361ee',
+                        secondary: '#3f37c9',
+                        accent: '#4cc9f0',
+                        dark: '#1a1a2e',
+                        light: '#f8f9fa',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'elevation-1': '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+                        'elevation-2': '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
+                        'elevation-3': '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #4361ee, #3f37c9);
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+                background-image: linear-gradient(135deg, #4361ee, #3f37c9);
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none;
+            }
+            .btn-effect {
+                @apply transition-all duration-300 hover:shadow-elevation-2 transform hover:-translate-y-0.5 active:translate-y-0;
+            }
+        }
+    </style>
+    
+    <style>
+        /* 基础动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* 加载动画 */
+        .loader {
+            border-top-color: #4361ee;
+            animation: spinner 0.6s linear infinite;
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 社交登录按钮动画 */
+        .social-btn {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+    <div class="container mx-auto px-4 py-8 md:py-16 flex flex-col lg:flex-row items-center justify-center min-h-screen">
+        <!-- 左侧信息面板 -->
+        <div class="w-full lg:w-1/2 mb-10 lg:mb-0 lg:pr-10 animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="bg-gradient-primary rounded-2xl p-8 md:p-12 shadow-elevation-3 text-white relative overflow-hidden">
+                <!-- 装饰元素 -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full"></div>
+                <div class="absolute -bottom-16 -left-16 w-64 h-64 bg-white/5 rounded-full"></div>
+                
+                <div class="relative z-10">
+                    <div class="mb-8">
+                        <a href="/">
+                            <img src="{:conf('logo')}" alt="{:conf('name')}" class="h-16 md:h-20 rounded-lg bg-white p-2 shadow-lg">
+                        </a>
+                    </div>
+                    
+                    <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold mb-4 leading-tight">
+                        欢迎回来<br>{:conf('name')}
+                    </h2>
+                    
+                    <p class="text-white/80 text-lg mb-8 max-w-md">
+                        登录您的账户，继续享受我们的服务。新用户？请注册账号。
+                    </p>
+                    
+                    <button id="sign-up-btn" class="bg-white text-primary font-medium px-6 py-3 rounded-lg shadow-elevation-1 btn-effect">
+                        <i class="fas fa-user-plus mr-2"></i>注 册 账 号
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧登录表单容器 -->
+        <div class="w-full lg:w-1/2 max-w-md animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="bg-white rounded-2xl shadow-elevation-2 p-8 md:p-10">
+                <!-- 标题区域 -->
+                <div class="text-center mb-8">
+                    <h3 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gradient">用户登录</h3>
+                    <p class="text-gray-500 mt-2">请输入您的账号信息登录</p>
+                </div>
+                
+                <!-- 登录表单 -->
+                <form name="form1" id='form1' autocomplete="off" class="space-y-5">
+                    <!-- 用户名/邮箱输入 -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" name="user" 
+                               class="w-full pl-10 py-3 border border-gray-300 rounded-lg input-focus transition-all" 
+                               placeholder="邮箱/用户名" required>
+                    </div>
+                    
+                    <!-- 密码输入 -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" name="pass" 
+                               class="w-full pl-10 py-3 border border-gray-300 rounded-lg input-focus transition-all" 
+                               placeholder="密码" required>
+                    </div>
+                    
+                    <!-- 图形验证码 -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-shield-alt text-gray-400"></i>
+                        </div>
+                        <input type="text" name="codes" 
+                               class="w-full pl-10 pr-40 py-3 border border-gray-300 rounded-lg input-focus transition-all" 
+                               placeholder="验证码" required>
+                        
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                            <img id="captchaImg" src="{:url('/captcha')}" alt="验证码" 
+                                 class="h-10 w-32 object-cover rounded cursor-pointer hover:opacity-90 transition-opacity" 
+                                 onclick="refreshCaptcha()">
+                        </div>
+                    </div>
+                    
+                    <!-- 登录按钮 -->
+                    <div>
+                        <button type="button" id="loginBtn" 
+                                class="w-full bg-gradient-primary text-white font-medium py-3 px-4 rounded-lg shadow-elevation-1 btn-effect flex items-center justify-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>点 我 登 录
+                        </button>
+                    </div>
+                    
+                    <!-- 第三方登录 -->
+                    <if conf('quick_type')==1>
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">或使用以下方式登录</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center gap-4">
+                        <div class="social-btn wechat-btn w-12 h-12 rounded-full bg-[#07C160] text-white flex items-center justify-center shadow-elevation-1"
+                             onclick="window.location.href='/api/quick/login?type=wx&terminal=index'">
+                            <i class="fab fa-weixin fa-lg"></i>
+                        </div>
+                        <div class="social-btn qq-btn w-12 h-12 rounded-full bg-[#12B7F5] text-white flex items-center justify-center shadow-elevation-1"
+                             onclick="window.location.href='/api/quick/login?type=qq&terminal=index'">
+                            <i class="fab fa-qq fa-lg"></i>
+                        </div>
+                    </div>
+                    </if>
+                    
+                    <!-- 服务条款和链接 -->
+                    <div class="text-center text-sm text-gray-500 space-y-2 pt-4">
+                        <p class="terms-text">
+                            登录即代表同意<a href="/service.html" class="text-primary hover:underline">服务条款</a>
+                        </p>
+                        <p class="terms-text">
+                            <a href="/" class="text-primary hover:underline">返回首页</a> / 
+                            <a href='/index/reset.html' target='_blank' class="text-primary hover:underline">找回密码</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 (默认隐藏) -->
+    <div id="divLoading" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-elevation-3 flex items-center">
+            <div class="loader w-6 h-6 border-2 border-gray-300 rounded-full mr-3"></div>
+            <span>登录中，请稍候...</span>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{__LIBS__}layui/layui.js"></script>
+    <script type="text/javascript" src="{__JS__}common.js?v=318"></script>
+    <script>
+        layui.use(['layer', 'form', 'admin', 'notice'], function () {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var form = layui.form;
+            var admin = layui.admin;
+            var notice = layui.notice;
+            
+            // 刷新验证码函数
+            window.refreshCaptcha = function() {
+                var captchaImg = document.getElementById('captchaImg');
+                captchaImg.src = '{:url('/captcha')}?t=' + new Date().getTime();
+            };
+            
+            // 注册按钮跳转
+            $('#sign-up-btn').click(function() {
+                window.location.href = "/index/register";
+            });
+            
+            // 登录按钮点击事件
+            $('#loginBtn').click(function() {
+                var user = $("input[name='user']").val();
+                var pass = $("input[name='pass']").val();
+                var captcha = $("input[name='codes']").val();
+                
+                if(!user){
+                    notice.warning({
+                        message: '请填写用户名！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                if(!pass){
+                    notice.warning({
+                        message: '请填写密码！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                if(!captcha){
+                    notice.warning({
+                        message: '请填写验证码！',
+                        animateInside:true,
+                        position:'topCenter',
+                        transitionOut:'flipOutX',
+                        transitionOutMobile: 'flipOutX',
+                        displayMode:'2',
+                        audio:'1'
+                    });
+                    return false;
+                }
+                
+                admin.btnLoading('#loginBtn');
+                $('#divLoading').removeClass('hidden');
+                
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/ajax/login')}",
+                    data: $('#form1').serialize(), 
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.code == 0) {
+                            notice.success({
+                                title: '登录通知',
+                                message: data.msg,
+                                animateInside:true,
+                                position:'topCenter',
+                                transitionOut:'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode:'2',
+                                audio:'1'
+                            });
+                            
+                            setTimeout(function (){
+                                location.href="{:url('/user/index')}";
+                            }, 2000);
+                        } else {
+                            // 登录失败时刷新验证码
+                            refreshCaptcha();
+                            
+                            notice.error({
+                                title: '系统提示',
+                                message: data.msg,
+                                animateInside:true,
+                                position:'topCenter',
+                                transitionOut:'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                displayMode:'2',
+                                audio:'1'
+                            });
+                        }
+                        
+                        $('#divLoading').addClass('hidden');
+                        admin.btnLoading('#loginBtn', false);
+                    }, 
+                    error: function () {
+                        notice.error({
+                            title: '系统提示',
+                            message: '服务器错误，请稍后重试~',
+                            animateInside:true,
+                            position:'topCenter',
+                            transitionOut:'flipOutX',
+                            transitionOutMobile: 'flipOutX',
+                            timeout:false,
+                            displayMode:'2',
+                            audio:'1'
+                        });
+                        
+                        $('#divLoading').addClass('hidden');
+                        admin.btnLoading('#loginBtn', false);
+                        return false;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+    

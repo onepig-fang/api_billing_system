@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{:conf('name')}</title>
+    <meta name="description" content="{:conf('name')}">
+    <link rel="icon" href="../favicon.ico">
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="../template/CDN/all.min.css">
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --success-color: #38b000;
+            --warning-color: #ffaa00;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 1rem 5%;
+            background: rgba(255, 255, 255, 0.98);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-image {
+            height: 40px; /* 调整logo高度 */
+            width: auto;  /* 保持宽高比 */
+            margin-right: 10px; /* 与文字保持间距 */
+            border-radius: 4px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .login-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            text-decoration: none;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+            color: white;
+        }
+        
+        /* 英雄区域样式 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(63, 55, 201, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+        
+        /* 公告弹窗样式 */
+        .announcement-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .announcement-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .announcement-content {
+            background-color: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .announcement-modal.active .announcement-content {
+            transform: translateY(0);
+        }
+        
+        .announcement-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .announcement-header h3 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .announcement-body {
+            padding: 20px;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .announcement-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .announcement-footer label {
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .announcement-footer button {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .announcement-footer button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(76, 201, 240, 0.1) 0%, rgba(76, 201, 240, 0) 70%);
+            z-index: 0;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            animation: fadeInUp 1s ease 0.5s forwards;
+            opacity: 0;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(67, 97, 238, 0.05);
+            transform: translateY(-3px);
+            color: var(--primary-color);
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            width: 50%;
+            max-width: 700px;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+            object-fit: cover;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-image {
+                width: 45%;
+                opacity: 0.7;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+            }
+            
+            .logo-image {
+                height: 36px; /* 移动端进一步调整logo大小 */
+            }
+            
+            .logo-text {
+                font-size: 1.3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                text-align: center;
+                padding-top: 5rem;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-image {
+                display: none;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            /* 响应式公告弹窗 */
+            .announcement-content {
+                max-width: 95%;
+                margin: 0 10px;
+            }
+            
+            .announcement-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+        }
+        
+        /* 装饰元素 */
+        .decorator {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(76, 201, 240, 0.1) 0%, rgba(76, 201, 240, 0) 70%);
+            z-index: 0;
+        }
+        
+        .decorator-1 {
+            top: -150px;
+            left: -150px;
+        }
+        
+        .decorator-2 {
+            bottom: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 公告弹窗 -->
+    <if conf('notice_type')==1>
+    <div class="announcement-modal" id="announcementModal">
+        <div class="announcement-content">
+            <div class="announcement-header">
+                <h3 class="text-xl font-bold text-primary">重要公告</h3>
+                <button class="text-gray-500 hover:text-gray-700 transition-colors" id="closeAnnouncement">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="announcement-body">
+                {:conf('notice')}
+            </div>
+            <div class="announcement-footer">
+                <label class="flex items-center mr-4">
+                    <input type="checkbox" class="mr-2" id="dontShowAgain">
+                    <span class="text-sm text-gray-600">7天内不再显示</span>
+                </label>
+                <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-dark transition-colors" id="confirmAnnouncement">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+    </if>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <a href="/" class="logo-container">
+            <img src="{:conf('logo')}" alt="{:conf('name')}" class="logo-image">
+            <span class="logo-text">{:conf('name')}</span>
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link">首页</a>
+            <a href="/Article/index" class="nav-link">新闻公告</a>
+            <a href="/user/video" class="nav-link">视频测试</a>
+            <a href="/user/help" class="nav-link">使用帮助</a>
+        </div>
+        <a href="/index/login" class="login-btn">登录/注册</a>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="decorator decorator-1"></div>
+        <div class="decorator decorator-2"></div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">解析极速高清体验</h1>
+            <p class="hero-subtitle">{:conf('name')}云API提供|全能格式支持 | 智能画质增强 | 跨平台解决方案</p>
+            
+            <div class="btn-group">
+                <a href="/index/login" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    立即开始
+                </a>
+                <a href="/index/register" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    新用户注册
+                </a>
+            </div>
+        </div>
+        
+        <img src="https://1vimg.hitv.com/100/2502/2212/3610/btvQd2ek/394830682272886784.jpg" alt="API接口展示" class="hero-image">
+    </section>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 公告弹窗功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保公告元素存在再执行
+            const announcementModal = document.getElementById('announcementModal');
+            if (!announcementModal) return;
+
+            const closeBtn = document.getElementById('closeAnnouncement');
+            const confirmBtn = document.getElementById('confirmAnnouncement');
+            const dontShowAgain = document.getElementById('dontShowAgain');
+            const storageKey = 'announcement_last_shown';
+
+            // 检查是否需要显示公告
+            function shouldShowAnnouncement() {
+                const lastShown = localStorage.getItem(storageKey);
+                if (!lastShown) return true;
+                
+                const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+                return parseInt(lastShown) < sevenDaysAgo;
+            }
+
+            // 显示公告
+            function showAnnouncement() {
+                if (shouldShowAnnouncement()) {
+                    setTimeout(() => {
+                        announcementModal.classList.add('active');
+                    }, 1000); // 延迟1秒显示，提升体验
+                }
+            }
+
+            // 隐藏公告
+            function hideAnnouncement() {
+                announcementModal.classList.remove('active');
+                // 如果勾选了不再显示，记录当前时间
+                if (dontShowAgain.checked) {
+                    localStorage.setItem(storageKey, Date.now().toString());
+                }
+            }
+
+            // 绑定事件
+            closeBtn.addEventListener('click', hideAnnouncement);
+            confirmBtn.addEventListener('click', hideAnnouncement);
+
+            // 初始化显示
+            showAnnouncement();
+        });
+    </script>
+</body>
+</html>

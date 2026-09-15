@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>公共弹幕库-{:conf('name')}</title>
+     <!-- 引入Tailwind CSS -->
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .card-shadow {
+                @apply shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .package-card {
+                @apply glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .badge {
+                @apply absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold;
+            }
+            .table-hover-row {
+                @apply hover:bg-gray-50 transition-colors duration-200;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+        }
+             
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+   <!--     <div class="glass-card mb-6">
+            <div class="p-5 text-center">
+                <h1 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-gray-800">公共弹幕库</h1>
+            </div>
+        </div>-->
+        
+        <!-- 信息卡片 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <i class="fa fa-comments text-primary text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-700">本系统中免费提供的公共弹幕库接口。</p>
+                    <p class="text-gray-700 mt-1">请勿使用违规使用弹幕库接口。</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 弹幕礼仪和接口区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 弹幕礼仪卡片 -->
+            <div class="glass-card card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-book text-blue-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">弹幕礼仪</h2>
+                    </div>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">尊重他人和内容</h3>
+                                <p class="text-gray-600 text-sm mt-1">不发布辱骂、侮辱、人身攻击等不良言论，尊重主播、其他观众以及内容创作者。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">避免刷屏</h3>
+                                <p class="text-gray-600 text-sm mt-1">不要连续发送大量弹幕，以免占据过多的屏幕空间，影响其他人的观看体验。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">合理使用表情和颜色</h3>
+                                <p class="text-gray-600 text-sm mt-1">适度使用表情和颜色，但不要过度使用，以免影响其他人的阅读。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">遵循主题</h3>
+                                <p class="text-gray-600 text-sm mt-1">在直播或视频评论中，尽量保持评论与内容主题相关，避免离题讨论。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">不泄露个人信息</h3>
+                                <p class="text-gray-600 text-sm mt-1">不要在弹幕中透露自己或他人的个人信息，包括手机号、地址等。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">避免敏感话题</h3>
+                                <p class="text-gray-600 text-sm mt-1">不发布与政治、宗教、种族等敏感话题相关的评论，以避免引发争议和冲突。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">不恶意抢楼</h3>
+                                <p class="text-gray-600 text-sm mt-1">不要在其他人发送的弹幕下迅速发送评论，以便自己的评论排在前面。</p>
+                            </div>
+                        </li>
+                        <li class="flex">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fa fa-check text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-900">理性表达意见</h3>
+                                <p class="text-gray-600 text-sm mt-1">如果对内容有意见或建议，可以用理性和文明的语言表达，避免过于激烈的言辞。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 弹幕接口卡片 -->
+            <div class="glass-card card-hover">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                            <i class="fa fa-link text-green-600 text-xl"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">弹幕接口</h2>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h3 class="font-medium text-gray-900 mb-3">弹幕库接口参数：选择其中一个</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                    <span class="text-green-600 text-xs font-bold">1</span>
+                                </div>
+                                <span class="text-gray-700">弹幕参数1：<code class="bg-gray-200 px-2 py-1 rounded text-sm font-mono">?ac=dm&url=</code></span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                    <span class="text-green-600 text-xs font-bold">2</span>
+                                </div>
+                                <span class="text-gray-700">弹幕参数2：<code class="bg-gray-200 px-2 py-1 rounded text-sm font-mono">?url=</code></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="font-medium text-gray-900 mb-3">复制弹幕库接口</h3>
+                        <div class="relative">
+                            <input type="text" id="urlInput" class="w-full bg-white border border-gray-300 rounded-lg py-3 px-4 pr-12 text-gray-700 input-focus" value="{:conf('cjdiyurl')}" readonly>
+                            <button id="copyBtn" class="absolute right-2 top-2 bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary/90 transition-colors duration-200 copy-text" data-clipboard-text="{:conf('cjdiyurl')}">
+                                <i class="fa fa-copy mr-1"></i> 复制
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <button id="copyLinkBtn" class="btn-primary w-full flex items-center justify-center">
+                            <i class="fa fa-link mr-2"></i> 复制弹幕库接口
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // 复制链接功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyBtn = document.getElementById('copyBtn');
+            const copyLinkBtn = document.getElementById('copyLinkBtn');
+            const urlInput = document.getElementById('urlInput');
+            
+            function copyLink() {
+                urlInput.select();
+                document.execCommand('copy');
+                
+                // 显示成功提示
+                Swal.fire({
+                    icon: 'success',
+                    title: '复制成功！',
+                    text: '弹幕接口已复制到剪贴板。',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // 按钮状态变化
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa fa-check mr-1"></i> 已复制';
+                copyBtn.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('bg-green-500');
+                }, 2000);
+            }
+            
+            copyBtn.addEventListener('click', copyLink);
+            copyLinkBtn.addEventListener('click', copyLink);
+            
+            // 移动端优化：点击输入框自动选择
+            urlInput.addEventListener('click', function() {
+                this.select();
+            });
+        });
+    </script>
+
+</body>
+</html>

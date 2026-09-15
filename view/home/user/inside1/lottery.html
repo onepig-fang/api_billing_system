@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>每日抽奖</title>
+    <link rel="stylesheet" href="/Assets/libs/layui/css/layui.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="background: #ffffff; padding: 20px;">
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2 style="text-align: center; color: #333;">每日抽奖</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 30px;">转动命运之轮，好运等着你！</p>
+    
+    <!-- 统计信息 -->
+    <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 22px; border-radius: 8px; margin-bottom: 35px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-around; text-align: center;">
+            <div>
+                <div style="font-size: 22px; font-weight: bold; color: #007bff; margin-bottom: 5px;">{$remainingCount}</div>
+                <div style="color: #666; font-size: 13px;">剩余次数</div>
+            </div>
+            <div>
+                <div style="font-size: 22px; font-weight: bold; color: #28a745; margin-bottom: 5px;">{$todayCount}</div>
+                <div style="color: #666; font-size: 13px;">今日已抽</div>
+            </div>
+            <div>
+                <div style="font-size: 22px; font-weight: bold; color: #6c757d; margin-bottom: 5px;">{$config.daily_limit}</div>
+                <div style="color: #666; font-size: 13px;">每日限制</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 抽奖按钮 -->
+    <div style="text-align: center; margin-bottom: 30px;">
+        <button id="lotteryBtn" style="width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(45deg, #007bff, #0056b3); color: white; border: none; font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,123,255,0.3);">
+            立即抽奖
+        </button>
+    </div>
+    
+    <!-- 奖品列表 -->
+    <div style="margin-bottom: 30px;">
+        <h4 style="color: #333; margin-bottom: 15px; font-size: 16px;">🎁 奖品内容</h4>
+        <div style="border: 1px solid #e3e6ea; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div id="prizesList">
+                <div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">
+                    正在加载奖品...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 抽奖记录 -->
+    <div>
+        <h4 style="color: #333; margin-bottom: 15px; font-size: 16px;">📋 最近记录</h4>
+        <div style="border: 1px solid #e3e6ea; border-radius: 8px; max-height: 200px; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div id="recordsList">
+                <div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">
+                    正在加载记录...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/Assets/libs/layui/layui.js"></script>
+<script>
+layui.use(['jquery', 'layer'], function(){
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    
+    // 加载奖品设置
+    function loadPrizes() {
+        $.ajax({
+            url: '{:url("user/lotteryPrizes")}',
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                if (result.code === 0 && result.data && result.data.length > 0) {
+                    var html = '';
+                    for (var i = 0; i < result.data.length; i++) {
+                        var prize = result.data[i];
+                        
+                        html += '<div style="padding: 12px 16px; border-bottom: 1px solid #f1f3f4; background: #fff;">';
+                        html += '<span style="font-weight: bold; color: #333;">' + prize.name + '</span>';
+                        
+                        // 显示奖品值（除了谢谢参与）
+                        if (prize.type !== 'empty') {
+                            var valueText = '';
+                            if (prize.type === 'points') {
+                                valueText = '+' + prize.value + '点数';
+                            } else if (prize.type === 'money') {
+                                valueText = '+' + prize.value + '元';
+                            } else if (prize.type === 'time') {
+                                valueText = '+' + prize.value + '天';
+                            }
+                            html += '<span style="color: #28a745; margin-left: 10px; font-size: 13px;">' + valueText + '</span>';
+                        }
+                        
+                       
+                        html += '</div>';
+                        
+                        // 最后一个不显示底部边框
+                        if (i === result.data.length - 1) {
+                            html = html.replace('border-bottom: 1px solid #f1f3f4;', '');
+                        }
+                    }
+                    $('#prizesList').html(html);
+                } else {
+                    $('#prizesList').html('<div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">暂无奖品设置</div>');
+                }
+            },
+            error: function() {
+                $('#prizesList').html('<div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">加载奖品失败</div>');
+            }
+        });
+    }
+
+    // 加载抽奖记录
+    function loadRecords() {
+        $.ajax({
+            url: '{:url("user/lotteryRecords")}',
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                if (result.code === 0 && result.data && result.data.length > 0) {
+                    var html = '';
+                    for (var i = 0; i < result.data.length; i++) {
+                        var record = result.data[i];
+                        var date = new Date(record.create_time);
+                        var timeStr = (date.getMonth() + 1) + '-' + date.getDate() + ' ' + 
+                                     date.getHours().toString().padStart(2, '0') + ':' + 
+                                     date.getMinutes().toString().padStart(2, '0');
+                        
+                        html += '<div style="padding: 12px 16px; border-bottom: 1px solid #f1f3f4; background: #fff;">';
+                        html += '<span style="color: #333; font-weight: 500;">' + record.prize_name + '</span>';
+                        html += '<span style="color: #6c757d; float: right; font-size: 12px;">' + timeStr + '</span>';
+                        html += '</div>';
+                    }
+                    $('#recordsList').html(html);
+                } else {
+                    $('#recordsList').html('<div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">暂无抽奖记录</div>');
+                }
+            },
+            error: function() {
+                $('#recordsList').html('<div style="padding: 20px; text-align: center; color: #6c757d; background: #fff;">暂无抽奖记录</div>');
+            }
+        });
+    }
+    
+    // 页面加载时获取奖品和记录
+    loadPrizes();
+    loadRecords();
+    
+    $('#lotteryBtn').click(function() {
+        var remainingCount = parseInt('{$remainingCount}');
+        if (remainingCount <= 0) {
+            layer.msg('今日抽奖次数已用完', {icon: 2});
+            return;
+        }
+        
+        var $btn = $(this);
+        $btn.prop('disabled', true).addClass('lottery-spinning');
+        
+        // 开始抽奖动画
+        var animationStep = 0;
+        var animationTexts = ['抽奖中.', '抽奖中..', '抽奖中...', '抽奖中....'];
+        var animationTimer = setInterval(function() {
+            $btn.text(animationTexts[animationStep]);
+            animationStep = (animationStep + 1) % animationTexts.length;
+        }, 300);
+        
+        $.ajax({
+            url: '{:url("user/doLottery")}',
+            type: 'POST',
+            dataType: 'json',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(result) {
+                // 继续动画2秒让用户感受抽奖过程
+                setTimeout(function() {
+                    clearInterval(animationTimer);
+                    $btn.prop('disabled', false).removeClass('lottery-spinning').text('立即抽奖');
+                    
+                    if (result.code === 0) {
+                        layer.open({
+                            type: 1,
+                            title: '中奖通知',
+                            content: '<div style="padding: 30px; text-align: center;"><h2 style="color: #28a745;">🎉 恭喜中奖！</h2><p style="font-size: 18px; margin: 15px 0;">' + result.data.prize_name + '</p><p style="color: #666;">奖品已自动发放到您的账户</p></div>',
+                            area: '350px',
+                        btn: ['确定'],
+                        yes: function(index) {
+                            layer.close(index);
+                            // 重新加载奖品和记录
+                            loadPrizes();
+                            loadRecords();
+                            setTimeout(function() {
+                                location.reload();
+                            }, 500);
+                        }
+                        });
+                    } else {
+                        layer.msg(result.msg || '抽奖失败', {icon: 2});
+                    }
+                }, 2000);
+            },
+            error: function() {
+                setTimeout(function() {
+                    clearInterval(animationTimer);
+                    $btn.prop('disabled', false).removeClass('lottery-spinning').text('立即抽奖');
+                    layer.msg('网络错误，请重试', {icon: 2});
+                }, 2000);
+            }
+        });
+    });
+});
+</script>
+
+<style>
+#lotteryBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,123,255,0.4);
+}
+
+#lotteryBtn:disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 抽奖动画效果 */
+.lottery-spinning {
+    background: linear-gradient(45deg, #28a745, #20c997) !important;
+    animation: lotteryPulse 0.8s ease-in-out infinite alternate !important;
+}
+
+@keyframes lotteryPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+    }
+    100% {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(40,167,69,0.5);
+    }
+}
+
+/* 手机适配 */
+@media (max-width: 768px) {
+    body {
+        padding: 15px !important;
+    }
+    
+    div[style*="max-width: 600px"] {
+        padding: 0 10px;
+    }
+    
+    #lotteryBtn {
+        width: 115px !important;
+        height: 115px !important;
+        font-size: 15px !important;
+    }
+    
+    div[style*="display: flex"] {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    div[style*="display: flex"] > div {
+        flex: 1;
+        min-width: 80px;
+    }
+    
+    h2 {
+        font-size: 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px !important;
+    }
+    
+    #lotteryBtn {
+        width: 90px !important;
+        height: 90px !important;
+        font-size: 13px !important;
+    }
+    
+    div[style*="padding: 10px 15px"] {
+        padding: 8px 12px !important;
+    }
+    
+    span[style*="float: right"] {
+        float: none !important;
+        display: block;
+        margin-top: 5px;
+        color: #999 !important;
+        font-size: 11px !important;
+    }
+}
+</style>
+
+</body>
+</html>

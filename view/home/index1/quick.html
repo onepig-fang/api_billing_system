@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号绑定</title>
+    <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#64748B',
+                        light: '#F8FAFC',
+                        dark: '#1E293B'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+            .glass-dark {
+                background: rgba(30, 41, 59, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .transition-height {
+                transition: max-height 0.3s ease-in-out;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white font-inter min-h-screen flex items-center justify-center p-4 md:p-8">
+    <!-- 背景装饰元素 -->
+    <div class="fixed inset-0 overflow-hidden -z-10">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-100 rounded-full opacity-50"></div>
+        <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-indigo-100 rounded-full opacity-50"></div>
+    </div>
+
+    <!-- 主卡片 -->
+    <div class="w-full max-w-md glass rounded-2xl shadow-xl overflow-hidden">
+        <!-- 卡片标题 -->
+        <div class="bg-primary text-white p-6">
+            <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold">账号绑定</h1>
+            <p class="text-blue-100 mt-1">请选择您的操作方式</p>
+        </div>
+
+        <!-- 表单内容 -->
+        <div class="p-6">
+            <form autocomplete="off" id="form1" class="space-y-6">
+                <input name='method' value="{$type}" hidden>
+                <input name='state' value="{$state}" hidden>
+                <input name='code' value="{$code}" hidden>
+
+                <!-- 创建方式选择 -->
+                <div class="space-y-3">
+                    <label class="block text-dark font-medium text-sm">创建方式</label>
+                    <div class="flex flex-col space-y-3">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-primary hover:bg-blue-50">
+                            <input type="radio" class="w-5 h-5 text-primary" value="1" name='quick' checked>
+                            <span class="ml-3 text-gray-700">新用户，自动创建账号</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer transition-all hover:border-primary hover:bg-blue-50">
+                            <input type="radio" class="w-5 h-5 text-primary" name='quick' value="2">
+                            <span class="ml-3 text-gray-700">老用户，绑定一个帐号</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 新用户表单 -->
+                <div id="reg" class="space-y-5 transition-height">
+                    <div>
+                        <label for="email" class="block text-dark font-medium text-sm mb-1">邮箱地址 <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                            <input type="text" id="email" name="email" placeholder="请输入邮箱地址" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="jxname" class="block text-dark font-medium text-sm mb-1">解析名称 <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fa fa-tag"></i>
+                            </span>
+                            <input type="text" id="jxname" name="jxname" placeholder="请输入解析名称" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 -mt-2">默认密码：123456</p>
+
+                <!-- 老用户绑定表单 -->
+                <div id="bangding" style="display: none;" class="space-y-5 transition-height">
+                    <div>
+                        <label for="user" class="block text-dark font-medium text-sm mb-1">登录账号 <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fa fa-user-o"></i>
+                            </span>
+                            <input type="text" id="user" name="user" placeholder="要绑定的登录账号" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="pass" class="block text-dark font-medium text-sm mb-1">登录密码 <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                            <input type="password" id="pass" name="pass" placeholder="要绑定的登录密码" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提交按钮 -->
+                <div class="pt-2">
+                    <button type="button" id="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2">
+                        <i class="fa fa-check mr-2"></i>确认绑定
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 引入必要的JS库 -->
+    <script src="{__LIBS__}layui/layui.js"></script>
+    <script src="{__JS__}common.js?v=318"></script>
+    <script>
+        layui.use(['layer','element','form', 'jquery','notice', 'dtree',  'code'], function () {
+            let form = layui.form;
+            var layer = layui.layer;
+            var element = layui.element;
+            let $ = layui.jquery;
+            var notice = layui.notice;
+
+            // 切换表单显示 - 修复版
+            $('input[name="quick"]').change(function() {
+                var value = $(this).val();
+                if(value == 2){
+                    // 显示老用户表单，隐藏新用户表单
+                    $("#bangding").show();
+                    $("#reg").hide();
+                }else{
+                    // 显示新用户表单，隐藏老用户表单
+                    $("#bangding").hide();
+                    $("#reg").show();
+                }
+                // 确保单选按钮状态正确更新
+                form.render('radio');
+            });
+
+            // 提交表单
+            $('#submit').click(function(){
+                if(confirm("你确定操作吗？")){  
+                    $.ajax({
+                        type: "POST",
+                        url: "/index/quickbd",        
+                        data: $('#form1').serialize(), 
+                        dataType: 'json',
+                        beforeSend: function() {
+                            // 添加加载状态
+                            $('#submit').html('<i class="fa fa-spinner fa-spin mr-2"></i>处理中...').prop('disabled', true);
+                        },
+                        success: function(data){
+                            // 恢复按钮状态
+                            $('#submit').html('<i class="fa fa-check mr-2"></i>确认绑定').prop('disabled', false);
+                            
+                            if(data.code == 0){
+                                notice.success({
+                                    title: '提示您',
+                                    message: data.msg,
+                                    animateInside: true,
+                                    position: 'topCenter',
+                                    transitionOut: 'flipOutX',
+                                    transitionOutMobile: 'flipOutX',
+                                    displayMode: '2',
+                                    audio: '1'
+                                });
+                                setTimeout(function (){
+                                    location.href = "/user/index.html";
+                                }, 2000);
+                            }else{
+                                notice.msg(data.msg, {icon: 2, audio: '1'}); 
+                            }
+                        }, 
+                        error: function () {
+                            // 恢复按钮状态
+                            $('#submit').html('<i class="fa fa-check mr-2"></i>确认绑定').prop('disabled', false);
+                            
+                            notice.error({
+                                title: '系统提示您',
+                                message: '服务器错误，请稍后重试~',
+                                animateInside: true,
+                                position: 'topCenter',
+                                transitionOut: 'flipOutX',
+                                transitionOutMobile: 'flipOutX',
+                                timeout: false,
+                                displayMode: '2',
+                                audio: '1'
+                            });
+                            return false;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

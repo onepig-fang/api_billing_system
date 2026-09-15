@@ -1,0 +1,113 @@
+<include file="/public/header">
+    <!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+     <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form ">
+        <input name="id" value="{:isset($shop.id) ? $shop.id : ''}" type="hidden"/>
+   
+       
+            <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">用户ID:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="uid" value="{:isset($shop.uid) ? $shop.uid : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+     <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">授权IP:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cj_auth_ip" value="{:isset($shop.cj_auth_ip) ? $shop.cj_auth_ip : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+       
+      
+              <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">接口ID:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cmsapi_id" value="{:isset($shop.cmsapi_id) ? $shop.cmsapi_id : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+
+       <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">接口名称:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cmsapi_name" value="{:isset($shop.cmsapi_name) ? $shop.cmsapi_name : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">开始时间:</label>
+                <div class="layui-input-block">
+                    <input type="text" id="intime" name="intime" value="{:isset($shop.intime) ? $shop.intime : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+  <div class="layui-form-item">
+                <label class="layui-form-label layui-form-required">到期时间:</label>
+                <div class="layui-input-block">
+                    <input type="text" id="end_time" name="end_time" value="{:isset($shop.end_time) ? $shop.end_time : ''}" placeholder="" class="layui-input"
+                           lay-verType="tips" lay-verify="required"/>
+                </div>
+            </div>
+       
+       <hr style="width:0px"><hr>
+                    <div class="layui-form-item">
+                        <div class="layui-btn-container">
+                            <button type="button" class="layui-btn" id="noticeBtn" lay-filter="submitBtn" lay-submit>&emsp;提交&emsp;</button>
+                  
+                        </div>
+                    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    <include file="/public/footer">
+        <script>
+    layui.use(['layer', 'form', 'table', 'notice','laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var notice = layui.notice;
+ 
+        var laydate = layui.laydate;
+        	       // 时间选择器
+    laydate.render({
+      elem: 'input[name="end_time"]'
+      , type: 'datetime' 
+    });
+
+    laydate.render({
+      elem: 'input[name="intime"]'
+      , type: 'datetime' 
+    });
+        form.on('submit(submitBtn)', function (data) {
+            notice.msg('正在执行中..', {icon: 4, close: true});
+            $.ajax({
+                type: "POST",
+                url: "{:url('/cmsapi/useredit')}",
+                data: data.field,
+                dataType: "json",
+                success: function(data) {
+                    notice.destroy();
+                    if (data.code == 0) {
+                        notice.msg(data.msg, {icon: 1, audio:'1'});
+                             var index = parent.layer.getFrameIndex(window.name);
+                  setTimeout(function () {
+                parent.layer.close(index);
+                           parent.location.reload();
+                  },500);
+                    } else {
+                        notice.msg(data.msg, {icon: 2, audio:'1'});
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

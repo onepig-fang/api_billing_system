@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入外部资源 -->
+  <script src="/template//inside1/css/3.4.16"></script>
+  <link href="/template//inside1/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#6B7280',
+                        accent: '#3B82F6',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    
+
+    <!-- 主要内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- 协议标题 -->
+            <div class="bg-primary text-white p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-2">用户求片协议</h2>
+                <p class="opacity-90">请仔细阅读以下条款，了解您在使用本平台求片功能时的权利和义务</p>
+            </div>
+            
+            <!-- 协议内容 -->
+            <div class="p-6 md:p-8">
+                <div class="mb-6 flex items-center text-sm text-secondary">
+                    <i class="fa fa-info-circle mr-2"></i>
+                    <p> Last updated: 2023年10月15日</p>
+                </div>
+                
+                <div class="h-[500px] overflow-y-auto pr-2 scrollbar-hide mb-8 text-balance" id="agreement-content">
+                    <h3 class="text-xl font-semibold mb-4 text-dark">一、总则</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        1.1 本协议是用户（以下简称"您"）与本影视资源平台（以下简称"本平台"）之间关于使用本平台求片功能所订立的协议。请您在使用本平台求片功能前仔细阅读本协议全部内容，尤其是涉及您重大权益的条款。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        1.2 您通过点击"同意"按钮或实际使用本平台的求片功能，即表示您已阅读、理解并同意本协议的全部内容。如您不同意本协议，请勿使用本平台的求片功能。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        1.3 本平台有权根据法律法规变化及业务发展需要，对本协议进行修改。修改后的协议将在本平台公布，并自公布之日起生效。如您继续使用求片功能，视为您接受修改后的协议。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">二、求片规则</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        2.1 您在使用求片功能时，应提供准确、完整的影片信息，包括但不限于影片名称、导演、主要演员、上映年份等，以便本平台更好地为您寻找资源。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        2.2 您所请求的影片必须是合法合规的，不得含有任何违反国家法律法规、社会公序良俗的内容，包括但不限于含有色情、暴力、恐怖、反动、煽动民族仇恨等内容的影片。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        2.3 同一用户针对同一影片的求片请求，间隔时间不得少于7天。恶意重复求片的用户，本平台有权限制或暂停其求片功能的使用。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        2.4 本平台不保证所有求片请求都能得到满足，能否找到相应影片资源取决于多种因素，包括但不限于影片的流行程度、版权状况等。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">三、版权声明</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        3.1 本平台尊重知识产权，所有影片资源均来自合法渠道。如您请求的影片涉及侵犯第三方知识产权，本平台有权拒绝提供相关资源。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        3.2 您承诺仅为个人学习、研究或欣赏目的请求和使用影片资源，不得用于任何商业用途，不得侵犯影片版权人的合法权益。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        3.3 如因您的求片请求导致本平台面临任何第三方索赔、诉讼或处罚，您应承担全部责任，并赔偿本平台因此遭受的全部损失。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">四、隐私保护</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        4.1 本平台将按照隐私政策保护您的个人信息，仅在为您提供求片服务所必需的范围内使用您的信息。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        4.2 您的求片记录将被严格保密，不会向第三方披露，除非法律法规另有规定或获得您的明确同意。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">五、免责条款</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        5.1 对于因不可抗力或本平台无法控制的原因造成的网络服务中断或其它缺陷，本平台不承担任何责任，但将尽力减少因此而给用户造成的损失和影响。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        5.2 您理解并同意，本平台仅提供影片资源的检索和指引服务，不对影片内容的真实性、合法性、完整性作出任何明示或暗示的保证。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">六、违约责任</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        6.1 如您违反本协议的任何条款，本平台有权采取包括但不限于警告、限制或暂停您的求片功能、封禁账号等措施。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        6.2 因您的违约行为给本平台或第三方造成损失的，您应承担相应的赔偿责任。
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 mt-6 text-dark">七、其他</h3>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        7.1 本协议的订立、效力、解释、履行及争议解决均适用中华人民共和国法律。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        7.2 因本协议引起的或与本协议有关的任何争议，双方应首先通过友好协商解决；协商不成的，任何一方均有权向本平台所在地有管辖权的人民法院提起诉讼。
+                    </p>
+                    <p class="mb-4 text-gray-700 leading-relaxed">
+                        7.3 本协议构成双方对本协议事项的完整理解，取代此前所有相关的口头或书面协议、谅解和沟通。
+                    </p>
+                </div>
+                
+                <!-- 已阅读确认 -->
+                <div class="flex items-center mb-6">
+                    <input type="checkbox" id="read-confirm" class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                    <label for="read-confirm" class="ml-2 text-gray-700">我已仔细阅读并同意上述协议内容</label>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="agree-btn" class="flex-1 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center opacity-50 cursor-not-allowed">
+                        <i class="fa fa-check mr-2"></i>同意并继续
+                    </button>
+                    <button id="disagree-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                        <i class="fa fa-times mr-2"></i>不同意
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+
+    <!-- JavaScript -->
+    <script>
+        // 获取DOM元素
+        const readConfirm = document.getElementById('read-confirm');
+        const agreeBtn = document.getElementById('agree-btn');
+        const disagreeBtn = document.getElementById('disagree-btn');
+        const agreementContent = document.getElementById('agreement-content');
+        
+        // 监听滚动，实现阅读进度检测
+        let hasScrolledToBottom = false;
+        
+        agreementContent.addEventListener('scroll', () => {
+            // 检查是否滚动到了底部
+            if (agreementContent.scrollHeight - agreementContent.scrollTop === agreementContent.clientHeight) {
+                hasScrolledToBottom = true;
+                updateAgreeButtonState();
+            }
+        });
+        
+        // 监听复选框变化
+        readConfirm.addEventListener('change', updateAgreeButtonState);
+        
+        // 更新同意按钮状态
+        function updateAgreeButtonState() {
+            if (readConfirm.checked && hasScrolledToBottom) {
+                agreeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                agreeBtn.classList.add('cursor-pointer');
+                agreeBtn.disabled = false;
+            } else {
+                agreeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                agreeBtn.classList.remove('cursor-pointer');
+                agreeBtn.disabled = true;
+            }
+        }
+        
+        // 同意按钮点击事件
+        agreeBtn.addEventListener('click', () => {
+            if (!agreeBtn.disabled) {
+                // 显示成功消息
+                alert('您已同意用户求片协议，即将跳转到求片页面');
+                // 实际应用中，这里可以跳转到求片页面
+                 window.location.href = '/user/qiupian.html';
+            }
+        });
+        
+        // 不同意按钮点击事件
+        disagreeBtn.addEventListener('click', () => {
+            if (confirm('您确定要拒绝此协议吗？拒绝后将无法使用求片功能。')) {
+                // 实际应用中，这里可以返回上一页
+                // window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

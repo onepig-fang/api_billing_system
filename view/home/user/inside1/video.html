@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>视频测试-{:conf('name')}</title>
+   <script src="{template}/inside1/css/3.4.16"></script>
+    <link href="{template}/inside1/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{template}/inside1/css/sweetalert2.all.min.js"></script>
+    <link href="{template}/inside1/css/sweetalert2.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#60a5fa',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6',
+                        glass: 'rgba(255, 255, 255, 0.85)',
+                        glassBorder: 'rgba(255, 255, 255, 0.4)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-card {
+                @apply bg-glass border border-glassBorder rounded-xl shadow-sm hover:shadow-md transition-all duration-300 backdrop-blur-sm;
+            }
+            .input-focus {
+                @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all;
+            }
+            .btn-primary {
+                @apply bg-primary text-white font-medium py-3 px-6 rounded-lg shadow-md hover:bg-primary/90 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all duration-300;
+            }
+            .card-shadow {
+                @apply shadow-sm hover:shadow-md transition-all duration-300;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .package-card {
+                @apply glass-card relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .badge {
+                @apply absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold;
+            }
+            .table-hover-row {
+                @apply hover:bg-gray-50 transition-colors duration-200;
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .status-badge {
+                @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+            }
+        }
+          
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-inter">
+    <main class="container mx-auto px-4 py-6">
+        <!-- 顶部标题区域 -->
+   <!--     <div class="glass-card mb-6">
+            <div class="p-5 text-center">
+                <h1 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-gray-800">视频测试</h1>
+            </div>
+        </div>-->
+        
+        <!-- 用户状态卡片 -->
+        <div class="glass-card mb-6 p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <i class="fa fa-user-circle text-blue-600 text-xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800">用户状态</h2>
+            </div>
+            
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded-r-lg">
+                <p class="flex items-center text-gray-700">
+                    <i class="fa fa-info-circle text-blue-500 mr-2"></i>
+                    注意:视频测试地址,解析成功将自动扣您账户点数- 
+                    <span class="font-medium">您当前是:【<?php if($user['way']=='包点'){ ?>
+                          点数用户</span>剩余点数:【{$user['points']}】
+                          <?php } else { ?>
+                       时效用户</span><?php 
+                       $bytime = $user['bytime'] ?? '';
+                       $byTs = !empty($bytime) ? strtotime((string)$bytime) : false;
+                       $dayy = $byTs !== false ? intval(($byTs - time()) / 86400) : 0;
+                       if($dayy<=0){
+                       $dayy=0;
+                       }
+                       echo " 剩余时效:【" . $dayy. " 天】";
+                       ?>
+                          <?php }?>】
+                   
+                </p>
+            </div>
+            
+            <?php 
+            // 判断是否有点数或时效
+            $hasPoints = ($user['points'] !== '0'); // 判断点数是否可用
+            $bytime = $user['bytime'] ?? '';
+            $byTs = !empty($bytime) ? strtotime((string)$bytime) : false;
+            $hasTime = $byTs !== false && $byTs > time(); // 判断时效是否可用
+
+            if ($user['way']  == "包点") {
+                if ($hasPoints) {
+                    echo '<div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4 rounded-r-lg">';
+                    echo '<p class="flex items-center text-gray-700">';
+                    echo '<i class="fa fa-check-circle text-green-500 mr-2"></i>';
+                    echo '您当前解析状态: <span class="status-badge bg-green-100 text-green-800">正常解析</span>';
+                    echo '</p></div>';
+                } else {
+                    echo '<div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded-r-lg">';
+                    echo '<p class="flex items-center text-gray-700">';
+                    echo '<i class="fa fa-exclamation-circle text-red-500 mr-2"></i>';
+                    echo '您当前解析状态: <span class="status-badge bg-red-100 text-red-800">无可用点数,解析失败</span>';
+                    echo '<span class="ml-2 status-badge bg-orange-100 text-orange-800">测试请购买套餐或切换成【点数用户】</span>';
+                    echo '</p></div>';
+                }
+            } else {
+                if ($hasTime) {
+                    echo '<div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4 rounded-r-lg">';
+                    echo '<p class="flex items-center text-gray-700">';
+                    echo '<i class="fa fa-check-circle text-green-500 mr-2"></i>';
+                    echo '您当前解析状态: <span class="status-badge bg-green-100 text-green-800">正常解析</span>';
+                    echo '</p></div>';
+                } else {
+                    echo '<div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded-r-lg">';
+                    echo '<p class="flex items-center text-gray-700">';
+                    echo '<i class="fa fa-exclamation-circle text-red-500 mr-2"></i>';
+                    echo '您当前解析状态: <span class="status-badge bg-red-100 text-red-800">时长到期-解析失败</span>';
+                    echo '<span class="ml-2 status-badge bg-orange-100 text-orange-800">测试请充值套餐或切换成【点数用户】</span>';
+                    echo '</p></div>';
+                }
+            }
+            ?>
+            
+          <!--  <form method='post' action='/user/information/refs/video.php' class="flex flex-wrap items-center gap-3 p-4 bg-gray-50 rounded-lg">-->
+                <span class="text-gray-700">您当前是</span>
+                <span class="font-medium text-primary"><?php if($user['way']=='包点'){ ?>
+                          点数用户
+                          <?php } else { ?>
+                       时效用户
+                          <?php }?></span>
+                <button type="submit" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-1 rounded-md transition-colors duration-200 user" name="user">
+                    一键切换成<?php if($user['way']=='包点'){ ?>
+                        时效用户
+                          <?php } else { ?>
+                        点数用户
+                          <?php }?>
+                </button>
+                <span class="text-gray-700">您当前余额:</span>
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md">
+            {$user.money}元
+                </span>
+                <span class="text-gray-700">您今日已调用</span>
+                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-md">
+                    <?php echo $user['way']=='包月'?$user['daynum']:$user['daynum'] ?>次
+                </span>
+                
+       
+        </div>
+        
+        <!-- 视频播放器卡片 -->
+        <div class="glass-card mb-6 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-play-circle text-red-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800">视频播放器</h2>
+                </div>
+                
+                <div class="relative aspect-video bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                    <iframe 
+                        src="<?php echo "/api/bfq/?key=". $user['my']."&url="; if(isset($_GET['url'])){echo $_GET['url'];}else{echo "https://v.qq.com/x/cover/mzc00200aaogpgh/w4100gpx85y.html";} ?>" 
+                        scrolling='no' 
+                        border='0' 
+                        frameborder='no' 
+                        framespacing='0' 
+                        allowfullscreen='true' 
+                        width="100%" 
+                        height="100%"
+                        class="absolute inset-0 w-full h-full"
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 视频地址输入卡片 -->
+        <div class="glass-card card-hover">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-link text-blue-600 text-xl"></i>
+                    </div>
+                    <h2 class="text-lg font-bold text-gray-800">测试视频播放地址</h2>
+                </div>
+                
+                <form class="" action="/user/video" method="get">
+                    <div class="mb-4">
+                        <label for="url" class="block text-sm font-medium text-gray-700 mb-1">视频地址</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa fa-video-camera text-gray-400"></i>
+                            </div>
+                            <input 
+                                type="text" 
+                                id="url" 
+                                name="url" 
+                                required 
+                                value="<?php if(isset($_GET['url'])){echo $_GET['url'];}else{echo "https://v.qq.com/x/cover/mzc00200aaogpgh/w4100gpx85y.html";} ?>" 
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg input-focus"
+                                placeholder="请输入视频地址"
+                            >
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full">
+                        <i class="fa fa-play mr-2"></i> 点击播放
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 如果既没有点数也没有时效，弹出提示弹窗 -->
+    <?php if (!$hasPoints && !$hasTime) { ?>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: '请购买套餐',
+                html: '您当前既没有可用点数，也没有时效套餐<br>请续费或购买套餐后再测试。',
+                confirmButtonText: '前往购买套餐',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/user/shop/'; // 跳转到套餐页面
+                }
+            });
+        </script>
+    <?php } ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+              $('.user').click(function(){
+            $.ajax({
+            type: "POST",
+            url: "/user/user",        
+            dataType: "json",
+                success: function(data){
+                    if(data.code==0){
+                         Swal.fire({
+                                        icon: 'success',
+                                        title: '成功',
+                                        text: data.msg,
+                                        confirmButtonColor: '#3b82f6'
+                                    }).then(() => {
+                                        // 刷新页面以更新余额
+                                        location.reload();
+                                    });
+                    setTimeout(function(){
+                                    location.reload();
+                                }, 1000);
+                    }else{
+                         showNotification(data.msg);
+                    }
+                }
+            });
+        });
+              // 显示通知 - 优化弹窗位置使其居中
+        function showNotification(message) {
+            // 检测设备类型，手机端强制居中，电脑端可选择居中或默认位置
+            const isMobile = window.innerWidth < 768;
+            const position = isMobile ? 'center' : 'top-end';
+            
+            Swal.fire({
+                position: position,
+                icon: 'success',
+                title: message,
+                showConfirmButton: false,
+                timer: 1500,
+                // 添加自定义类名以增强居中效果
+                customClass: {
+                    container: 'swal2-center'
+                }
+            });
+        }
+</script>
+</body>
+</html>

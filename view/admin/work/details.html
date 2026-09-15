@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<include file="/public/header">
+<style>
+.support-title{
+    word-break: break-all;
+    line-height: 40px;   
+}   
+.support-title .badge {
+    display: inline-block;
+    height: 28px;
+    margin-right: 10px;
+}
+.support-title em {
+    font-size: 20px;
+}
+.support-info {
+    width: 100%;
+    padding: 20px;
+    border: 1px dashed #a0b0be;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    display: flex;
+    flex-flow: wrap;
+}
+.support-info .username {
+    line-height: 30px;
+    color:  #06f;
+    margin-right: 20px;
+}
+.support-info .username .pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    margin-right: 10px;
+    border: 1px solid #efefef;
+}
+.support-info .type {
+    display: inline-flex;
+    padding: 0 10px;
+    height: 30px;
+    border-radius: 4px;
+    align-items: center;
+    margin-right: 20px;
+}
+.support-info .text {
+    line-height: 30px;
+    color: #4d555e;
+    margin-right: 20px;
+}
+.support-plist {
+    margin-top: 40px;
+}
+.card-header {
+    width: 100%;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-header em {
+    height: 30px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+.card-header em i {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    border-radius: 12px;
+    background-color:#06f;
+    background-image: linear-gradient(to bottom, #06f, #06f);
+}
+.card-header em i:after {
+    position: absolute;
+    content: '';
+    top: 2px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 12px;
+    background-color: #fff;
+}
+.card-header em i.purple {
+    background-color: #955aff;
+    background-image: linear-gradient(to bottom, #d05fff, #955aff);
+}
+.support-plist-item + .support-plist-item {
+    margin-top: 20px;
+}
+.support-plist-item {
+    width: 100%;
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 8px;
+}
+.support-plist-item.sub .detailed em {
+    color:  #955aff;
+    background-color: rgb(149 90 255 / 5%);
+    border: 1px dashed  #955aff;
+}
+.support-plist-item .detailed {
+    width: 100%;
+    border-bottom: 1px solid #efefef;
+    padding-bottom: 20px;
+    display: flex;
+    flex-flow: wrap;
+    align-items: center;
+    margin-right: 20px;
+}
+.support-plist-item .detailed em {
+    display: inline-flex;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+.support-plist-item .detailed em.new {
+    color: #f41127;
+    background-color: rgb(244 17 39 / 5%);
+    border: 1px dashed #f41127;
+}
+.support-plist-item .detailed em.old {
+    color: #4d555e;
+    background-color: rgb(160 176 190 / 5%);
+    border: 1px dashed #4d555e;
+}
+.support-plist-item .detailed .bolck {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.support-plist-item .detailed .pic {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    margin-right: 10px;
+}
+.support-plist-item .detailed .bolck .nickname {
+    font-size: 16px;
+}
+.support-plist-item .detailed .bolck .time {
+    color: #999;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.support-body {
+    padding: 20px 0 0;
+}
+
+.support-body .support-container {
+    height: 30px;
+}
+.support-body.show .support-container {
+    height: auto;
+}
+
+.support-container {
+    position: relative;
+    overflow: hidden;
+    line-height: 1.5;
+}
+.support-reply {
+    margin-top: 40px;
+}
+.support-reply .support-reply-ok {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+.support-reply .support-reply-ok em {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:#06f;
+    background-color: rgb(0 102 255 / 5%);
+    border: 1px dashed #06f;
+}
+.badge {
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    width: fit-content;
+    padding: 0 10px;
+    border-radius: 4px;
+    background-color: rgb(0 102 255 / 5%);
+    border: 1px solid #06f;
+    color: #06f;
+    font-size: 12px;
+}
+.badge-green{
+   background-color: rgb(18 185 70 / 5%);
+    border-color: #12b946;
+    color: #12b946;   
+}
+.badge-teal {
+    background-color: rgb(56 208 163 / 5%);
+    border-color: #38d0a3;
+    color: #38d0a3;
+}
+.badge-gray {
+    background-color: rgb(160 176 190 / 5%);
+    border-color: #a0b0be;
+    color: #a0b0be;
+}
+.badge-gray-dark {
+    background-color: rgb(77 85 94 / 5%);
+    border-color: #4d555e;
+    color: #4d555e;
+}
+.badge-red {
+    background-color: rgb(244 17 39 / 5%);
+    border-color: #f41127;
+    color: #f41127;
+}
+.badge-blue {
+    background-color: rgb(255 139 42 / 5%);
+    border-color: #06f;
+    color: #06f;
+}
+.support-reply .support-reply-btn {
+    margin-top: 20px;
+}
+</style>
+<div class="layui-fluid">
+<div class="layui-card">
+<div class="layui-card-body">
+<empty name="id">
+    <else/>
+<div class="support-title">
+  
+     <if condition="$work['state'] eq 0"> 
+    <div class="badge badge-red">待处理</div>
+    </if>
+     <if condition="$work['state'] eq 1"> 
+    <div class="badge badge-green">处理中</div>
+    </if>
+     <if condition="$work['state'] eq 2"> 
+    <div class="badge badge-blue">处理完成</div>
+    </if>
+    <em>{$work.name}</em></div>
+<!--<div class="support-info">
+
+<div class="text">更新时间：{$work.time}</div>
+</div> -->  
+<div class="support-plist">
+                <div class="card-header">
+                    <em><i></i>工单内容</em>
+                </div>
+               <empty name='list'>
+                   <else/>
+                    <volist name="list" id="v" >
+                <div class="support-plist-item sub">
+                    <div class="detailed">
+                        <em>回复人</em>
+                        <div class="bolck">
+                            <div class="nickname">我</div>
+                            <div class="time">{$v.time}</div>
+                        </div>
+                    </div>
+                    <div class="support-body">
+                        <div class="support-container">
+                        {:htmlspecialchars_decode(isset($v.details)?$v.details : '')}
+                        </div>
+                 
+                    </div>
+                </div>
+                </volist>
+    </empty>
+               <empty name='list_e'>
+                   <else/>
+                    <volist name="list_e" id="vs" >
+                <div class="support-plist-item sub">
+                    <div class="detailed">
+                        <em>回复人</em>
+                        <div class="bolck">
+                            <div class="nickname">对方</div>
+                            <div class="time">{$vs.time}</div>
+                        </div>
+                    </div>
+                    <div class="support-body">
+                        <div class="support-container">
+                      {:htmlspecialchars_decode(isset($vs.details)?$vs.details : '')}
+                        </div>
+                 
+                    </div>
+                </div>
+                </volist>
+    </empty>
+
+            </div>
+     </empty>
+            <div class="support-reply">
+                <div class="card-header">
+                    <em><i></i>工单提交</em>
+                </div>
+                 <form id="Sk_EditForm" lay-filter="Sk_EditForm" class="layui-form model-form">
+                     <empty name="id">
+                          <input name="title"  placeholder="请输入标题" class='layui-input'>
+                          <p style="margin-top:5px"></p>
+                   
+                      
+                            <p style="margin-top:5px"></p>
+    <else/>
+    <input name='title' value="{$work.name}" hidden="">
+    <input name='id' value="{$work.id}" hidden="">
+      </empty>
+                        <p style="margin-top:5px"></p>
+                     <textarea placeholder="请输入投诉内容"  name="notice" rows="2" id="ShuKa" class="ant-input css-r6xsk5"></textarea>
+                <div class="support-reply-btn">
+                    <button type="button" lay-filter="Sk_EditSubmit" lay-submit class="layui-btn icon-btn" id="submit"> <empty name="id">提交<else/>继续提交</empty></button>
+                      </form>
+                </div>
+
+            </div>
+       
+        </div>
+        </div>
+  <include file="/public/footer">   
+     <script type="text/javascript" src="/Assets/libs/tinymce/tinymce.min.js"></script>
+      <script>
+    layui.use(['layer','element','form', 'jquery','notice', 'dtree','upload',  'code'], function () {
+        
+        let form = layui.form;
+        var layer = layui.layer;
+        var element = layui.element;
+        let $ = layui.jquery;
+        var notice = layui.notice;
+        var upload = layui.upload;
+         tinymce.init({
+            selector: '#ShuKa',
+            height: 525,
+            branding: false,
+            language: 'zh_CN',
+            plugins: 'code print preview fullscreen paste searchreplace save autosave link autolink image imagetools media table codesample lists advlist hr charmap emoticons anchor directionality pagebreak quickbars nonbreaking visualblocks visualchars wordcount',
+            toolbar: 'fullscreen preview code | undo redo | forecolor backcolor | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | formatselect fontselect fontsizeselect | link image media emoticons charmap anchor pagebreak codesample | ltr rtl',
+            toolbar_drawer: 'sliding',
+            images_upload_url: '{:url("/Upload/images")}',
+            images_upload_base_path: '',
+            file_picker_types: 'media',
+             relative_urls: false, // 使用相对路径
+             remove_script_host: false, // 不移除脚本主机名
+             setup: function (editor) {
+                editor.on('change', function () {
+             editor.save();
+                })
+            }
+        });
+    //修改
+        $('#submit').click(function(){
+           //  $(this).attr('disabled','disabled');
+           if(confirm("你确定操作吗？")){  
+            $.ajax({
+            type: "POST",
+            url: '{:url("edit")}',        
+            data:$('#Sk_EditForm').serialize(), 
+            dataType: "json",
+            success: function(data) {
+                 //   notice.destroy();
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {icon: 1, audio:'0'});
+                        location.reload();
+                    } else {
+                        layer.msg(data.msg, {icon: 2, audio:'0'});
+                    }
+                },
+                error: function() {
+                   // notice.destroy();
+                    layer.msg("服务器错误！", {icon: 2, audio:'0'});
+                }
+            });
+           }
+        });
+    })
+</script>

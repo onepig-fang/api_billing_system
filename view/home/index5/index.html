@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{:conf('name')}</title>
+    <meta name="description" content="{:conf('name')}">
+    <link rel="icon" href="../favicon.ico">
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="../template/CDN/all.min.css">
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1890ff;
+            --secondary-color: #4096ff;
+            --accent-color: #1677ff;
+            --dark-color: #fafafa;
+            --dark-light: #ffffff;
+            --light-color: #1a1a1a;
+            --light-gray: #606266;
+            --gradient: #1890ff;
+            --star-color-1: #ffffff;
+            --star-color-2: #e6f7ff;
+            --star-color-3: #f5faff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 星空背景基础样式 */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #fafafa;
+            color: var(--light-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* 动态星星容器（覆盖全屏） */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2; /* 置于最底层，不遮挡内容 */
+            pointer-events: none; /* 不影响交互 */
+        }
+        
+        /* 星星样式（三种大小+颜色，随机闪烁） */
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        /* 星星闪烁动画 */
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+        
+        /* 流星效果（2个不同轨迹的流星） */
+        .meteor {
+            position: fixed;
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent, var(--light-color));
+            z-index: -1;
+            pointer-events: none;
+            animation: meteor-fall linear infinite;
+        }
+        
+        .meteor-1 {
+            top: -10%;
+            left: 20%;
+            animation-duration: 3s;
+            animation-delay: 1s;
+        }
+        
+        .meteor-2 {
+            top: -15%;
+            left: 70%;
+            animation-duration: 4s;
+            animation-delay: 3s;
+        }
+        
+        /* 流星下落动画 */
+        @keyframes meteor-fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(-30deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(120vh) translateX(50px) rotate(-30deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 导航栏样式（星空玻璃拟态） */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: #ffffff;
+            backdrop-filter: blur(12px); /* 玻璃模糊 */
+            box-shadow: 0 2px 20px rgba(24, 144, 255, 0.12); /* 紫蓝阴影 */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 1rem 5%;
+            background: rgba(15, 23, 42, 0.9); /* 滚动时加深背景 */
+            box-shadow: 0 2px 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-image {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); /*  logo发光效果 */
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light-color);
+            text-shadow: 0 0 8px rgba(24, 144, 255, 0.25); /* 文字发光 */
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color);
+            text-shadow: 0 0 6px rgba(24, 144, 255, 0.2);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .login-btn {
+            background: var(--gradient);
+            color: var(--light-color);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); /* 按钮发光阴影 */
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(24, 144, 255, 0.18);
+            color: var(--light-color);
+        }
+        
+        /* 英雄区域样式（星空主题强化） */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            position: relative;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+        
+        /* 星空装饰元素（替代原有浅色渐变） */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(24, 144, 255, 0.1) 0%, rgba(24, 144, 255, 0) 70%);
+            z-index: 0;
+        }
+        
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+            padding: 2rem 0;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            /* 星空文字渐变 */
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-gray);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--light-color);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(24, 144, 255, 0.18);
+            color: var(--light-color);
+        }
+        
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.6); /* 半透明深空背景 */
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
+            animation: fadeInUp 1s ease 0.5s forwards;
+            opacity: 0;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-3px);
+            color: var(--accent-color);
+            box-shadow: 0 8px 20px rgba(24, 144, 255, 0.08);
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .hero-image {
+            position: absolute;
+            right: 5%;
+            width: 50%;
+            max-width: 700px;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3); /* 图片发光边框 */
+        }
+        
+        /* 原有动画保留（渐入+浮动） */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+                box-shadow: 0 0 40px rgba(24, 144, 255, 0.16);
+            }
+        }
+        
+        /* 公告弹窗样式（星空深色卡片） */
+        .announcement-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.7); /* 半透明深空遮罩 */
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .announcement-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .announcement-content {
+            background-color: var(--dark-light); /* 浅深空背景 */
+            border: 1px solid rgba(59, 130, 246, 0.2); /* 蓝边点缀 */
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(24, 144, 255, 0.08); /* 紫蓝阴影 */
+        }
+        
+        .announcement-modal.active .announcement-content {
+            transform: translateY(0);
+        }
+        
+        .announcement-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .announcement-header h3 {
+            color: var(--accent-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-shadow: 0 0 6px rgba(24, 144, 255, 0.18);
+        }
+        
+        .announcement-header button {
+            background: transparent;
+            border: none;
+            color: var(--light-gray);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .announcement-header button:hover {
+            color: var(--accent-color);
+        }
+        
+        .announcement-body {
+            padding: 20px;
+            line-height: 1.8;
+            color: var(--light-gray);
+        }
+        
+        .announcement-footer {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(59, 130, 246, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .announcement-footer label {
+            cursor: pointer;
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .announcement-footer input[type="checkbox"] {
+            accent-color: var(--accent-color); /* 复选框星空色 */
+        }
+        
+        .announcement-footer button {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .announcement-footer button:hover {
+            background-color: var(--accent-color);
+            box-shadow: 0 6px 15px rgba(24, 144, 255, 0.16);
+        }
+        
+        /* 星空装饰球（替代原有浅色装饰） */
+        .decorator {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 70%);
+            z-index: 0;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.1);
+        }
+        
+        .decorator-1 {
+            top: -150px;
+            left: -150px;
+        }
+        
+        .decorator-2 {
+            bottom: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(24, 144, 255, 0.1) 0%, rgba(24, 144, 255, 0) 70%);
+            box-shadow: 0 0 60px rgba(24, 144, 255, 0.1);
+        }
+        
+        /* 响应式设计（同步星空风格） */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-image {
+                width: 45%;
+                opacity: 0.8;
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+            }
+            
+            .logo-image {
+                height: 36px;
+            }
+            
+            .logo-text {
+                font-size: 1.3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                text-align: center;
+                padding-top: 5rem;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-image {
+                display: none;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            /* 移动端公告弹窗 */
+            .announcement-content {
+                max-width: 95%;
+                margin: 0 10px;
+                box-shadow: 0 8px 25px rgba(24, 144, 255, 0.12);
+            }
+            
+            .announcement-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 1. 星空背景元素（动态星星+流星） -->
+    <div class="stars" id="stars"></div>
+    <div class="meteor meteor-1"></div>
+    <div class="meteor meteor-2"></div>
+
+    <!-- 2. 公告弹窗（保留原有逻辑，仅改样式） -->
+    <if conf('notice_type')==1>
+    <div class="announcement-modal" id="announcementModal">
+        <div class="announcement-content">
+            <div class="announcement-header">
+                <h3>重要公告</h3>
+                <button id="closeAnnouncement">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="announcement-body">
+                {:conf('notice')}
+            </div>
+            <div class="announcement-footer">
+                <label class="flex items-center">
+                    <input type="checkbox" class="mr-2" id="dontShowAgain">
+                    <span>7天内不再显示</span>
+                </label>
+                <button id="confirmAnnouncement">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+    </if>
+
+    <!-- 3. 导航栏（保留原有链接，改星空玻璃风） -->
+    <nav class="navbar" id="navbar">
+        <a href="/" class="logo-container">
+            <img src="{:conf('logo')}" alt="{:conf('name')}" class="logo-image">
+            <span class="logo-text">{:conf('name')}</span>
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link">首页</a>
+            <a href="/Article/index" class="nav-link">新闻公告</a>
+            <a href="/user/video" class="nav-link">视频测试</a>
+            <a href="/user/help" class="nav-link">使用帮助</a>
+        </div>
+        <a href="/index/login" class="login-btn">登录/注册</a>
+    </nav>
+
+    <!-- 4. 英雄区域（保留原有内容，改星空色调） -->
+    <section class="hero">
+        <div class="decorator decorator-1"></div>
+        <div class="decorator decorator-2"></div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">解析极速高清体验</h1>
+            <p class="hero-subtitle">{:conf('name')}云API提供|全能格式支持 | 智能画质增强 | 跨平台解决方案</p>
+            
+            <div class="btn-group">
+                <a href="/index/login" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    立即开始
+                </a>
+                <a href="/index/register" class="btn btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    新用户注册
+                </a>
+            </div>
+        </div>
+        
+        <img src="https://1vimg.hitv.com/100/2502/2212/3610/btvQd2ek/394830682272886784.jpg" alt="API接口展示" class="hero-image">
+    </section>
+
+    <script>
+        // 5. 原有逻辑完全保留（导航滚动、公告弹窗、本地存储）
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 公告弹窗功能（逻辑不变）
+        document.addEventListener('DOMContentLoaded', function() {
+            const announcementModal = document.getElementById('announcementModal');
+            if (!announcementModal) return;
+
+            const closeBtn = document.getElementById('closeAnnouncement');
+            const confirmBtn = document.getElementById('confirmAnnouncement');
+            const dontShowAgain = document.getElementById('dontShowAgain');
+            const storageKey = 'announcement_last_shown';
+
+            function shouldShowAnnouncement() {
+                const lastShown = localStorage.getItem(storageKey);
+                if (!lastShown) return true;
+                
+                const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+                return parseInt(lastShown) < sevenDaysAgo;
+            }
+
+            function showAnnouncement() {
+                if (shouldShowAnnouncement()) {
+                    setTimeout(() => {
+                        announcementModal.classList.add('active');
+                    }, 1000);
+                }
+            }
+
+            function hideAnnouncement() {
+                announcementModal.classList.remove('active');
+                if (dontShowAgain.checked) {
+                    localStorage.setItem(storageKey, Date.now().toString());
+                }
+            }
+
+            closeBtn.addEventListener('click', hideAnnouncement);
+            confirmBtn.addEventListener('click', hideAnnouncement);
+            showAnnouncement();
+
+            // 6. 动态生成星星（新增星空效果逻辑）
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150; // 星星数量
+            const starSizes = [1, 2, 3]; // 星星大小
+            const starColors = [
+                var(--star-color-1),
+                var(--star-color-2),
+                var(--star-color-3)
+            ];
+
+            // 生成随机星星
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('span');
+                const size = starSizes[Math.floor(Math.random() * starSizes.length)];
+                const color = starColors[Math.floor(Math.random() * starColors.length)];
+                
+                // 随机位置、大小、颜色
+                star.classList.add('star');
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.backgroundColor = color;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                // 随机闪烁延迟（0-2秒）
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<include file="/public/header">
+<!-- 正文开始 -->
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form" id="packForm" lay-filter="packForm">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>打包配置</legend>
+                </fieldset>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">打包开关</label>
+                    <div class="layui-input-block">
+                        <input name="pack_enabled" value="0" hidden="">
+                        <input type="checkbox" name="pack_enabled" value="1" lay-skin="switch" lay-text="开启|关闭" <if condition="isset($set['pack_enabled']) && $set['pack_enabled'] eq 1">checked</if>>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">单次消耗</label>
+                    <div class="layui-input-block">
+                        <input type="number" min="1" name="pack_cost" class="layui-input" placeholder="每次打包扣减次数" value="{:isset($set.pack_cost) && $set.pack_cost ? $set.pack_cost : 1}" required>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">打包API地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="pack_api_url" class="layui-input" placeholder="例如：https://pack.example.com" value="{:isset($set.pack_api_url) ? $set.pack_api_url : ''}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">API Key</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="pack_api_key" class="layui-input" placeholder="可选" value="{:isset($set.pack_api_key) ? $set.pack_api_key : ''}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">APPID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="pack_api_appid" class="layui-input" placeholder="可选" value="{:isset($set.pack_api_appid) ? $set.pack_api_appid : ''}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">AppSecret</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="pack_api_secret" class="layui-input" placeholder="可选" value="{:isset($set.pack_api_secret) ? $set.pack_api_secret : ''}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-row layui-col-space10">
+                    <div class="layui-col-md2">
+                        <button type="submit" class="layui-btn layui-btn-fluid" lay-filter="packBtn" lay-submit>保存配置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<include file="/public/footer">
+
+<script>
+layui.use(['form', 'notice'], function () {
+    var $ = layui.jquery;
+    var form = layui.form;
+    var notice = layui.notice;
+
+    form.on('submit(packBtn)', function (data) {
+        notice.msg('正在保存配置..', {icon: 4, close: true});
+        $.ajax({
+            type: 'POST',
+            url: '{:url("/Set/packedit")}',
+            data: data.field,
+            dataType: 'json',
+            success: function (res) {
+                notice.destroy();
+                if (res.code == 0) {
+                    notice.msg(res.msg || '保存成功', {icon: 1, audio: '1'});
+                } else {
+                    notice.msg(res.msg || '保存失败', {icon: 2, audio: '1'});
+                }
+            },
+            error: function () {
+                notice.destroy();
+                notice.msg('服务器错误！', {icon: 2, audio: '1'});
+            }
+        });
+        return false;
+    });
+});
+</script>
